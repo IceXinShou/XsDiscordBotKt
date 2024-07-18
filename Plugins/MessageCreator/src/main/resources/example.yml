@@ -1,0 +1,26 @@
+content: ""
+
+embeds:
+  - author: null
+#      name: null
+#      url: null
+#      iconUrl: null
+    title: null
+    description: null
+    url: null
+    setThumbnail: null
+    image: null
+    color: null
+    footer: null
+#      text: null
+#      iconUrl: null
+    timestamp: null  # no placeholder support
+
+    fields:
+      - name: "Hello"
+        value: ""
+        inline: false
+
+      - name: "I cannot be null !!!"
+        value: ""
+        inline: false  # no placeholder support

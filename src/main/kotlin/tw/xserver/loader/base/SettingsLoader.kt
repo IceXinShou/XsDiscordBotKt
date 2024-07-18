@@ -1,0 +1,58 @@
+package tw.xserver.loader.base
+
+import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.decodeFromString
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import tw.xserver.loader.util.yaml.Setting
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import java.util.*
+
+object SettingsLoader {
+    private val logger: Logger = LoggerFactory.getLogger(SettingsLoader::class.java)
+    private const val CONFIG_NAME: String = "config.yml"
+    internal lateinit var config: Setting
+    internal lateinit var token: String
+
+    @Throws(IOException::class)
+    fun run() {
+        var settingFile = File("./$CONFIG_NAME")
+        if (!settingFile.exists()) {
+            logger.info("$CONFIG_NAME not found, create default $CONFIG_NAME")
+            settingFile = exportResource()
+        }
+
+        logger.info("loading ${settingFile.path}")
+        config = Yaml().decodeFromString<Setting>(settingFile.readText())
+        token = config.generalSettings.botToken
+        logger.info("setting file loaded")
+    }
+
+    private fun exportResource(): File {
+        try {
+            this@SettingsLoader.javaClass.classLoader.getResourceAsStream(CONFIG_NAME).use { fileInJar ->
+                if (fileInJar == null) {
+                    logger.error("Cannot find resource: $CONFIG_NAME")
+                    throw MissingResourceException(
+                        "Cannot find resource $CONFIG_NAME",
+                        this@SettingsLoader.javaClass.classLoader.name,
+                        CONFIG_NAME
+                    )
+                }
+                Files.copy(
+                    fileInJar,
+                    Paths.get("./$CONFIG_NAME"),
+                    StandardCopyOption.REPLACE_EXISTING
+                )
+                return File("./$CONFIG_NAME")
+            }
+        } catch (e: IOException) {
+            logger.error("Read resource failed: {}", e.message)
+            throw e
+        }
+    }
+}

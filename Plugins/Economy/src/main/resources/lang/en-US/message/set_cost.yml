@@ -1,0 +1,18 @@
+content: ""
+
+embeds:
+  - author:
+      name: "Pocket Set Cost"
+      iconUrl: "https://i.imgur.com/PsEXCuY.png"
+    title: "☛ %user_name%'s Pocket"
+    footer:
+      text: "❖ Your Best Pocket ❖"
+
+    fields:
+      - name: Balance
+        value: "%economy_money% $"
+        inline: false  # no placeholder support
+
+      - name: Cost [=]
+        value: "%economy_cost_before% ➣ %economy_cost% $"
+        inline: false  # no placeholder support

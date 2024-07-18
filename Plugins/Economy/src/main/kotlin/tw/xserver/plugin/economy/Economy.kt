@@ -1,0 +1,290 @@
+package tw.xserver.plugin.economy
+
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.decodeFromStream
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.session.ReadyEvent
+import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent
+import net.dv8tion.jda.api.interactions.DiscordLocale
+import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import tw.xserver.loader.localizations.LangManager
+import tw.xserver.loader.plugin.Event
+import tw.xserver.loader.util.FileGetter
+import tw.xserver.loader.util.json.JsonObjFileManager
+import tw.xserver.plugin.economy.cmd.getGuildCommands
+import tw.xserver.plugin.economy.googlesheet.SheetManager
+import tw.xserver.plugin.economy.json.JsonManager
+import tw.xserver.plugin.economy.lang.LangFile
+import tw.xserver.plugin.economy.lang.Localizations
+import tw.xserver.plugin.economy.setting.MainConfig
+import tw.xserver.plugin.placeholder.PAPI
+import java.io.File
+import java.io.IOException
+
+/**
+ * Main class for the Economy plugin managing configurations, commands, and data handling.
+ */
+object Economy : Event(true) {
+    private val MODE = Mode.GoogleSheet
+    private val logger: Logger = LoggerFactory.getLogger(Economy::class.java)
+    internal const val DIR_PATH = "./plugins/Economy/"
+    internal lateinit var config: MainConfig
+
+    override fun load() {
+        reloadAll()
+        logger.info("Loaded Economy")
+    }
+
+    override fun unload() {
+        logger.info("UnLoaded Economy")
+    }
+
+    override fun reloadConfigFile() {
+        getter = FileGetter(DIR_PATH, Economy::class.java)
+
+        try {
+            getter.readInputStream("config.yml").use {
+                config = Yaml().decodeFromStream<MainConfig>(it)
+            }
+        } catch (e: IOException) {
+            logger.error("Please configure ${DIR_PATH}./config.yml", e)
+        }
+
+        logger.info("Setting file loaded successfully")
+        if (File(DIR_PATH, "data").mkdirs()) {
+            logger.info("Default data folder created")
+        }
+
+        if (MODE == Mode.Json)
+            JsonManager.json = JsonObjFileManager(File(DIR_PATH, "data/data.json"))
+        logger.info("Data file loaded successfully")
+    }
+
+    override fun reloadLang() {
+        LangManager(
+            getter,
+            DiscordLocale.CHINESE_TAIWAN,
+            LangFile::class,
+            Localizations::class
+        )
+    }
+
+    override fun guildCommands(): Array<CommandData> = getGuildCommands()
+
+    /**
+     * Initializes data handling when the bot is ready.
+     */
+    override fun onReady(event: ReadyEvent) {
+        if (MODE == Mode.Json)
+            JsonManager.initFile()
+        updateMoneyBoard()
+        updateCostBoard()
+    }
+
+    override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
+        val locale: DiscordLocale = event.userLocale
+        when (event.name) {
+            "balance" -> {
+                val user = getTargetUser(event)
+                val data = queryData(user)
+
+                updatePapi(user, data)
+                event.hook.editOriginal(MessageReplier.reply(user, InteractType.Balance, locale)).queue()
+            }
+
+            "top-money" -> {
+                if (checkPermission(event)) return
+                event.hook.editOriginal(
+                    MessageReplier.replyBoard(
+                        event.user,
+                        InteractType.TopMoney,
+                        Type.Money,
+                        MODE,
+                        locale
+                    )
+                ).queue()
+            }
+
+            "top-cost" -> {
+                if (checkPermission(event)) return
+                event.hook.editOriginal(
+                    MessageReplier.replyBoard(
+                        event.user,
+                        InteractType.TopCost,
+                        Type.Cost,
+                        MODE,
+                        locale
+                    )
+                ).queue()
+            }
+
+            "add-money" -> {
+                if (checkPermission(event)) return
+                val value: Int = event.getOption(
+                    "value",
+                    0
+                ) { obj: OptionMapping -> obj.asInt }
+                if (checkValue(value, event)) return
+
+                val user = getTargetUser(event)
+                val data = queryData(user)
+                val before = data.money
+                data.add(value)
+                saveData(data)
+                updatePapi(user, data, mapOf("economy_money_before" to "$before"))
+
+                event.hook.editOriginal(MessageReplier.reply(user, InteractType.AddMoney, locale)).queue()
+                updateMoneyBoard()
+            }
+
+            "remove-money" -> {
+                if (checkPermission(event)) return
+                val value: Int = event.getOption(
+                    "value",
+                    0
+                ) { obj: OptionMapping -> obj.asInt }
+                if (checkValue(value, event)) return
+
+                val user = getTargetUser(event)
+                val data = queryData(user)
+                val beforeMoney = data.money
+                val beforeCost = data.cost
+                data.remove(value)
+                saveData(data)
+                updatePapi(
+                    user, data, mapOf(
+                        "economy_money_before" to "$beforeMoney",
+                        "economy_cost_before" to "$beforeCost"
+                    )
+                )
+
+                event.hook.editOriginal(MessageReplier.reply(user, InteractType.RemoveMoney, locale)).queue()
+                updateMoneyBoard()
+                updateCostBoard()
+            }
+
+            "set-money" -> {
+                if (checkPermission(event)) return
+                val value: Int = event.getOption(
+                    "value",
+                    0
+                ) { obj: OptionMapping -> obj.asInt }
+                if (checkValue(value, event)) return
+
+                val user = getTargetUser(event)
+                val data = queryData(user)
+                val before = data.money
+
+                data.setMoney(value)
+                saveData(data)
+                updatePapi(user, data, mapOf("economy_money_before" to "$before"))
+
+                event.hook.editOriginal(MessageReplier.reply(user, InteractType.SetMoney, locale)).queue()
+                updateMoneyBoard()
+            }
+
+            "set-cost" -> {
+                if (checkPermission(event)) return
+                val value: Int = event.getOption(
+                    "value",
+                    0
+                ) { obj: OptionMapping -> obj.asInt }
+                if (checkValue(value, event)) return
+
+                val user = getTargetUser(event)
+                val data = queryData(user)
+                val before = data.cost
+
+                data.cost = value
+                saveData(data)
+                updatePapi(user, data, mapOf("economy_cost_before" to "$before"))
+
+                event.hook.editOriginal(MessageReplier.reply(user, InteractType.SetCost, locale)).queue()
+                updateCostBoard()
+            }
+        }
+    }
+
+    /**
+     * Updates user's global name changes in the data storage.
+     */
+    override fun onUserUpdateGlobalName(event: UserUpdateGlobalNameEvent) = JsonManager.nameUpdate(event.user)
+
+    private fun checkValue(value: Int, event: SlashCommandInteractionEvent): Boolean {
+        if (value >= 0) return false
+
+        event.hook.editOriginal("").queue()
+        return true
+    }
+
+    private fun queryData(user: User): UserData = when (MODE) {
+        Mode.Json -> JsonManager.query(user)
+        Mode.GoogleSheet -> SheetManager.query(user)
+    }
+
+    private fun saveData(data: UserData) = when (MODE) {
+        Mode.Json -> JsonManager.update(data)
+        Mode.GoogleSheet -> SheetManager.update(data)
+    }
+
+    private fun updatePapi(user: User, data: UserData, map: Map<String, String> = emptyMap()) {
+        PAPI.update(
+            user, hashMapOf(
+                "economy_money" to "${data.money}",
+                "economy_cost" to "${data.cost}"
+            ).apply { putAll(map) }
+        )
+    }
+
+    private fun updateMoneyBoard() {
+        if (MODE == Mode.Json) JsonManager.sortMoneyBoard()
+    }
+
+    private fun updateCostBoard() {
+        if (MODE == Mode.Json) JsonManager.sortCostBoard()
+    }
+
+    private fun getTargetUser(event: SlashCommandInteractionEvent): User {
+        return if (config.admin_id.none { it == event.user.idLong })
+            event.user
+        else
+            event.getOption("member")?.asUser ?: event.user
+
+    }
+
+    private fun checkPermission(event: SlashCommandInteractionEvent): Boolean {
+        if (config.admin_id.none { it == event.user.idLong }) {
+            event.hook.editOriginal(MessageReplier.reply(event.user, InteractType.NoPermission, event.userLocale))
+                .queue()
+            return true
+        }
+        return false
+    }
+
+    enum class InteractType(val value: String) {
+        Balance("balance"),
+        TopMoney("top_money"),
+        TopCost("top_cost"),
+        AddMoney("add_money"),
+        RemoveMoney("remove_money"),
+        SetMoney("set_money"),
+        SetCost("set_cost"),
+        NoPermission("no_permission"),
+    }
+
+
+    internal enum class Mode {
+        Json,
+        GoogleSheet,
+    }
+
+
+    internal enum class Type {
+        Money,
+        Cost
+    }
+}

@@ -1,0 +1,10 @@
+content: ""
+
+embeds:
+  - author:
+      name: "口袋失敗"
+      iconUrl: "https://i.imgur.com/PsEXCuY.png"
+    title: "你沒有權限 ><"
+    color: 0xFF0000
+    footer:
+      text: ❖ 你最好的口袋 ❖

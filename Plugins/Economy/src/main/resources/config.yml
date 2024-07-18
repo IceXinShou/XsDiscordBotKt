@@ -1,0 +1,41 @@
+### first setting en-us ###
+
+# if you may set up yourself, visit https://reurl.cc/DXz5O5
+
+# or you could follow the steps
+# step 1. create a Google project from visiting https://reurl.cc/X518r3
+# step 2. enable API from visiting https://reurl.cc/91ekYO
+# step 3. type "google sheet api" and enable it
+# step 4. create an OAuth Client ID Credential from visiting https://reurl.cc/rZyqGk
+# step 5. Application type > Desktop app
+# step 6. copy client_id and secret_id to the below
+# step 7. click PUBLISH_APP https://reurl.cc/KX7g9n
+
+### 初次設定 zh-tw ###
+
+# 如果你能夠自己進行設定，請參閱: https://reurl.cc/DXz5O5
+
+# 或是跟著下列步驟
+# 步驟 1. 創建 Google 專案 https://reurl.cc/X518r3
+# 步驟 2. 點擊「啟用 API 和服務」 https://reurl.cc/91ekYO
+# 步驟 3. 搜尋框輸入「google sheet api」並點擊啟用
+# 步驟 4. 點擊建立憑證 > OAuth 用戶端 ID > 電腦版應用程式類型 https://reurl.cc/rZyqGk
+# 步驟 5. 複製 「您的用戶端 ID」與「您的用戶端密碼」至下方兩欄
+# 步驟 6. 點擊 PUBLISH_APP https://reurl.cc/KX7g9n
+
+client_id: xxx.xxx.com
+client_secret: xxx-xxx-xxx
+port: 8888  # default
+
+sheet_id: ABCDEFG123456
+sheet_label: Economy
+sheet_range_id: "A2:A"
+sheet_range_money: "B2:B"
+sheet_range_cost: "C2:C"
+
+admin_id:
+  - 810822763601461318
+  - 270062130470846465
+
+board_user_show_limit: 10
+

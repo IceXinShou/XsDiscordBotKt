@@ -1,0 +1,5 @@
+author: IceXinShou
+main: tw.xserver.plugin.placeholder.Placeholder
+name: Placeholder
+version: '2.0'
+prefix: Placeholder

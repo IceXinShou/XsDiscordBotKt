@@ -1,0 +1,59 @@
+balance:
+  name: 金錢
+  description: 取得成員金錢紀錄
+  options:
+    member:
+      name: 成員
+      description: 誰
+
+top_money:
+  name: 餘額排行
+  description: 取得餘額排行
+
+top_cost:
+  name: 消費紀錄排行
+  description: 取得消費紀錄排行
+
+add_money:
+  name: 增加餘額
+  description: 增加成員餘額
+  options:
+    member:
+      name: 成員
+      description: 誰
+    value:
+      name: 金額
+      description: 多少
+
+remove_money:
+  name: 移除餘額
+  description: 移除成員餘額
+  options:
+    member:
+      name: 成員
+      description: 誰
+    value:
+      name: 金額
+      description: 多少
+
+set_money:
+  name: 設定餘額
+  description: 設定成員餘額
+  options:
+    member:
+      name: 成員
+      description: 誰
+    value:
+      name: 金額
+      description: 多少
+
+set_cost:
+  name: 設定消費紀錄
+  description: 設定成員消費紀錄
+  options:
+    member:
+      name: 成員
+      description: 誰
+    value:
+      name: 金額
+      description: 多少

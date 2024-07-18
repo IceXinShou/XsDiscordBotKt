@@ -1,0 +1,14 @@
+content: ""
+
+embeds:
+  - author:
+      name: "Pocket Board"
+      iconUrl: "https://i.imgur.com/PsEXCuY.png"
+    title: "☛ Cost Board"
+    footer:
+      text: "❖ Your Best Pocket ❖"
+
+    fields:
+      - name: "%name%"
+        value: "%economy_board% $"
+        inline: false  # no placeholder support

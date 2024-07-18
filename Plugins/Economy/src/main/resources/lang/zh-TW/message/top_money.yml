@@ -1,0 +1,14 @@
+content: ""
+
+embeds:
+  - author:
+      name: "口袋排行榜"
+      iconUrl: "https://i.imgur.com/PsEXCuY.png"
+    title: "☛ 餘額"
+    footer:
+      text: ❖ 你最好的口袋 ❖
+
+    fields:
+      - name: "%name%"
+        value: "%economy_board% 元"
+        inline: false  # no placeholder support

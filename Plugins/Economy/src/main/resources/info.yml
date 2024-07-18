@@ -1,0 +1,8 @@
+author: IceXinShou
+main: tw.xserver.plugin.economy.Economy
+name: Economy
+version: '2.0'
+prefix: Economy
+depend:
+  - GoogleSheetAPI
+  - MessageCreator
