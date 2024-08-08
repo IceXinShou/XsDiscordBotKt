@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -87,127 +86,123 @@ object Economy : Event(true) {
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val locale: DiscordLocale = event.userLocale
+
+        if (event.name.startsWith("top-")) {
+            handleTopCommands(event, locale)
+            return
+        }
+
+        val user = getTargetUser(event)
+        val data = queryData(user)
+
         when (event.name) {
-            "balance" -> {
-                val user = getTargetUser(event)
-                val data = queryData(user)
+            "balance" -> handleBalance(event, user, data, locale)
+            "add-money", "remove-money", "set-money", "set-cost" -> handleMoneyAndCostCommands(
+                event,
+                user,
+                data,
+                locale
+            )
+        }
+    }
 
-                updatePapi(user, data)
-                event.hook.editOriginal(MessageReplier.reply(user, InteractType.Balance, locale)).queue()
-            }
+    private fun handleTopCommands(event: SlashCommandInteractionEvent, locale: DiscordLocale) {
+        if (checkPermission(event)) return
 
-            "top-money" -> {
-                if (checkPermission(event)) return
-                event.hook.editOriginal(
-                    MessageReplier.replyBoard(
-                        event.user,
-                        InteractType.TopMoney,
-                        Type.Money,
-                        MODE,
-                        locale
-                    )
-                ).queue()
-            }
+        val interactType = when (event.name) {
+            "top-money" -> InteractType.TopMoney
+            "top-cost" -> InteractType.TopCost
+            else -> return  // impossible
+        }
 
-            "top-cost" -> {
-                if (checkPermission(event)) return
-                event.hook.editOriginal(
-                    MessageReplier.replyBoard(
-                        event.user,
-                        InteractType.TopCost,
-                        Type.Cost,
-                        MODE,
-                        locale
-                    )
-                ).queue()
-            }
+        event.hook.editOriginal(
+            MessageReplier.replyBoard(
+                event.user,
+                interactType,
+                if (interactType == InteractType.TopMoney) Type.Money else Type.Cost,
+                MODE,
+                locale
+            )
+        ).queue()
+    }
 
+    private fun handleBalance(
+        event: SlashCommandInteractionEvent,
+        user: User,
+        data: UserData,
+        locale: DiscordLocale
+    ) {
+        updatePapi(user, data)
+        event.hook.editOriginal(MessageReplier.reply(user, InteractType.Balance, locale)).queue()
+    }
+
+    private fun handleMoneyAndCostCommands(
+        event: SlashCommandInteractionEvent,
+        user: User,
+        data: UserData,
+        locale: DiscordLocale
+    ) {
+        if (checkPermission(event)) return
+        val value: Int = event.getOption("value", 0) { it.asInt }
+        if (checkValue(value, event)) return
+
+        when (event.name) {
             "add-money" -> {
-                if (checkPermission(event)) return
-                val value: Int = event.getOption(
-                    "value",
-                    0
-                ) { obj: OptionMapping -> obj.asInt }
-                if (checkValue(value, event)) return
-
-                val user = getTargetUser(event)
-                val data = queryData(user)
                 val before = data.money
                 data.add(value)
-                saveData(data)
-                updatePapi(user, data, mapOf("economy_money_before" to "$before"))
-
-                event.hook.editOriginal(MessageReplier.reply(user, InteractType.AddMoney, locale)).queue()
+                saveAndUpdate(event, user, data, before, "economy_money_before", InteractType.AddMoney, locale)
                 updateMoneyBoard()
             }
 
             "remove-money" -> {
-                if (checkPermission(event)) return
-                val value: Int = event.getOption(
-                    "value",
-                    0
-                ) { obj: OptionMapping -> obj.asInt }
-                if (checkValue(value, event)) return
-
-                val user = getTargetUser(event)
-                val data = queryData(user)
                 val beforeMoney = data.money
                 val beforeCost = data.cost
                 data.remove(value)
-                saveData(data)
-                updatePapi(
-                    user, data, mapOf(
-                        "economy_money_before" to "$beforeMoney",
-                        "economy_cost_before" to "$beforeCost"
-                    )
+                saveAndUpdate(
+                    event,
+                    user,
+                    data,
+                    beforeMoney,
+                    "economy_money_before",
+                    InteractType.RemoveMoney,
+                    locale,
+                    "economy_cost_before" to "$beforeCost"
                 )
-
-                event.hook.editOriginal(MessageReplier.reply(user, InteractType.RemoveMoney, locale)).queue()
                 updateMoneyBoard()
                 updateCostBoard()
             }
 
             "set-money" -> {
-                if (checkPermission(event)) return
-                val value: Int = event.getOption(
-                    "value",
-                    0
-                ) { obj: OptionMapping -> obj.asInt }
-                if (checkValue(value, event)) return
-
-                val user = getTargetUser(event)
-                val data = queryData(user)
                 val before = data.money
-
                 data.setMoney(value)
-                saveData(data)
-                updatePapi(user, data, mapOf("economy_money_before" to "$before"))
-
-                event.hook.editOriginal(MessageReplier.reply(user, InteractType.SetMoney, locale)).queue()
+                saveAndUpdate(event, user, data, before, "economy_money_before", InteractType.SetMoney, locale)
                 updateMoneyBoard()
             }
 
             "set-cost" -> {
-                if (checkPermission(event)) return
-                val value: Int = event.getOption(
-                    "value",
-                    0
-                ) { obj: OptionMapping -> obj.asInt }
-                if (checkValue(value, event)) return
-
-                val user = getTargetUser(event)
-                val data = queryData(user)
                 val before = data.cost
-
                 data.cost = value
-                saveData(data)
-                updatePapi(user, data, mapOf("economy_cost_before" to "$before"))
-
-                event.hook.editOriginal(MessageReplier.reply(user, InteractType.SetCost, locale)).queue()
+                saveAndUpdate(event, user, data, before, "economy_cost_before", InteractType.SetCost, locale)
                 updateCostBoard()
             }
         }
     }
+
+    private fun saveAndUpdate(
+        event: SlashCommandInteractionEvent,
+        user: User,
+        data: UserData,
+        before: Int,
+        key: String,
+        interactType: InteractType,
+        locale: DiscordLocale,
+        vararg placeholders: Pair<String, String>
+    ) {
+        saveData(data)
+        updatePapi(user, data, mapOf(key to "$before") + placeholders)
+        event.hook.editOriginal(MessageReplier.reply(user, interactType, locale)).queue()
+    }
+
 
     /**
      * Updates user's global name changes in the data storage.
@@ -258,8 +253,9 @@ object Economy : Event(true) {
 
     private fun checkPermission(event: SlashCommandInteractionEvent): Boolean {
         if (config.admin_id.none { it == event.user.idLong }) {
-            event.hook.editOriginal(MessageReplier.reply(event.user, InteractType.NoPermission, event.userLocale))
-                .queue()
+            event.hook.editOriginal(
+                MessageReplier.reply(event.user, InteractType.NoPermission, event.userLocale)
+            ).queue()
             return true
         }
         return false
