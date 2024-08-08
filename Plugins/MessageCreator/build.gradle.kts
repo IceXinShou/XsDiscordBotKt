@@ -3,7 +3,7 @@ version = "v2.0"
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-Beta1"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
 }
 
 repositories {
@@ -34,5 +34,5 @@ tasks.named<Jar>("jar") {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
