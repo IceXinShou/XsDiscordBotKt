@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="XsDiscordBotKt.Plugins.Economy.main:jar">
-    <output-path>$PROJECT_DIR$/Server/plugins</output-path>
-    <root id="archive" name="XsDiscordBotKt.Plugins.Economy.main.jar">
-      <element id="module-output" name="XsDiscordBotKt.Plugins.Economy.main" />
-    </root>
-  </artifact>
-</component>

@@ -5,15 +5,6 @@ plugins {
     kotlin("jvm")
 }
 
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compileOnly(project(":"))
-}
-
 sourceSets {
     main {
         java {
@@ -30,8 +21,4 @@ tasks.named<Jar>("jar") {
 
     dependencies {
     }
-}
-
-kotlin {
-    jvmToolchain(21)
 }

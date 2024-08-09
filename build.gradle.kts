@@ -4,9 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 group = "tw.xserver.loader"
 version = "v2.0"
 
-apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
-apply(plugin = "com.github.johnrengelman.shadow")
-
 plugins {
     kotlin("jvm") version "2.0.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
@@ -44,7 +41,12 @@ dependencies {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
+    repositories {
+        mavenCentral()
+    }
+
     dependencies {
+        compileOnly(project(":"))
         compileOnly("net.dv8tion:JDA:5.0.0") // JDA
         compileOnly("ch.qos.logback:logback-classic:1.5.6") // Log
         compileOnly("com.charleskorn.kaml:kaml:0.60.0") // Yaml
@@ -53,8 +55,16 @@ subprojects {
         compileOnly("org.apache.commons:commons-text:1.12.0") // StringSubstitutor
     }
 
+    kotlin {
+        jvmToolchain(21)
+    }
+
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    }
+
+    tasks.build {
+        dependsOn(tasks.jar)
     }
 }
 
@@ -71,6 +81,10 @@ tasks.named<ShadowJar>("shadowJar") {
     manifest {
         attributes("Main-Class" to "tw.xserver.loader.MainKt")
     }
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 kotlin {

@@ -6,12 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compileOnly(project(":"))
     compileOnly(project(":Plugins:MessageCreator"))
     compileOnly(project(":Plugins:Placeholder"))
     compileOnly(project(":Plugins:API:GoogleSheetAPI"))
@@ -37,8 +32,4 @@ tasks.named<Jar>("jar") {
 
     dependencies {
     }
-}
-
-kotlin {
-    jvmToolchain(21)
 }

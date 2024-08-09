@@ -9,12 +9,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compileOnly(project(":"))
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     implementation("com.google.api-client:google-api-client:2.6.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.36.0")
@@ -38,6 +33,6 @@ tasks.named<ShadowJar>("shadowJar") {
     configurations = listOf(project.configurations.getByName("runtimeClasspath"))
 }
 
-kotlin {
-    jvmToolchain(21)
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
