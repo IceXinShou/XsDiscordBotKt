@@ -50,10 +50,11 @@ object MessageCreator : Event(true) {
         // Apply color and timestamp directly since they don't involve parsing
         embed.color?.let {
             builder.setColor(
-                it.uppercase()
-                    .removePrefix("0X")
-                    .removePrefix("#")
-                    .removeSuffix("H").toInt(radix = 16)
+                it.lowercase()
+                    .removePrefix("0x") // 0xFFFFFF
+                    .removePrefix("#")  // #FFFFFF
+                    .removeSuffix("h")  // FFFFFh
+                    .toInt(radix = 16)
             )
         }
         embed.timestamp?.let { builder.setTimestamp(it) }

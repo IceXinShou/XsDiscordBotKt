@@ -1,25 +1,23 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-group = "tw.xserver.loader"
-version = "v2.0"
-
 plugins {
     kotlin("jvm") version "2.0.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
+group = "tw.xserver.loader"
+version = "v2.0"
+java.sourceCompatibility = JavaVersion.VERSION_21
+
+val outputPath = file("${rootProject.projectDir}/Server")
+extra["outputPath"] = outputPath
+
+defaultTasks("build")  // Allow to use `./gradlew` to auto build a full project
+
 repositories {
     mavenCentral()
-}
-
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("src/main/kotlin"))
-        }
-    }
 }
 
 dependencies {
@@ -36,6 +34,28 @@ dependencies {
     implementation("com.charleskorn.kaml:kaml:0.61.0") // Yaml
     implementation("org.apache.commons:commons-text:1.12.0") // StringSubstitutor
     implementation(kotlin("reflect"))
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    // [archiveBaseName]-[archiveAppendix]-[archiveVersion]-[archiveClassifier].[archiveExtension]
+
+    archiveBaseName = rootProject.name
+    archiveAppendix = "${properties["prefix"]}"
+    archiveVersion = "$version"
+    archiveClassifier = ""
+    destinationDirectory = outputPath
+
+    manifest {
+        attributes("Main-Class" to "tw.xserver.loader.MainKt")
+    }
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 subprojects {
@@ -60,33 +80,10 @@ subprojects {
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        compilerOptions.jvmTarget = JvmTarget.JVM_21
     }
 
     tasks.build {
         dependsOn(tasks.jar)
     }
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.named<ShadowJar>("shadowJar") {
-    archiveBaseName.set("XsDiscordBot")
-    archiveVersion.set("$version")
-    archiveClassifier.set("")
-    destinationDirectory.set(file("./Server"))
-
-    manifest {
-        attributes("Main-Class" to "tw.xserver.loader.MainKt")
-    }
-}
-
-tasks.build {
-    dependsOn(tasks.shadowJar)
-}
-
-kotlin {
-    jvmToolchain(21)
 }

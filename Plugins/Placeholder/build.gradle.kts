@@ -1,3 +1,4 @@
+val pluginName = "Placeholder"
 group = "tw.xserver.plugin"
 version = "v2.0"
 
@@ -5,20 +6,13 @@ plugins {
     kotlin("jvm")
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("Plugins/Placeholder/src/main/kotlin"))
-        }
-    }
-}
-
 tasks.named<Jar>("jar") {
-    archiveBaseName.set("Placeholder-${properties["prefix"]}")
-    archiveVersion.set("$version")
-    archiveClassifier.set("")
-    destinationDirectory.set(file("../../Server/plugins"))
+    val outputPath: File by rootProject.extra
 
-    dependencies {
-    }
+    archiveBaseName = pluginName
+    archiveAppendix = "${properties["prefix"]}"
+    archiveVersion = "$version"
+    archiveClassifier = ""
+    archiveExtension = "jar"
+    destinationDirectory = outputPath.resolve("plugins")
 }

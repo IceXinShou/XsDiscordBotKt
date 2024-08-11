@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+val pluginName = "GoogleSheetAPI"
 group = "tw.xserver.plugin.api"
 version = "v2.0"
 
@@ -16,23 +17,16 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev20240514-2.0.0")
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("Plugins/API/GoogleSheetAPI/src/main/kotlin"))
-        }
-    }
-}
-
-
-tasks.named<ShadowJar>("shadowJar") {
-    archiveBaseName.set("GoogleSheetAPI-${properties["prefix"]}")
-    archiveVersion.set("$version")
-    archiveClassifier.set("")
-    destinationDirectory.set(file("../../../Server/plugins"))
-    configurations = listOf(project.configurations.getByName("runtimeClasspath"))
-}
-
 tasks.build {
     dependsOn(tasks.shadowJar)
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    val outputPath: File by rootProject.extra
+    archiveBaseName = pluginName
+    archiveAppendix = "${properties["prefix"]}"
+    archiveVersion = "$version"
+    archiveClassifier = ""
+    archiveExtension = "jar"
+    destinationDirectory = outputPath.resolve("plugins")
 }

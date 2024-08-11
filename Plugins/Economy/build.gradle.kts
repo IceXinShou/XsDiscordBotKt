@@ -1,3 +1,4 @@
+val pluginName = "Economy"
 group = "tw.xserver.plugin"
 version = "v2.0"
 
@@ -16,20 +17,13 @@ dependencies {
     compileOnly("com.google.apis:google-api-services-sheets:v4-rev20240514-2.0.0")
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("Plugins/Economy/src/main/kotlin"))
-        }
-    }
-}
-
 tasks.named<Jar>("jar") {
-    archiveBaseName.set("Economy-${properties["prefix"]}")
-    archiveVersion.set("$version")
-    archiveClassifier.set("")
-    destinationDirectory.set(file("../../Server/plugins"))
+    val outputPath: File by rootProject.extra
 
-    dependencies {
-    }
+    archiveBaseName = pluginName
+    archiveAppendix = "${properties["prefix"]}"
+    archiveVersion = "$version"
+    archiveClassifier = ""
+    archiveExtension = "jar"
+    destinationDirectory = outputPath.resolve("plugins")
 }

@@ -1,3 +1,4 @@
+val pluginName = "MessageCreator"
 group = "tw.xserver.plugin"
 version = "v2.0"
 
@@ -10,20 +11,13 @@ dependencies {
     compileOnly(project(":Plugins:Placeholder"))
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(listOf("Plugins/MessageCreator/src/main/kotlin"))
-        }
-    }
-}
-
 tasks.named<Jar>("jar") {
-    archiveBaseName.set("MessageCreator-${properties["prefix"]}")
-    archiveVersion.set("$version")
-    archiveClassifier.set("")
-    destinationDirectory.set(file("../../Server/plugins"))
+    val outputPath: File by rootProject.extra
 
-    dependencies {
-    }
+    archiveBaseName = pluginName
+    archiveAppendix = "${properties["prefix"]}"
+    archiveVersion = "$version"
+    archiveClassifier = ""
+    archiveExtension = "jar"
+    destinationDirectory = outputPath.resolve("plugins")
 }
