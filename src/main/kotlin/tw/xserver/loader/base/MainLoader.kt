@@ -91,7 +91,7 @@ object MainLoader {
         PluginLoader.apply {
             pluginQueue.reversed().forEach { (name, plugin) ->
                 plugin.unload()
-                logger.info("$name load successfully")
+                logger.info("{} load successfully", name)
             }
         }
 

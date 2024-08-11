@@ -46,7 +46,7 @@ class LangManager<D : Any, L : Any>(
 
         dir.listFiles()?.filter { it.isDirectory }?.forEach { directory ->
             directory.listFiles()?.filter { it.extension == "yml" }?.forEach lang@{ file ->
-                val locale =  DiscordLocale.from(directory.name.replace("\\.\\w+$".toRegex(), ""))
+                val locale = DiscordLocale.from(directory.name.replace("\\.\\w+$".toRegex(), ""))
                 if (locale == DiscordLocale.UNKNOWN) {
                     logger.warn("Cannot identify Discord locale from file: ${file.absolutePath}")
                     return@lang
@@ -81,16 +81,16 @@ class LangManager<D : Any, L : Any>(
      */
     @Throws(IOException::class)
     private fun exportDefaultLang() {
-        val langFiles = getter.getResources("/lang/")
-        if (langFiles.isEmpty()) {
+        val langFilenames = getter.getResourceFilenameList("./lang/")
+        if (langFilenames.isEmpty()) {
             logger.error("No default language files found.")
             throw FileNotFoundException("Default language files not found.")
         }
 
-        langFiles.forEach { langFilename ->
+        langFilenames.forEach { langFilename ->
             val langFile = File(dir, "./$langFilename")
             if (!langFile.exists()) {
-                getter.exportResource("/lang/$langFilename")
+                getter.exportResource("./lang/$langFilename", langFile)
             }
         }
     }

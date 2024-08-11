@@ -91,7 +91,6 @@ class ClassLoader : URLClassLoader(arrayOfNulls(0), MainLoader::class.java.class
      * @return The URL of the resource, or null if the resource cannot be found.
      */
     override fun findResource(name: String): URL? {
-        logger.info(name)
         super.findResource(name)?.let { return it }
 
         val index = name.lastIndexOf('/')

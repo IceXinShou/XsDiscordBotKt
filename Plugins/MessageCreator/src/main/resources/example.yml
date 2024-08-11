@@ -2,9 +2,9 @@ content: ""
 
 embeds:
   - author: null
-#      name: null
-#      url: null
-#      iconUrl: null
+    #      name: null
+    #      url: null
+    #      iconUrl: null
     title: null
     description: null
     url: null
@@ -12,8 +12,8 @@ embeds:
     image: null
     color: null
     footer: null
-#      text: null
-#      iconUrl: null
+    #      text: null
+    #      iconUrl: null
     timestamp: null  # no placeholder support
 
     fields:

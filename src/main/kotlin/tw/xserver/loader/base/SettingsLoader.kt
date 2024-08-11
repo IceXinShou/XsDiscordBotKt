@@ -22,11 +22,11 @@ object SettingsLoader {
     fun run() {
         var settingFile = File("./$CONFIG_NAME")
         if (!settingFile.exists()) {
-            logger.info("$CONFIG_NAME not found, create default $CONFIG_NAME")
+            logger.info("{} not found, create default {}", CONFIG_NAME, CONFIG_NAME)
             settingFile = exportResource()
         }
 
-        logger.info("loading ${settingFile.path}")
+        logger.info("loading {}", settingFile.path)
         config = Yaml().decodeFromString<SettingSerializer>(settingFile.readText())
         token = config.generalSettings.botToken
         logger.info("setting file loaded")

@@ -1,9 +1,9 @@
 package tw.xserver.plugin.botinfo.cmd
 
-import tw.xserver.plugin.botinfo.lang.Localizations
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.commands.build.Commands
+import tw.xserver.plugin.botinfo.lang.Localizations
 
 /**
  * Retrieves and constructs an array of guild-specific command configurations.

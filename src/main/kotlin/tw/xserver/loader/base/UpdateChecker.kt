@@ -39,7 +39,7 @@ object UpdateChecker {
 
             // Log version info
             if (VERSION == latestVersion) {
-                logger.info("You are running on the latest version: ${Color.GREEN}$VERSION${Color.RESET}")
+                logger.info("You are running on the latest version: {}{}{}", Color.GREEN, VERSION, Color.RESET)
                 return false
             } else {
                 logger.warn("Your current version: ${Color.RED}$VERSION${Color.RESET}, latest version: ${Color.GREEN}$latestVersion${Color.RESET}")

@@ -1,8 +1,5 @@
 package tw.xserver.plugin.botinfo
 
-import tw.xserver.plugin.botinfo.cmd.getGuildCommands
-import tw.xserver.plugin.botinfo.lang.Localizations
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
@@ -12,9 +9,9 @@ import tw.xserver.loader.localizations.LangManager
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter
 import tw.xserver.loader.util.GlobalUtil.checkCommandName
+import tw.xserver.plugin.botinfo.cmd.getGuildCommands
 import tw.xserver.plugin.botinfo.lang.LangFileSerializer
-import tw.xserver.plugin.creator.message.MessageCreator
-import java.time.OffsetDateTime
+import tw.xserver.plugin.botinfo.lang.Localizations
 
 object BotInfo : PluginEvent(true) {
     private val logger: Logger = LoggerFactory.getLogger(BotInfo::class.java)

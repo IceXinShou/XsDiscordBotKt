@@ -46,7 +46,7 @@ object Economy : PluginEvent(true) {
         getter = FileGetter(DIR_PATH, Economy::class.java)
 
         try {
-            getter.readInputStream("config.yml").use {
+            getter.readInputStream("./config.yml").use {
                 config = Yaml().decodeFromStream<MainConfigSerializer>(it)
             }
         } catch (e: IOException) {

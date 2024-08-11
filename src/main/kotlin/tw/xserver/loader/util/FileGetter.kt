@@ -39,11 +39,11 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
     fun readInputStream(fileName: String): InputStream {
         val file = File(dir, fileName)
         try {
-            checkFileAvailable(file)
-            logger.info("Loaded file: ${file.path}")
+            checkFileAvailable(fileName)
+            logger.info("Loaded file: {}", file.absolutePath)
             return Files.newInputStream(file.toPath())
         } catch (e: IOException) {
-            logger.error("Failed to read resource: ${e.message}")
+            logger.error("Failed to read resource: {}", e.message)
             throw e
         }
     }
@@ -51,15 +51,14 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
     /**
      * Exports a resource from within the JAR to the filesystem.
      *
-     * @param sourceFilePath The internal path to the resource.
+     * @param resourceFilePath The internal path to the resource.
      * @param outputPath The path where the resource will be written to.
      * @return A File object representing the copied file.
      * @throws IOException if an I/O error occurs during the export.
      */
     @Throws(IOException::class)
-    fun exportResource(sourceFilePath: String, outputPath: String = sourceFilePath): File {
-        getResource(sourceFilePath).use { fileInJar ->
-            val outputFile = File(dir, outputPath)
+    fun exportResource(resourceFilePath: String, outputFile: File = File(resourceFilePath)): File {
+        getResource(resourceFilePath).use { fileInJar ->
             outputFile.parentFile.mkdirs()
             Files.copy(fileInJar, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
             return outputFile
@@ -75,7 +74,7 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      */
     @Throws(FileNotFoundException::class)
     private fun getResource(sourceFilePath: String): InputStream {
-        return clazz.classLoader.getResourceAsStream(sourceFilePath)
+        return clazz.getResourceAsStream(sourceFilePath)
             ?: throw FileNotFoundException("Resource not found: $sourceFilePath")
     }
 
@@ -87,10 +86,10 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      * @throws IOException if an error occurs during resource listing.
      */
     @Throws(IOException::class)
-    fun getResources(path: String): Array<String> {
-        val adjustedPath = path.removePrefix("/")
-        val filenames = mutableListOf<String>()
+    fun getResourceFilenameList(path: String): Array<String> {
+        val adjustedPath = path.removePrefix(".").removePrefix("/")
         val jarUrl = clazz.protectionDomain.codeSource.location
+        val filenames = mutableListOf<String>()
 
         jarUrl.openStream().use { inputStream ->
             ZipInputStream(inputStream).use { zip ->
@@ -110,15 +109,16 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
     /**
      * Checks if a file is available; if not, it tries to export it.
      *
+     * @param resourceFilePath Export from where.
      * @param file The file to check.
      * @return A File object pointing to the existing or newly created file.
      * @throws IOException if the file cannot be created.
      */
     @Throws(IOException::class)
-    private fun checkFileAvailable(file: File) {
+    private fun checkFileAvailable(resourceFilePath: String, file: File = File(dir, resourceFilePath)) {
         if (!file.exists()) {
-            logger.info("Creating default file: ${file.path}")
-            exportResource(file.path)
+            logger.info("Creating default file: {}", file.path)
+            exportResource(resourceFilePath, file)
         }
     }
 }

@@ -37,7 +37,7 @@ object PluginLoader {
                 try {
                     jarFile.getInputStream(jarFile.getEntry("info.yml")).use { inputStream ->
                         val config = Yaml().decodeFromStream<InfoSerializer>(inputStream)
-                        logger.info("Loading ${config.name}...")
+                        logger.info("Loading {}...", config.name)
 
                         if (plugins.containsKey(config.name)) {
                             logger.error("Duplicate plugin name: ${file.name}")
@@ -52,7 +52,7 @@ object PluginLoader {
                             count++
                         } ?: run { fail++ }
 
-                        logger.info("Loaded ${config.name}!")
+                        logger.info("Loaded {}!", config.name)
                     }
                 } catch (e: Exception) {
                     fail++
@@ -76,7 +76,7 @@ object PluginLoader {
         }
 
         if (fail > 0) logger.error("$fail plugin(s) failed to load.")
-        logger.info("$count plugin(s) loaded successfully.")
+        logger.info("{} plugin(s) loaded successfully.", count)
     }
 
     /**
@@ -122,9 +122,9 @@ object PluginLoader {
         pluginInfo?.let {
             if (!pluginQueue.containsKey(it.name)) {
                 pluginQueue[it.name] = it.pluginInstance
-                logger.info("Initializing ${it.name}")
+                logger.info("Initializing {}", it.name)
                 it.pluginInstance.load()
-                logger.info("${it.name} load successfully")
+                logger.info("{} load successfully", it.name)
             }
         }
 
