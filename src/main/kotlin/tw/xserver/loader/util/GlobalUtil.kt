@@ -38,5 +38,5 @@ object GlobalUtil {
      * @param name The name to compare with the event's command name.
      * @return True if the names do not match, false otherwise.
      */
-    fun checkCommand(event: SlashCommandInteractionEvent, name: String): Boolean = (event.name != name)
+    fun checkCommandName(event: SlashCommandInteractionEvent, name: String): Boolean = (event.name != name)
 }

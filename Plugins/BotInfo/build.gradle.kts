@@ -1,4 +1,4 @@
-val pluginName = "MessageCreator"
+val pluginName = "BotInfo"
 group = "tw.xserver.plugin"
 version = "v2.0"
 
@@ -7,8 +7,10 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
 }
 
+
 dependencies {
-    api(project(":Plugins:Placeholder"))
+    compileOnly(project(":Plugins:MessageCreator"))
+    compileOnly(project(":Plugins:Placeholder"))
 }
 
 tasks.named<Jar>("jar") {

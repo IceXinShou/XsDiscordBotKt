@@ -4,11 +4,11 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.plugin.Event
-import tw.xserver.plugin.creator.message.setting.MessageData.EmbedSetting
+import tw.xserver.loader.plugin.PluginEvent
+import tw.xserver.plugin.creator.message.setting.MessageDataSerializer.EmbedSetting
 import tw.xserver.plugin.placeholder.Substitutor
 
-object MessageCreator : Event(true) {
+object MessageCreator : PluginEvent(true) {
     private val logger: Logger = LoggerFactory.getLogger(MessageCreator::class.java)
 
     override fun load() {

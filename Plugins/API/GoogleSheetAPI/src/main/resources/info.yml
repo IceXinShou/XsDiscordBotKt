@@ -2,4 +2,3 @@ author: IceXinShou
 main: tw.xserver.plugin.api.google.sheet.SheetAPI
 name: GoogleSheetAPI
 version: '2.0'
-prefix: GoogleSheetAPI

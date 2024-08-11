@@ -11,10 +11,10 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
-import tw.xserver.plugin.api.google.sheet.setting.AuthConfig
+import tw.xserver.plugin.api.google.sheet.setting.AuthConfigSerializer
 import java.io.File
 
-class SheetsService(private val config: AuthConfig, private val folderPath: String) {
+class SheetsService(private val config: AuthConfigSerializer, private val folderPath: String) {
     private val httpTransport by lazy { GoogleNetHttpTransport.newTrustedTransport() }
     private val jsonFactory: JsonFactory by lazy { GsonFactory.getDefaultInstance() }
     private val credential by lazy { credential(httpTransport) }

@@ -4,7 +4,7 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.decodeFromString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.util.yaml.Setting
+import tw.xserver.loader.util.yaml.SettingSerializer
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -15,7 +15,7 @@ import java.util.*
 object SettingsLoader {
     private val logger: Logger = LoggerFactory.getLogger(SettingsLoader::class.java)
     private const val CONFIG_NAME: String = "config.yml"
-    internal lateinit var config: Setting
+    internal lateinit var config: SettingSerializer
     internal lateinit var token: String
 
     @Throws(IOException::class)
@@ -27,7 +27,7 @@ object SettingsLoader {
         }
 
         logger.info("loading ${settingFile.path}")
-        config = Yaml().decodeFromString<Setting>(settingFile.readText())
+        config = Yaml().decodeFromString<SettingSerializer>(settingFile.readText())
         token = config.generalSettings.botToken
         logger.info("setting file loaded")
     }

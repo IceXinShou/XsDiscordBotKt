@@ -75,7 +75,7 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      */
     @Throws(FileNotFoundException::class)
     private fun getResource(sourceFilePath: String): InputStream {
-        return clazz.getResourceAsStream(sourceFilePath)
+        return clazz.classLoader.getResourceAsStream(sourceFilePath)
             ?: throw FileNotFoundException("Resource not found: $sourceFilePath")
     }
 

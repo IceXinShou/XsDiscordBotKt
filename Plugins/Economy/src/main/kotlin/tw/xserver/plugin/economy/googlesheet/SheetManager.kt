@@ -7,8 +7,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.loader.util.GlobalUtil.getUserById
 import tw.xserver.plugin.api.google.sheet.SheetsService
-import tw.xserver.plugin.api.google.sheet.setting.AuthConfig
-import tw.xserver.plugin.creator.message.setting.MessageData
+import tw.xserver.plugin.api.google.sheet.setting.AuthConfigSerializer
+import tw.xserver.plugin.creator.message.setting.MessageDataSerializer
 import tw.xserver.plugin.economy.Economy.DIR_PATH
 import tw.xserver.plugin.economy.Economy.Type
 import tw.xserver.plugin.economy.Economy.config
@@ -22,7 +22,7 @@ import kotlin.math.min
 internal object SheetManager {
     private val logger: Logger = LoggerFactory.getLogger(SheetManager::class.java)
     private val spreadsheet = SheetsService(
-        AuthConfig(config.client_id, config.client_secret, config.port), DIR_PATH
+        AuthConfigSerializer(config.client_id, config.client_secret, config.port), DIR_PATH
     ).sheets.spreadsheets().values()
 
     /**
@@ -63,7 +63,7 @@ internal object SheetManager {
     fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
-        fieldSetting: MessageData.EmbedSetting.FieldSetting,
+        fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
         substitutor: Substitutor
     ): EmbedBuilder {
         val board = when (type) {

@@ -11,7 +11,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.loader.builtin.StatusChanger
 import tw.xserver.loader.logger.InteractionLogger
-import tw.xserver.loader.plugin.Event
+import tw.xserver.loader.plugin.PluginEvent
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
@@ -24,7 +24,7 @@ object MainLoader {
     val ROOT_PATH: String = System.getProperty("user.dir")
     val guildCommands: ArrayList<CommandData> = ArrayList()
     val globalCommands: ArrayList<CommandData> = ArrayList()
-    val listeners: Queue<Event> = ArrayDeque()
+    val listeners: Queue<PluginEvent> = ArrayDeque()
     lateinit var jdaBot: JDA
     lateinit var bot: User
     var botId: Long by Delegates.notNull()
@@ -87,10 +87,12 @@ object MainLoader {
             registeredListeners.forEach { removeEventListener(it) }
             shutdown()
         }
+
         PluginLoader.apply {
-            pluginQueue.values.reversed().forEach { it.unload() }
-            plugins.clear()
-            pluginQueue.clear()
+            pluginQueue.reversed().forEach { (name, plugin) ->
+                plugin.unload()
+                logger.info("$name load successfully")
+            }
         }
 
         StatusChanger.stop()

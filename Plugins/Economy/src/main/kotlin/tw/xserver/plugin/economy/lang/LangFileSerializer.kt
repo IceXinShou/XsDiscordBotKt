@@ -3,7 +3,7 @@ package tw.xserver.plugin.economy.lang
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class LangFile(
+internal data class LangFileSerializer(
     val balance: Command1,
     val top_money: SimpleCommand,
     val top_cost: SimpleCommand,
@@ -17,32 +17,31 @@ internal data class LangFile(
         val name: String,
         val description: String,
         val options: Options1
-    )
+    ) {
+        @Serializable
+        internal data class Options1(
+            val member: Option
+        )
+    }
 
     @Serializable
     internal data class Command2(
         val name: String,
         val description: String,
         val options: Options2
-    )
-
-    @Serializable
-    internal data class Options1(
-        val member: Option,
-    )
-
-    @Serializable
-    internal data class Options2(
-        val member: Option,
-        val value: Option
-    )
+    ) {
+        @Serializable
+        internal data class Options2(
+            val member: Option,
+            val value: Option
+        )
+    }
 
     @Serializable
     internal data class Option(
         val name: String,
         val description: String
     )
-
 
     @Serializable
     internal data class SimpleCommand(

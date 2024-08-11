@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import tw.xserver.loader.util.GlobalUtil.getUserById
 import tw.xserver.loader.util.json.JsonObjFileManager
-import tw.xserver.plugin.creator.message.setting.MessageData
+import tw.xserver.plugin.creator.message.setting.MessageDataSerializer
 import tw.xserver.plugin.economy.Economy.Type
 import tw.xserver.plugin.economy.Economy.config
 import tw.xserver.plugin.economy.UserData
@@ -91,7 +91,7 @@ internal object JsonManager {
     fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
-        fieldSetting: MessageData.EmbedSetting.FieldSetting,
+        fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
         substitutor: Substitutor
     ): EmbedBuilder {
         val board = when (type) {

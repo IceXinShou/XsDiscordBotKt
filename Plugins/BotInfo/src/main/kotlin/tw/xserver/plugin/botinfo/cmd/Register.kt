@@ -1,0 +1,22 @@
+package tw.xserver.plugin.botinfo.cmd
+
+import tw.xserver.plugin.botinfo.lang.Localizations
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
+import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.api.interactions.commands.build.Commands
+
+/**
+ * Retrieves and constructs an array of guild-specific command configurations.
+ * Each command is tailored for economic transactions like checking balance, modifying balances, and viewing leaderboards.
+ *
+ * @return Array<CommandData> Collection of guild commands configured with localizations and permissions.
+ */
+
+
+fun getGuildCommands(): Array<CommandData> = arrayOf(
+    // Command to display bot info message
+    Commands.slash("bot-info", "show about the bot data")
+        .setNameLocalizations(Localizations.bot_info.name)
+        .setDescriptionLocalizations(Localizations.bot_info.description)
+        .setDefaultPermissions(DefaultMemberPermissions.ENABLED),
+)

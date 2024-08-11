@@ -11,10 +11,10 @@ plugins {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    implementation("com.google.api-client:google-api-client:2.6.0")
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.36.0")
-    implementation("com.google.apis:google-api-services-sheets:v4-rev20240514-2.0.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    api("com.google.api-client:google-api-client:2.6.0")
+    api("com.google.oauth-client:google-oauth-client-jetty:1.36.0")
+    api("com.google.apis:google-api-services-sheets:v4-rev20240514-2.0.0")
 }
 
 tasks.build {

@@ -7,9 +7,8 @@ import org.slf4j.LoggerFactory
 import tw.xserver.loader.base.MainLoader.globalCommands
 import tw.xserver.loader.base.MainLoader.guildCommands
 import tw.xserver.loader.base.MainLoader.listeners
-import tw.xserver.loader.plugin.Event
-import tw.xserver.loader.plugin.yaml.Config
-import tw.xserver.loader.plugin.yaml.Info
+import tw.xserver.loader.plugin.PluginEvent
+import tw.xserver.loader.plugin.yaml.InfoSerializer
 import java.io.File
 import java.util.jar.JarFile
 
@@ -19,8 +18,8 @@ import java.util.jar.JarFile
 object PluginLoader {
     private val logger: Logger = LoggerFactory.getLogger(PluginLoader::class.java)
     private val dir: File = File("./plugins")
-    val plugins: MutableMap<String, Info> = HashMap()
-    val pluginQueue = LinkedHashMap<String, Event>()
+    private val plugins: MutableMap<String, InfoSimple> = HashMap()
+    val pluginQueue = LinkedHashMap<String, PluginEvent>()
 
     /**
      * Loads all plugins from the plugins directory.
@@ -37,7 +36,7 @@ object PluginLoader {
             JarFile(file).use { jarFile ->
                 try {
                     jarFile.getInputStream(jarFile.getEntry("info.yml")).use { inputStream ->
-                        val config = Yaml().decodeFromStream<Config>(inputStream)
+                        val config = Yaml().decodeFromStream<InfoSerializer>(inputStream)
                         logger.info("Loading ${config.name}...")
 
                         if (plugins.containsKey(config.name)) {
@@ -46,9 +45,10 @@ object PluginLoader {
                             return
                         }
                         loader.addJar(file, config.main)
-                        val curPlugin = loader.getClass(config.main)?.getDeclaredField("INSTANCE")?.get(null) as? Event
+                        val curPlugin =
+                            loader.getClass(config.main)?.getDeclaredField("INSTANCE")?.get(null) as? PluginEvent
                         curPlugin?.let {
-                            plugins[config.name] = Info(config.name, it, config.depend, config.soft_depend)
+                            plugins[config.name] = InfoSimple(config.name, it, config.depend, config.soft_depend)
                             count++
                         } ?: run { fail++ }
 
@@ -92,7 +92,7 @@ object PluginLoader {
      * @param pluginInfo Information about the plugin to load.
      * @return True if there is a failure in dependency loading, false otherwise.
      */
-    private fun loadPlugin(pluginInfo: Info?): Boolean {
+    private fun loadPlugin(pluginInfo: InfoSimple?): Boolean {
         // Check if all mandatory dependencies are loaded successfully.
         pluginInfo?.depend?.forEach { depend ->
             // If the dependency is not already loaded, and it exists in the plugin list, try to load it.
@@ -124,9 +124,17 @@ object PluginLoader {
                 pluginQueue[it.name] = it.pluginInstance
                 logger.info("Initializing ${it.name}")
                 it.pluginInstance.load()
+                logger.info("${it.name} load successfully")
             }
         }
 
         return false
     }
 }
+
+private class InfoSimple(
+    val name: String,
+    val pluginInstance: PluginEvent,
+    val depend: List<String>,
+    val softDepend: List<String>
+)

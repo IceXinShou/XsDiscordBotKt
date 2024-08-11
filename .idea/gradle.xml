@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/Plugins" />
             <option value="$PROJECT_DIR$/Plugins/API" />
             <option value="$PROJECT_DIR$/Plugins/API/GoogleSheetAPI" />
+            <option value="$PROJECT_DIR$/Plugins/BotInfo" />
             <option value="$PROJECT_DIR$/Plugins/Economy" />
             <option value="$PROJECT_DIR$/Plugins/MessageCreator" />
             <option value="$PROJECT_DIR$/Plugins/Placeholder" />

@@ -11,15 +11,15 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.loader.localizations.LangManager
-import tw.xserver.loader.plugin.Event
+import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter
 import tw.xserver.loader.util.json.JsonObjFileManager
 import tw.xserver.plugin.economy.cmd.getGuildCommands
 import tw.xserver.plugin.economy.googlesheet.SheetManager
 import tw.xserver.plugin.economy.json.JsonManager
-import tw.xserver.plugin.economy.lang.LangFile
+import tw.xserver.plugin.economy.lang.LangFileSerializer
 import tw.xserver.plugin.economy.lang.Localizations
-import tw.xserver.plugin.economy.setting.MainConfig
+import tw.xserver.plugin.economy.setting.MainConfigSerializer
 import tw.xserver.plugin.placeholder.PAPI
 import java.io.File
 import java.io.IOException
@@ -27,11 +27,11 @@ import java.io.IOException
 /**
  * Main class for the Economy plugin managing configurations, commands, and data handling.
  */
-object Economy : Event(true) {
+object Economy : PluginEvent(true) {
     private val MODE = Mode.GoogleSheet
     private val logger: Logger = LoggerFactory.getLogger(Economy::class.java)
     internal const val DIR_PATH = "./plugins/Economy/"
-    internal lateinit var config: MainConfig
+    internal lateinit var config: MainConfigSerializer
 
     override fun load() {
         reloadAll()
@@ -47,7 +47,7 @@ object Economy : Event(true) {
 
         try {
             getter.readInputStream("config.yml").use {
-                config = Yaml().decodeFromStream<MainConfig>(it)
+                config = Yaml().decodeFromStream<MainConfigSerializer>(it)
             }
         } catch (e: IOException) {
             logger.error("Please configure ${DIR_PATH}./config.yml", e)
@@ -67,7 +67,7 @@ object Economy : Event(true) {
         LangManager(
             getter,
             DiscordLocale.CHINESE_TAIWAN,
-            LangFile::class,
+            LangFileSerializer::class,
             Localizations::class
         )
     }

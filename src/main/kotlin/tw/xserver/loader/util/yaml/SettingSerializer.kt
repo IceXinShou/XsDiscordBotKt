@@ -3,7 +3,7 @@ package tw.xserver.loader.util.yaml
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Setting(
+data class SettingSerializer(
     val generalSettings: GeneralSettings
 ) {
     @Serializable

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import java.time.temporal.TemporalAccessor
 
 @Serializable
-data class MessageData(
+data class MessageDataSerializer(
     val content: String = "",
     val embeds: List<EmbedSetting> = emptyList(),
 ) {

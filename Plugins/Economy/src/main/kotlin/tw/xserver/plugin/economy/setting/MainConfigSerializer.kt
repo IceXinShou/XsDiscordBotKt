@@ -3,7 +3,7 @@ package tw.xserver.plugin.economy.setting
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MainConfig(
+data class MainConfigSerializer(
     val client_id: String,
     val client_secret: String,
     val port: Int,

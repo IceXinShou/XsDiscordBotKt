@@ -4,13 +4,13 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.decodeFromString
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
-import tw.xserver.plugin.creator.message.setting.MessageData
+import tw.xserver.plugin.creator.message.setting.MessageDataSerializer
 import tw.xserver.plugin.placeholder.Substitutor
 import java.io.File
 import java.util.*
 
 class CreatorImpl(langPath: String) {
-    private val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageData>> =
+    private val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
         EnumMap(DiscordLocale::class.java)
 
     init {
@@ -21,7 +21,7 @@ class CreatorImpl(langPath: String) {
             File(directory, "./message/").listFiles()?.filter { it.isFile && it.extension == "yml" }
                 ?.forEach { file ->
                     messagesMap[file.nameWithoutExtension] =
-                        Yaml().decodeFromString<MessageData>(file.readText())
+                        Yaml().decodeFromString<MessageDataSerializer>(file.readText())
                 }
         }
     }
@@ -38,6 +38,6 @@ class CreatorImpl(langPath: String) {
         return builder
     }
 
-    fun getMessageData(locale: DiscordLocale, commandMethod: String): MessageData =
+    fun getMessageData(locale: DiscordLocale, commandMethod: String): MessageDataSerializer =
         localeMapper[locale]?.get(commandMethod)!!
 }
