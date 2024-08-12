@@ -52,7 +52,7 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      * Exports a resource from within the JAR to the filesystem.
      *
      * @param resourceFilePath The internal path to the resource.
-     * @param outputPath The path where the resource will be written to.
+     * @param outputFile The File where the resource will be written to.
      * @return A File object representing the copied file.
      * @throws IOException if an I/O error occurs during the export.
      */
