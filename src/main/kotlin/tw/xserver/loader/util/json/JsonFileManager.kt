@@ -8,9 +8,8 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
 
-abstract class JsonFileManager<T : JsonElement>(private val file: File) {
+abstract class JsonFileManager<T : JsonElement>(private val file: File, private val dataType: Class<T>) {
     protected lateinit var data: T
-    protected abstract val dataType: Class<T>
     protected abstract fun defaultFileAndData(): T
 
     init {

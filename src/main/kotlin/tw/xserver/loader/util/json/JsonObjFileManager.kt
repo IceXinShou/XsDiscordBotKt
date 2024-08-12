@@ -8,8 +8,7 @@ import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class JsonObjFileManager(file: File) : JsonFileManager<JsonObject>(file) {
-    override val dataType: Class<JsonObject> = JsonObject::class.java
+class JsonObjFileManager(file: File) : JsonFileManager<JsonObject>(file, JsonObject::class.java) {
     override fun defaultFileAndData(): JsonObject = JsonObject()
 
     fun get(): JsonObject = data
@@ -27,18 +26,18 @@ class JsonObjFileManager(file: File) : JsonFileManager<JsonObject>(file) {
     fun getAsJsonPrimitive(key: String): JsonPrimitive = data[key].asJsonPrimitive
     fun getAsNumber(key: String): Number = data[key].asNumber
 
-    val asString: String = data.asString
-    val asByte: Byte = data.asByte
-    val asShort: Short = data.asShort
-    val asInt: Int = data.asInt
-    val asLong: Long = data.asLong
-    val asDouble: Double = data.asDouble
-    val asBoolean: Boolean = data.asBoolean
-    val asJsonArray: JsonArray = data.asJsonArray
-    val asBigInteger: BigInteger = data.asBigInteger
-    val asBigDecimal: BigDecimal = data.asBigDecimal
-    val asJsonPrimitive: JsonPrimitive = data.asJsonPrimitive
-    val asNumber: Number = data.asNumber
+    fun asString(): String = data.asString
+    fun asByte(): Byte = data.asByte
+    fun asShort(): Short = data.asShort
+    fun asInt(): Int = data.asInt
+    fun asLong(): Long = data.asLong
+    fun asDouble(): Double = data.asDouble
+    fun asBoolean(): Boolean = data.asBoolean
+    fun asJsonArray(): JsonArray = data.asJsonArray
+    fun asBigInteger(): BigInteger = data.asBigInteger
+    fun asBigDecimal(): BigDecimal = data.asBigDecimal
+    fun asJsonPrimitive(): JsonPrimitive = data.asJsonPrimitive
+    fun asNumber(): Number = data.asNumber
 
     fun add(key: String, value: Number?): JsonObjFileManager {
         data.addProperty(key, value)

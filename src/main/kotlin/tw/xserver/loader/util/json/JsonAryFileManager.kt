@@ -8,8 +8,7 @@ import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class JsonAryFileManager(file: File) : JsonFileManager<JsonArray>(file) {
-    override val dataType: Class<JsonArray> = JsonArray::class.java
+class JsonAryFileManager(file: File) : JsonFileManager<JsonArray>(file, JsonArray::class.java) {
     override fun defaultFileAndData(): JsonArray = JsonArray()
 
     fun get(index: Int): JsonElement = data[index]
