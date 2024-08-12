@@ -28,19 +28,16 @@ import java.io.IOException
  * Main class for the Economy plugin managing configurations, commands, and data handling.
  */
 object Economy : PluginEvent(true) {
-    private val MODE = Mode.GoogleSheet
+    private val MODE = Mode.Json
     private val logger: Logger = LoggerFactory.getLogger(Economy::class.java)
     internal const val DIR_PATH = "./plugins/Economy/"
     internal lateinit var config: MainConfigSerializer
 
     override fun load() {
         reloadAll()
-        logger.info("Loaded Economy")
     }
 
-    override fun unload() {
-        logger.info("UnLoaded Economy")
-    }
+    override fun unload() {}
 
     override fun reloadConfigFile() {
         getter = FileGetter(DIR_PATH, Economy::class.java)

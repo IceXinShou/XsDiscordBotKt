@@ -11,13 +11,9 @@ import tw.xserver.plugin.placeholder.Substitutor
 object MessageCreator : PluginEvent(true) {
     private val logger: Logger = LoggerFactory.getLogger(MessageCreator::class.java)
 
-    override fun load() {
-        logger.info("MessageCreator loaded")
-    }
+    override fun load() {}
 
-    override fun unload() {
-        logger.info("MessageCreator unloaded")
-    }
+    override fun unload() {}
 
     fun buildEmbeds(embeds: List<EmbedSetting>, substitutor: Substitutor? = null): List<MessageEmbed> =
         embeds.mapNotNull { embed -> buildEmbed(embed, substitutor) }

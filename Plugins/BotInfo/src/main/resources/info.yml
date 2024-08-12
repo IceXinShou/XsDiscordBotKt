@@ -2,3 +2,5 @@ author: IceXinShou
 main: tw.xserver.plugin.botinfo.BotInfo
 name: BotInfo
 version: '2.0'
+depend:
+  - MessageCreator

@@ -37,7 +37,7 @@ object PluginLoader {
                 try {
                     jarFile.getInputStream(jarFile.getEntry("info.yml")).use { inputStream ->
                         val config = Yaml().decodeFromStream<InfoSerializer>(inputStream)
-                        logger.info("Loading {}...", config.name)
+                        logger.debug("-------> {}", config.name)
 
                         if (plugins.containsKey(config.name)) {
                             logger.error("Duplicate plugin name: ${file.name}")
@@ -52,7 +52,7 @@ object PluginLoader {
                             count++
                         } ?: run { fail++ }
 
-                        logger.info("Loaded {}!", config.name)
+                        logger.info("==ADD==> {}", config.name)
                     }
                 } catch (e: Exception) {
                     fail++

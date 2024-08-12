@@ -10,7 +10,6 @@ plugins {
 
 dependencies {
     compileOnly(project(":Plugins:MessageCreator"))
-    compileOnly(project(":Plugins:Placeholder"))
 }
 
 tasks.named<Jar>("jar") {

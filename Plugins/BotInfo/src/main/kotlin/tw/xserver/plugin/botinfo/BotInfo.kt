@@ -12,19 +12,19 @@ import tw.xserver.loader.util.GlobalUtil.checkCommandName
 import tw.xserver.plugin.botinfo.cmd.getGuildCommands
 import tw.xserver.plugin.botinfo.lang.LangFileSerializer
 import tw.xserver.plugin.botinfo.lang.Localizations
+import tw.xserver.plugin.creator.message.CreatorImpl
+import tw.xserver.plugin.placeholder.PAPI
 
 object BotInfo : PluginEvent(true) {
     private val logger: Logger = LoggerFactory.getLogger(BotInfo::class.java)
     private const val DIR_PATH = "./plugins/BotInfo/"
+    private val creator = CreatorImpl("$DIR_PATH./lang/")
 
     override fun load() {
         reloadAll()
-        logger.info("loaded BotInfo")
     }
 
-    override fun unload() {
-        logger.info("unLoaded BotInfo")
-    }
+    override fun unload() {}
 
     override fun reloadConfigFile() {
         getter = FileGetter(DIR_PATH, BotInfo::class.java)
@@ -44,29 +44,15 @@ object BotInfo : PluginEvent(true) {
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (checkCommandName(event, "bot-info")) return
         val locale = event.userLocale
-
-        val members = event.jda.guilds.sumOf { guild ->
+        val memberCounts = event.jda.guilds.sumOf { guild ->
             guild.memberCount
         }
 
-//        MessageCreator.
-//
-//        val builder = EmbedBuilder()
-//        builder.addField(
-//            lang.runtime.successes.guild_count.get(locale),
-//            event.jda.guilds.size.toLong().toString(), false
-//        )
-//        builder.addField(
-//            lang.runtime.successes.member_count.get(locale),
-//            members.toString(), false
-//        )
-//
-//        event.hook.editOriginalEmbeds(
-//            builder
-//                .setTitle(lang.runtime.successes.title.get(locale))
-//                .setTimestamp(OffsetDateTime.now())
-//                .setColor(0x00FFFF)
-//                .build()
-//        ).queue()
+        PAPI.globalPlaceholder.put("member_counts", "$memberCounts")
+        PAPI.globalPlaceholder.put("guild_counts", "${event.jda.guilds.size}")
+
+        event.hook.editOriginal(
+            creator.getBuilder(locale, "bot_info").build()
+        ).queue()
     }
 }

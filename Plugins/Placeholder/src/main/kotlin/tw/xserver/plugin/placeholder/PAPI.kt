@@ -2,9 +2,18 @@ package tw.xserver.plugin.placeholder
 
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import tw.xserver.loader.base.MainLoader.jdaBot
 
 object PAPI {
+    val globalPlaceholder: Substitutor = Substitutor(
+        "%", "%",
+        hashMapOf(
+            "bot_id" to jdaBot.selfUser.id,
+            "bot_name" to jdaBot.selfUser.name,
+        )
+    )
     private val userPlaceholder: MutableMap<Long, Substitutor> = HashMap()
+
 
     fun update(user: User, kv: Map<String, String>) {
         get(user).put(kv)
@@ -17,7 +26,6 @@ object PAPI {
             Substitutor(
                 "%", "%",
                 hashMapOf(
-                    "%%" to "%",
                     "user_id" to user.id,
                     "user_name" to user.name,
                     "user_avatar_url" to user.effectiveAvatarUrl,
@@ -32,7 +40,6 @@ object PAPI {
         ) {
             Substitutor(
                 "%", "%", hashMapOf(
-                    "%%" to "%",
                     "user_id" to member.id,
                     "user_name" to member.user.name,
                     "user_avatar_url" to member.user.effectiveAvatarUrl,

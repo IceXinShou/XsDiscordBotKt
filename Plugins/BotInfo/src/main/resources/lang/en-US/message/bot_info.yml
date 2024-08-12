@@ -2,17 +2,19 @@ content: ""
 
 embeds:
   - author:
-      name: "Pocket Query"
-      iconUrl: "https://i.imgur.com/PsEXCuY.png"
-    title: "☛ %user_name%'s Pocket"
+      name: "Info Query"
+      iconUrl: "https://i.imgur.com/a7z4ch2.png"
+    title: "☛ ORDERLY BOT's INFORMATION"
     footer:
-      text: "❖ Your Best Pocket ❖"
+      text: "❖ Bot's Info ❖"
 
     fields:
-      - name: Balance
-        value: "%economy_money% $"
+      - name: Server Counts
+        value: "%guild_counts%"
         inline: false  # no placeholder support
 
-      - name: Cost
-        value: "%economy_cost% $"
+      - name: Member Counts
+        value: "%member_counts%"
         inline: false  # no placeholder support
+
+    color: 0x00FFFF

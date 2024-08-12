@@ -18,11 +18,11 @@ object UpdateChecker {
 
     fun versionCheck(): Boolean {
         if (ignoreVersionCheck) {
-            logger.info("version check ignored.")
+            logger.info("Version check ignored.")
             return false
         }
 
-        logger.info("checking version...")
+        logger.info("Checking version...")
         val client = OkHttpClient()
         var response: Response? = null
 

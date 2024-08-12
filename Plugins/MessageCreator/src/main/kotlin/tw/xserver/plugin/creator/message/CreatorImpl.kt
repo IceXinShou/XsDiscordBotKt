@@ -5,6 +5,7 @@ import kotlinx.serialization.decodeFromString
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 import tw.xserver.plugin.creator.message.setting.MessageDataSerializer
+import tw.xserver.plugin.placeholder.PAPI
 import tw.xserver.plugin.placeholder.Substitutor
 import java.io.File
 import java.util.*
@@ -26,7 +27,11 @@ class CreatorImpl(langPath: String) {
         }
     }
 
-    fun getBuilder(locale: DiscordLocale, commandMethod: String, substitutor: Substitutor): MessageEditBuilder {
+    fun getBuilder(
+        locale: DiscordLocale,
+        commandMethod: String,
+        substitutor: Substitutor = PAPI.globalPlaceholder
+    ): MessageEditBuilder {
         val messageData = getMessageData(locale, commandMethod)
         val builder = MessageEditBuilder()
 

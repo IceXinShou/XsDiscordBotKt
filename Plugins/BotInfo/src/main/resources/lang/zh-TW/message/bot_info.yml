@@ -2,17 +2,19 @@ content: ""
 
 embeds:
   - author:
-      name: "口袋查詢"
-      iconUrl: "https://i.imgur.com/PsEXCuY.png"
-    title: "☛ %user_name% 的口袋"
+      name: "狀態查詢"
+      iconUrl: "https://i.imgur.com/a7z4ch2.png"
+    title: "☛ 序之徒的資訊"
     footer:
-      text: ❖ 你最好的口袋 ❖
+      text: ❖ 機器人狀態 ❖
 
     fields:
-      - name: 餘額
-        value: "%economy_money% 元"
+      - name: 伺服器總數
+        value: "%guild_counts%"
         inline: false  # no placeholder support
 
-      - name: 總消費
-        value: "%economy_cost% 元"
+      - name: 成員總數
+        value: "%member_counts%"
         inline: false  # no placeholder support
+
+    color: 0x00FFFF

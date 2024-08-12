@@ -26,10 +26,10 @@ object SettingsLoader {
             settingFile = exportResource()
         }
 
-        logger.info("loading {}", settingFile.path)
+        logger.info("Loading {}", settingFile.path)
         config = Yaml().decodeFromString<SettingSerializer>(settingFile.readText())
         token = config.generalSettings.botToken
-        logger.info("setting file loaded")
+        logger.info("Setting file loaded.")
     }
 
     private fun exportResource(): File {
