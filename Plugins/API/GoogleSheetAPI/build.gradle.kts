@@ -5,8 +5,7 @@ group = "tw.xserver.plugin.api"
 version = "v2.0"
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC2"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -14,7 +13,7 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:2.17.2")
     api("com.google.api-client:google-api-client:2.6.0")
     api("com.google.oauth-client:google-oauth-client-jetty:1.36.0")
-    api("com.google.apis:google-api-services-sheets:v4-rev20240514-2.0.0")
+    api("com.google.apis:google-api-services-sheets:v4-rev20240730-2.0.0")
 }
 
 tasks.build {

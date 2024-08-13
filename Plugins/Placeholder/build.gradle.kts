@@ -2,10 +2,6 @@ val pluginName = "Placeholder"
 group = "tw.xserver.plugin"
 version = "v2.0"
 
-plugins {
-    kotlin("jvm")
-}
-
 tasks.named<Jar>("jar") {
     val outputPath: File by rootProject.extra
 

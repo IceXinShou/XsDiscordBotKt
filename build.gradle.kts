@@ -2,9 +2,10 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC"
+    kotlin("jvm") version "2.0.20-RC2"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC2"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.ben-manes.versions") version "0.51.0" // Check updates by running `./gradlew dependencyUpdates`
 }
 
 group = "tw.xserver.loader"
