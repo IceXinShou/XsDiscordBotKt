@@ -17,21 +17,21 @@ internal object Localizations {
     }
 
     class CommandWithMember_lz {
-        val options = Options_lz
+        val options = Options_lz()
         val name = LocaleData()
         val description = LocaleData()
 
-        object Options_lz {
+        class Options_lz {
             val member = ND()
         }
     }
 
     class CommandWithMemberValue_lz {
-        val options = Options_lz
+        val options = Options_lz()
         val name = LocaleData()
         val description = LocaleData()
 
-        object Options_lz {
+        class Options_lz {
             val member = ND()
             val value = ND()
         }
