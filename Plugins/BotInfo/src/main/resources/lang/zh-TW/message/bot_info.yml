@@ -3,8 +3,9 @@ content: ""
 embeds:
   - author:
       name: "狀態查詢"
-      iconUrl: "https://i.imgur.com/a7z4ch2.png"
-    title: "☛ 序之徒的資訊"
+      icon_url: "https://i.imgur.com/a7z4ch2.png"
+    title: 
+      text: ☛ 序之徒的資訊"
     footer:
       text: ❖ 機器人狀態 ❖
 

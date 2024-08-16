@@ -3,8 +3,9 @@ content: ""
 embeds:
   - author:
       name: "Info Query"
-      iconUrl: "https://i.imgur.com/a7z4ch2.png"
-    title: "☛ ORDERLY BOT's INFORMATION"
+      icon_url: "https://i.imgur.com/a7z4ch2.png"
+    title: 
+      text: ☛ ORDERLY BOT's INFORMATION"
     footer:
       text: "❖ Bot's Info ❖"
 

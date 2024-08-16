@@ -3,8 +3,9 @@ content: ""
 embeds:
   - author:
       name: "Pocket Add Balance"
-      iconUrl: "https://i.imgur.com/PsEXCuY.png"
-    title: "☛ %user_name%'s Pocket"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title:
+      text: "☛ %user_name%'s Pocket"
     footer:
       text: "❖ Your Best Pocket ❖"
 

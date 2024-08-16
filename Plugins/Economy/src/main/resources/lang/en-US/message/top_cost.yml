@@ -3,8 +3,9 @@ content: ""
 embeds:
   - author:
       name: "Pocket Board"
-      iconUrl: "https://i.imgur.com/PsEXCuY.png"
-    title: "☛ Cost Board"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title: 
+      text: ☛ Cost Board"
     footer:
       text: "❖ Your Best Pocket ❖"
 

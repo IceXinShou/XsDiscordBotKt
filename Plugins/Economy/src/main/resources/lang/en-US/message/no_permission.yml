@@ -3,8 +3,9 @@ content: ""
 embeds:
   - author:
       name: "Pocket Failed"
-      iconUrl: "https://i.imgur.com/PsEXCuY.png"
-    title: "You have no permission ><"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title: 
+      text: You have no permission ><"
     color: 0xFF0000
     footer:
       text: ❖ Your best Pocket ❖

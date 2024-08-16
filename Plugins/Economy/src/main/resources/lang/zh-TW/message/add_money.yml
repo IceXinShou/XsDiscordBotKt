@@ -3,8 +3,9 @@ content: ""
 embeds:
   - author:
       name: "口袋增值"
-      iconUrl: "https://i.imgur.com/PsEXCuY.png"
-    title: "☛ %user_name% 的口袋"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title: 
+      text: ☛ %user_name% 的口袋"
     footer:
       text: ❖ 你最好的口袋 ❖
 
