@@ -1,26 +1,79 @@
-content: ""
+content: "" # Ignorable, 2000 length limit
 
-embeds:
-  - author: null
-    #      name: null
-    #      url: null
-    #      iconUrl: null
-    title: null
-    description: null
-    url: null
-    setThumbnail: null
-    image: null
-    color: null
-    footer: null
-    #      text: null
-    #      iconUrl: null
-    timestamp: null  # no placeholder support
-
-    fields:
-      - name: "Hello"
-        value: ""
-        inline: false
+embeds: # Ignorable, 10 size limit
+  - author: # Ignorable
+      name: "xinshou" # Nonnull, 256 length limit
+      url: "https://xinshou.tw/" # Ignorable, 2000 length limit
+      icon_url: "https://blog.xinshou.tw/favicon.ico" # Ignorable, 2000 length limit
+    title: # Ignorable
+      text: "This is an embed message" # Ignorable, 256 length limit
+      url: "https://xinshou.tw/" # Ignorable, 2000 length limit
+    description: "This is a embed description" # Ignorable, 4096 length limit
+    thumbnail_url: "https://blog.xinshou.tw/favicon.ico" # Ignorable, 2000 length limit
+    image_url: "https://blog.xinshou.tw/favicon.ico" # Ignorable, 20000 length limit
+    color_code: 0xFFFF00 # Ignorable, default: "#FFFFFF", allowed values: [ "0xFFFFFF", "#FFFFFF", "FFFFFFh" ]
+    footer: # Ignorable
+      text: "I'm footer" # Nonnull, 2048 length limit
+      icon_url: "https://blog.xinshou.tw/favicon.ico" # Ignorable, 2000 length limit
+    timestamp: "%now%"  # Ignorable, allowed values: [ "%now%", 1723675788491 ]
+    fields: # Ignorable, 25 size limit
+      - name: "Hello" # Nonnull, 256 length limit
+        value: "XinShou!" # Ignorable, 1024 length limit
+        inline: false # Ignorable, default: false
 
       - name: "I cannot be null !!!"
-        value: ""
-        inline: false  # no placeholder support
+        inline: true
+
+components: # 5 size limit, allowed values: [ "buttons", "string_select_menu", "entity_select_menu" ]
+  - buttons: # 5 size limit
+      - uid_or_url: "xs:messagecreator:template:btn1" # Nonnull, 512 length limit
+        style: 1 # Nonnull, allowed values [ 1 (BLUE), 2 (GREY), 3 (GREEN), 4 (RED), 5 (LINK) ]
+        label: "CUTE" # Ignorable, 80 length limit
+        disabled: false # Ignorable, default: false
+        emoji: # Ignorable
+          name: "🐳" # Nonnull
+          animated: false # Ignorable, default: false
+
+      - uid_or_url: "https://xinshou.tw/"
+        style: 5
+        label: "My Blog"
+
+  - string_select_menu:
+      uid: "xs:messagecreator:template:selectmenu1" # Nonnull
+      placeholder: "Choose one:" # Ignorable
+      min: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
+      max: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
+      options: # 1-25 size limit
+        - label: option1 # Nonnull, 100 length limit
+          value: value1 # Nonnull, 100 length limit
+          description: desc1 # Ignorable
+          default: false # Ignorable, default: false
+          emoji: # Ignorable
+            name: "🐳" # Nonnull
+            animated: false # Ignorable, default: false
+
+        - label: option2
+          value: value2
+
+  - entity_select_menu:
+      uid: "xs:messagecreator:template:selectmenu2" # Nonnull
+      placeholder: "Choose one:" # Ignorable
+      min: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
+      max: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
+      select_target_type: "CHANNEL" # allowed values [ "ROLE", "USER", "CHANNEL" ]
+      channel_types:
+        # Nonnull whether select_target_type is "CHANNEL"
+        # allowed values
+        # [
+        #   "TEXT", "VOICE", "CATEGORY", "NEWS", "STAGE", "FORUM", "MEDIA"
+        #   "GUILD_NEWS_THREAD", "GUILD_PUBLIC_THREAD", "GUILD_PRIVATE_THREAD"
+        #   "PRIVATE", "GROUP"
+        # ]
+        - "TEXT"
+        - "PRIVATE"
+
+
+
+
+
+

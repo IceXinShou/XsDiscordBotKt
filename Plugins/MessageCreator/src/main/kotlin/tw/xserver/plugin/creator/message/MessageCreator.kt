@@ -2,11 +2,14 @@ package tw.xserver.plugin.creator.message
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
+import org.apache.commons.lang3.StringUtils.isNumeric
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.plugin.creator.message.setting.MessageDataSerializer.EmbedSetting
 import tw.xserver.plugin.placeholder.Substitutor
+import java.time.Instant
+import java.time.OffsetDateTime
 
 object MessageCreator : PluginEvent(true) {
     private val logger: Logger = LoggerFactory.getLogger(MessageCreator::class.java)
@@ -32,19 +35,19 @@ object MessageCreator : PluginEvent(true) {
 
         // Handle title, description, thumbnail, and image with or without substitutor
         if (substitutor != null) {
-            embed.title?.let { title -> builder.setTitle(substitutor.parse(title), substitutor.parse(embed.url)) }
+            embed.title?.let { title -> builder.setTitle(substitutor.parse(title.text), substitutor.parse(title.url)) }
             embed.description?.let { desc -> builder.setDescription(substitutor.parse(desc)) }
-            embed.setThumbnail?.let { thumb -> builder.setThumbnail(substitutor.parse(thumb)) }
-            embed.image?.let { image -> builder.setImage(substitutor.parse(image)) }
+            embed.thumbnailUrl?.let { url -> builder.setThumbnail(substitutor.parse(url)) }
+            embed.imageUrl?.let { url -> builder.setImage(substitutor.parse(url)) }
         } else {
-            embed.title?.let { title -> builder.setTitle(title, embed.url) }
+            embed.title?.let { title -> builder.setTitle(title.text, title.url) }
             embed.description?.let { desc -> builder.setDescription(desc) }
-            embed.setThumbnail?.let { thumb -> builder.setThumbnail(thumb) }
-            embed.image?.let { image -> builder.setImage(image) }
+            embed.thumbnailUrl?.let { url -> builder.setThumbnail(url) }
+            embed.imageUrl?.let { url -> builder.setImage(url) }
         }
 
         // Apply color and timestamp directly since they don't involve parsing
-        embed.color?.let {
+        embed.colorCode.let {
             builder.setColor(
                 it.lowercase()
                     .removePrefix("0x") // 0xFFFFFF
@@ -53,7 +56,14 @@ object MessageCreator : PluginEvent(true) {
                     .toInt(radix = 16)
             )
         }
-        embed.timestamp?.let { builder.setTimestamp(it) }
+
+        embed.timestamp?.let {
+            when {
+                isNumeric(it) -> Instant.ofEpochMilli(it.toLong())
+                it == "%now%" -> OffsetDateTime.now().toInstant()
+                else -> throw Exception("Unknown format for timestamp!")
+            }
+        }
 
         // Set footer similarly to author
         embed.footer?.let { footer ->
