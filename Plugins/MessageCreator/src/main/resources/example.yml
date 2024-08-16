@@ -6,7 +6,7 @@ embeds: # Ignorable, 10 size limit
       url: "https://xinshou.tw/" # Ignorable, 2000 length limit
       icon_url: "https://blog.xinshou.tw/favicon.ico" # Ignorable, 2000 length limit
     title: # Ignorable
-      text: "This is an embed message" # Ignorable, 256 length limit
+      text: "This is an embed message" # Nonnull, 256 length limit
       url: "https://xinshou.tw/" # Ignorable, 2000 length limit
     description: "This is a embed description" # Ignorable, 4096 length limit
     thumbnail_url: "https://blog.xinshou.tw/favicon.ico" # Ignorable, 2000 length limit
