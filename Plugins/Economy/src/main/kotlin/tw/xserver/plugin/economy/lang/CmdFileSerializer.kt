@@ -1,16 +1,29 @@
 package tw.xserver.plugin.economy.lang
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class LangFileSerializer(
+internal data class CmdFileSerializer(
     val balance: Command1,
-    val top_money: SimpleCommand,
-    val top_cost: SimpleCommand,
-    val add_money: Command2,
-    val remove_money: Command2,
-    val set_money: Command2,
-    val set_cost: Command2
+
+    @SerialName("top_money")
+    val topMoney: SimpleCommand,
+
+    @SerialName("top_cost")
+    val topCost: SimpleCommand,
+
+    @SerialName("add_money")
+    val addMoney: Command2,
+
+    @SerialName("remove_money")
+    val removeMoney: Command2,
+
+    @SerialName("set_money")
+    val setMoney: Command2,
+
+    @SerialName("set_cost")
+    val setCost: Command2
 ) {
     @Serializable
     internal data class Command1(

@@ -4,12 +4,12 @@ import tw.xserver.loader.localizations.LocaleData
 
 internal object Localizations {
     val balance = CommandWithMember_lz()
-    val top_money = ND()
-    val top_cost = ND()
-    val add_money = CommandWithMemberValue_lz()
-    val remove_money = CommandWithMemberValue_lz()
-    val set_money = CommandWithMemberValue_lz()
-    val set_cost = CommandWithMemberValue_lz()
+    val topMoney = ND()
+    val topCost = ND()
+    val addMoney = CommandWithMemberValue_lz()
+    val removeMoney = CommandWithMemberValue_lz()
+    val setMoney = CommandWithMemberValue_lz()
+    val setCost = CommandWithMemberValue_lz()
 
     class ND {
         val name = LocaleData()

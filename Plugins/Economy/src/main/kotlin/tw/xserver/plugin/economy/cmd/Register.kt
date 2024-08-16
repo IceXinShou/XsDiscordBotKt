@@ -28,69 +28,69 @@ fun getGuildCommands(): Array<CommandData> = arrayOf(
 
     // Command to display top money holders.
     Commands.slash("top-money", "Get leaderboard for money")
-        .setNameLocalizations(Localizations.top_money.name)
-        .setDescriptionLocalizations(Localizations.top_money.description)
+        .setNameLocalizations(Localizations.topMoney.name)
+        .setDescriptionLocalizations(Localizations.topMoney.description)
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
     // Command to display top transaction logs.
     Commands.slash("top-cost", "Get leaderboard from log money")
-        .setNameLocalizations(Localizations.top_cost.name)
-        .setDescriptionLocalizations(Localizations.top_cost.description)
+        .setNameLocalizations(Localizations.topCost.name)
+        .setDescriptionLocalizations(Localizations.topCost.description)
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
     // Command to add money to a member's balance.
     Commands.slash("add-money", "Add money to member's balance")
-        .setNameLocalizations(Localizations.add_money.name)
-        .setDescriptionLocalizations(Localizations.add_money.description)
+        .setNameLocalizations(Localizations.addMoney.name)
+        .setDescriptionLocalizations(Localizations.addMoney.description)
         .addOptions(
             OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
-                .setNameLocalizations(Localizations.add_money.options.member.name)
-                .setDescriptionLocalizations(Localizations.add_money.options.member.description),
+                .setNameLocalizations(Localizations.addMoney.options.member.name)
+                .setDescriptionLocalizations(Localizations.addMoney.options.member.description),
             OptionData(OptionType.INTEGER, "value", "Specify the amount to add.", true)
-                .setNameLocalizations(Localizations.add_money.options.value.name)
-                .setDescriptionLocalizations(Localizations.add_money.options.value.description)
+                .setNameLocalizations(Localizations.addMoney.options.value.name)
+                .setDescriptionLocalizations(Localizations.addMoney.options.value.description)
         )
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
     // Command to remove money from a member's balance.
     Commands.slash("remove-money", "Remove money from member's balance")
-        .setNameLocalizations(Localizations.remove_money.name)
-        .setDescriptionLocalizations(Localizations.remove_money.description)
+        .setNameLocalizations(Localizations.removeMoney.name)
+        .setDescriptionLocalizations(Localizations.removeMoney.description)
         .addOptions(
             OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
-                .setNameLocalizations(Localizations.remove_money.options.member.name)
-                .setDescriptionLocalizations(Localizations.remove_money.options.member.description),
+                .setNameLocalizations(Localizations.removeMoney.options.member.name)
+                .setDescriptionLocalizations(Localizations.removeMoney.options.member.description),
             OptionData(OptionType.INTEGER, "value", "Specify the amount to remove.", true)
-                .setNameLocalizations(Localizations.remove_money.options.value.name)
-                .setDescriptionLocalizations(Localizations.remove_money.options.value.description)
+                .setNameLocalizations(Localizations.removeMoney.options.value.name)
+                .setDescriptionLocalizations(Localizations.removeMoney.options.value.description)
         )
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
     // Command to set a specific money value to a member's balance.
     Commands.slash("set-money", "Set money to member's balance")
-        .setNameLocalizations(Localizations.set_money.name)
-        .setDescriptionLocalizations(Localizations.set_money.description)
+        .setNameLocalizations(Localizations.setMoney.name)
+        .setDescriptionLocalizations(Localizations.setMoney.description)
         .addOptions(
             OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
-                .setNameLocalizations(Localizations.set_money.options.member.name)
-                .setDescriptionLocalizations(Localizations.set_money.options.member.description),
+                .setNameLocalizations(Localizations.setMoney.options.member.name)
+                .setDescriptionLocalizations(Localizations.setMoney.options.member.description),
             OptionData(OptionType.INTEGER, "value", "Specify the new balance.", true)
-                .setNameLocalizations(Localizations.set_money.options.value.name)
-                .setDescriptionLocalizations(Localizations.set_money.options.value.description)
+                .setNameLocalizations(Localizations.setMoney.options.value.name)
+                .setDescriptionLocalizations(Localizations.setMoney.options.value.description)
         )
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
     // Command to record a transaction log adjustment for a member.
     Commands.slash("set-cost", "Set money log to member")
-        .setNameLocalizations(Localizations.set_cost.name)
-        .setDescriptionLocalizations(Localizations.set_cost.description)
+        .setNameLocalizations(Localizations.setCost.name)
+        .setDescriptionLocalizations(Localizations.setCost.description)
         .addOptions(
             OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
-                .setNameLocalizations(Localizations.set_cost.options.member.name)
-                .setDescriptionLocalizations(Localizations.set_cost.options.member.description),
+                .setNameLocalizations(Localizations.setCost.options.member.name)
+                .setDescriptionLocalizations(Localizations.setCost.options.member.description),
             OptionData(OptionType.INTEGER, "value", "Specify the log amount.", true)
-                .setNameLocalizations(Localizations.set_cost.options.value.name)
-                .setDescriptionLocalizations(Localizations.set_cost.options.value.description)
+                .setNameLocalizations(Localizations.setCost.options.value.name)
+                .setDescriptionLocalizations(Localizations.setCost.options.value.description)
         )
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 )

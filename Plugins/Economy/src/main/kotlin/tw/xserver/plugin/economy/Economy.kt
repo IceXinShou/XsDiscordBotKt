@@ -17,7 +17,7 @@ import tw.xserver.loader.util.json.JsonObjFileManager
 import tw.xserver.plugin.economy.cmd.getGuildCommands
 import tw.xserver.plugin.economy.googlesheet.SheetManager
 import tw.xserver.plugin.economy.json.JsonManager
-import tw.xserver.plugin.economy.lang.LangFileSerializer
+import tw.xserver.plugin.economy.lang.CmdFileSerializer
 import tw.xserver.plugin.economy.lang.Localizations
 import tw.xserver.plugin.economy.setting.MainConfigSerializer
 import tw.xserver.plugin.placeholder.PAPI
@@ -64,7 +64,7 @@ object Economy : PluginEvent(true) {
         LangManager(
             getter,
             DiscordLocale.CHINESE_TAIWAN,
-            LangFileSerializer::class,
+            CmdFileSerializer::class,
             Localizations::class
         )
     }

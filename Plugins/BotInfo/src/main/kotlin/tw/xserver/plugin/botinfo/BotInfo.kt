@@ -10,7 +10,7 @@ import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter
 import tw.xserver.loader.util.GlobalUtil.checkCommandName
 import tw.xserver.plugin.botinfo.cmd.getGuildCommands
-import tw.xserver.plugin.botinfo.lang.LangFileSerializer
+import tw.xserver.plugin.botinfo.lang.CmdFileSerializer
 import tw.xserver.plugin.botinfo.lang.Localizations
 import tw.xserver.plugin.creator.message.CreatorImpl
 import tw.xserver.plugin.placeholder.PAPI
@@ -34,7 +34,7 @@ object BotInfo : PluginEvent(true) {
         LangManager(
             getter,
             DiscordLocale.CHINESE_TAIWAN,
-            LangFileSerializer::class,
+            CmdFileSerializer::class,
             Localizations::class
         )
     }

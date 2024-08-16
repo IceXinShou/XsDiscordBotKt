@@ -16,7 +16,7 @@ import tw.xserver.plugin.botinfo.lang.Localizations
 fun getGuildCommands(): Array<CommandData> = arrayOf(
     // Command to display bot info message
     Commands.slash("bot-info", "show about the bot data")
-        .setNameLocalizations(Localizations.bot_info.name)
-        .setDescriptionLocalizations(Localizations.bot_info.description)
+        .setNameLocalizations(Localizations.botInfo.name)
+        .setDescriptionLocalizations(Localizations.botInfo.description)
         .setDefaultPermissions(DefaultMemberPermissions.ENABLED),
 )
