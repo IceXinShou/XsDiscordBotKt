@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory
  * This class handles logging of different types of interaction events on Discord.
  * It extends ListenerAdapter to respond to various interaction events such as commands and button presses.
  */
-class InteractionLogger : ListenerAdapter() {
+object InteractionLogger : ListenerAdapter() {
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     /**
      * Logs slash command interactions. It defers the reply to the interaction and logs the command.
@@ -46,9 +47,5 @@ class InteractionLogger : ListenerAdapter() {
      */
     override fun onModalInteraction(event: ModalInteractionEvent) {
         logger.info("[MODAL] {}: {}", event.user.name, event.modalId)
-    }
-
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(InteractionLogger::class.java)
     }
 }

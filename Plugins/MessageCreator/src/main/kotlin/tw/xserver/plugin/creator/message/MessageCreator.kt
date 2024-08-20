@@ -1,22 +1,155 @@
 package tw.xserver.plugin.creator.message
 
+import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.channel.ChannelType
+import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.DiscordLocale
+import net.dv8tion.jda.api.interactions.components.ActionRow
+import net.dv8tion.jda.api.interactions.components.LayoutComponent
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
+import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
+import net.dv8tion.jda.internal.interactions.component.ButtonImpl
 import org.apache.commons.lang3.StringUtils.isNumeric
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import tw.xserver.loader.plugin.PluginEvent
-import tw.xserver.plugin.creator.message.setting.MessageDataSerializer.EmbedSetting
+import tw.xserver.loader.util.serializer.ColorSerializer
+import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
+import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer.EmbedSetting
+import tw.xserver.plugin.placeholder.Placeholder
 import tw.xserver.plugin.placeholder.Substitutor
+import java.io.File
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.util.*
 
-object MessageCreator : PluginEvent(true) {
-    private val logger: Logger = LoggerFactory.getLogger(MessageCreator::class.java)
+class MessageCreator(langPath: String, private val componentPrefix: String = "") {
+    private val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
+        EnumMap(DiscordLocale::class.java)
 
-    override fun load() {}
+    init {
+        File(langPath).listFiles()?.filter { it.isDirectory }?.forEach { directory ->
+            val locale = DiscordLocale.from(directory.name)
 
-    override fun unload() {}
+            File(directory, "./messages/").listFiles()?.filter { it.isFile && it.extension == "yml" }
+                ?.forEach { file ->
+                    localeMapper.getOrPut(locale) { mutableMapOf() }[file.nameWithoutExtension] =
+                        Yaml(
+                            serializersModule = SerializersModule { contextual(ColorSerializer) }
+                        ).decodeFromString<MessageDataSerializer>(file.readText())
+                }
+        }
+    }
+
+
+    fun getBuilder(
+        event: SlashCommandInteractionEvent,
+        substitutor: Substitutor = Placeholder.globalPlaceholder,
+    ): MessageEditBuilder {
+        return getBuilder(getMessageData(event), substitutor)
+    }
+
+    fun getBuilder(
+        key: String,
+        locale: DiscordLocale,
+        substitutor: Substitutor = Placeholder.globalPlaceholder,
+    ): MessageEditBuilder {
+        return getBuilder(getMessageData(key, locale), substitutor)
+    }
+
+    fun getBuilder(
+        messageData: MessageDataSerializer,
+        substitutor: Substitutor = Placeholder.globalPlaceholder,
+    ): MessageEditBuilder {
+        val builder = MessageEditBuilder()
+
+        messageData.content.let { builder.setContent(substitutor.parse(it)) }
+        messageData.embeds.let { embeds ->
+            builder.setEmbeds(buildEmbeds(embeds, substitutor))
+        }
+
+        val components: MutableList<LayoutComponent> = ArrayList()
+        messageData.components.forEach { component ->
+            when (component) {
+                is MessageDataSerializer.Component.ButtonsComponent -> {
+                    components.add(ActionRow.of(component.buttons.map { button ->
+                        ButtonImpl(
+                            "$componentPrefix${substitutor.parse(button.uidOrUrl)}",
+                            button.label?.let { substitutor.parse(it) },
+                            when (button.style) {
+                                1 -> ButtonStyle.PRIMARY
+                                2 -> ButtonStyle.SECONDARY
+                                3 -> ButtonStyle.SUCCESS
+                                4 -> ButtonStyle.DANGER
+                                5 -> ButtonStyle.LINK
+                                else -> throw IllegalArgumentException("Unknown style code: ${button.style}")
+
+                            },
+                            button.disabled,
+                            button.emoji?.let { Emoji.fromUnicode(button.emoji.name) }
+                        )
+                    }))
+                }
+
+                is MessageDataSerializer.Component.StringSelectMenuSetting -> {
+                    val menu = StringSelectMenu
+                        .create("$componentPrefix${substitutor.parse(component.uid)}").apply {
+                            placeholder = component.placeholder?.let { substitutor.parse(it) }
+                            minValues = component.min
+                            maxValues = component.max
+                            component.options.forEach { option ->
+                                addOption(
+                                    substitutor.parse(option.label),
+                                    substitutor.parse(option.value),
+                                    option.description?.let { substitutor.parse(it) },
+                                    option.emoji?.let { Emoji.fromUnicode(option.emoji.name) }
+                                )
+                            }
+                        }
+
+                    components.add(ActionRow.of(menu.build()))
+                }
+
+                is MessageDataSerializer.Component.EntitySelectMenuSetting -> {
+                    val menu =
+                        EntitySelectMenu.create(
+                            "$componentPrefix${substitutor.parse(component.uid)}",
+                            EntitySelectMenu.SelectTarget.valueOf(component.selectTargetType.uppercase())
+                        ).apply {
+                            placeholder = component.placeholder?.let { substitutor.parse(it) }
+                            minValues = component.min
+                            maxValues = component.max
+                        }
+                    if (component.selectTargetType.uppercase() == "CHANNEL") {
+                        if (component.channelTypes.isEmpty()) {
+                            throw IllegalArgumentException("'channel_types' cannot be empty when 'select_target_type' is set to 'CHANNEL'!")
+                        }
+                        menu.setChannelTypes(component.channelTypes.map { ChannelType.valueOf(it) })
+                    }
+
+                    components.add(ActionRow.of(menu.build()))
+                }
+            }
+        }
+
+        builder.setComponents(components)
+
+        return builder
+    }
+
+    fun getMessageData(event: SlashCommandInteractionEvent): MessageDataSerializer {
+        return getMessageData(parseCommandName(event), event.userLocale)
+    }
+
+    fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer {
+        return localeMapper[locale]?.get(key.removePrefix(componentPrefix))
+            ?: throw IllegalStateException("Message data not found for command: $key")
+    }
 
     fun buildEmbeds(embeds: List<EmbedSetting>, substitutor: Substitutor? = null): List<MessageEmbed> =
         embeds.mapNotNull { embed -> buildEmbed(embed, substitutor) }
@@ -28,14 +161,16 @@ object MessageCreator : PluginEvent(true) {
         embed.author?.let { author ->
             builder.setAuthor(
                 substitutor?.parse(author.name) ?: author.name,
-                substitutor?.parse(author.url) ?: author.url,
-                substitutor?.parse(author.iconUrl) ?: author.iconUrl
+                author.url?.let { substitutor?.parse(it) } ?: author.url,
+                author.iconUrl?.let { substitutor?.parse(it) } ?: author.iconUrl
             )
         }
 
         // Handle title, description, thumbnail, and image with or without substitutor
         if (substitutor != null) {
-            embed.title?.let { title -> builder.setTitle(substitutor.parse(title.text), substitutor.parse(title.url)) }
+            embed.title?.let { title ->
+                builder.setTitle(substitutor.parse(title.text), title.url?.let { substitutor.parse(it) })
+            }
             embed.description?.let { desc -> builder.setDescription(substitutor.parse(desc)) }
             embed.thumbnailUrl?.let { url -> builder.setThumbnail(substitutor.parse(url)) }
             embed.imageUrl?.let { url -> builder.setImage(substitutor.parse(url)) }
@@ -48,13 +183,7 @@ object MessageCreator : PluginEvent(true) {
 
         // Apply color and timestamp directly since they don't involve parsing
         embed.colorCode.let {
-            builder.setColor(
-                it.lowercase()
-                    .removePrefix("0x") // 0xFFFFFF
-                    .removePrefix("#")  // #FFFFFF
-                    .removeSuffix("h")  // FFFFFh
-                    .toInt(radix = 16)
-            )
+            builder.setColor(it)
         }
 
         embed.timestamp?.let {
@@ -69,7 +198,7 @@ object MessageCreator : PluginEvent(true) {
         embed.footer?.let { footer ->
             builder.setFooter(
                 substitutor?.parse(footer.text) ?: footer.text,
-                substitutor?.parse(footer.iconUrl) ?: footer.iconUrl
+                footer.iconUrl?.let { substitutor?.parse(it) } ?: footer.iconUrl
             )
         }
 
@@ -84,5 +213,9 @@ object MessageCreator : PluginEvent(true) {
 
         // Build the embed only if it's not empty
         return if (builder.isEmpty) null else builder.build()
+    }
+
+    private fun parseCommandName(event: SlashCommandInteractionEvent): String {
+        return "${event.name}${{ event.subcommandName?.let { ":$it" } ?: "" }}"
     }
 }

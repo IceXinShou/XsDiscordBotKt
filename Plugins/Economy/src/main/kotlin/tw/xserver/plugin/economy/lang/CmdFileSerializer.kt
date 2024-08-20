@@ -7,22 +7,22 @@ import kotlinx.serialization.Serializable
 internal data class CmdFileSerializer(
     val balance: Command1,
 
-    @SerialName("top_money")
+    @SerialName("top-money")
     val topMoney: SimpleCommand,
 
-    @SerialName("top_cost")
+    @SerialName("top-cost")
     val topCost: SimpleCommand,
 
-    @SerialName("add_money")
+    @SerialName("add-money")
     val addMoney: Command2,
 
-    @SerialName("remove_money")
+    @SerialName("remove-money")
     val removeMoney: Command2,
 
-    @SerialName("set_money")
+    @SerialName("set-money")
     val setMoney: Command2,
 
-    @SerialName("set_cost")
+    @SerialName("set-cost")
     val setCost: Command2
 ) {
     @Serializable

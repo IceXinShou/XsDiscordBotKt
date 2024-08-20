@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     kotlin("jvm") version "2.0.20-RC2"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC2"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.0"
     id("com.github.ben-manes.versions") version "0.51.0" // Check updates by running `./gradlew dependencyUpdates`
 }
 
@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     api("net.dv8tion:JDA:5.0.2") // JDA
-    api("ch.qos.logback:logback-classic:1.5.6") // Log
+    api("ch.qos.logback:logback-classic:1.5.7") // Log
     api("com.charleskorn.kaml:kaml:0.61.0") // Yaml
     api("com.google.code.gson:gson:2.11.0") // Json
     api("commons-io:commons-io:2.16.1") // Commons io
@@ -31,7 +31,7 @@ dependencies {
 
     implementation("org.jline:jline:3.26.3")
     implementation("com.github.ajalt.clikt:clikt:4.4.0")
-    implementation("commons-cli:commons-cli:1.8.0") // CLI arg
+    implementation("commons-cli:commons-cli:1.9.0") // CLI arg
     implementation("com.googlecode.clichemaven:cliche:110413") // CLI cmd
     implementation("org.fusesource.jansi:jansi:2.4.1") // AnsiConsole
     implementation("org.jsoup:jsoup:1.18.1") // Connection

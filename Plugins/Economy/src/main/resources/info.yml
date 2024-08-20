@@ -1,7 +1,8 @@
 author: IceXinShou
-main: tw.xserver.plugin.economy.Economy
+main: tw.xserver.plugin.economy.Event
 name: Economy
 version: '2.0'
 depend:
+  - SQLiteAPI
   - GoogleSheetAPI
   - MessageCreator

@@ -2,43 +2,42 @@ package tw.xserver.plugin.economy
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.interactions.DiscordLocale
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import tw.xserver.plugin.creator.message.CreatorImpl
-import tw.xserver.plugin.economy.Economy.DIR_PATH
-import tw.xserver.plugin.economy.googlesheet.SheetManager
-import tw.xserver.plugin.economy.json.JsonManager
-import tw.xserver.plugin.placeholder.PAPI
+import tw.xserver.plugin.creator.message.MessageCreator
+import tw.xserver.plugin.economy.Event.DIR_PATH
+import tw.xserver.plugin.economy.storage.JsonManager
+import tw.xserver.plugin.economy.storage.SheetManager
+import tw.xserver.plugin.placeholder.Placeholder
 
 internal object MessageReplier {
-    private val creator = CreatorImpl("$DIR_PATH./lang/")
+    private val creator = MessageCreator("$DIR_PATH./lang/")
 
-    fun reply(user: User, cmd: Economy.InteractType, locale: DiscordLocale): MessageEditData =
-        creator.getBuilder(locale, cmd.value, user.let { PAPI.get(it) }).build()
+    fun reply(event: SlashCommandInteractionEvent): MessageEditData =
+        creator.getBuilder(event, event.user.let { Placeholder.get(it) }).build()
 
     fun replyBoard(
         user: User,
-        cmd: Economy.InteractType,
+        event: SlashCommandInteractionEvent,
         type: Economy.Type,
         mode: Economy.Mode,
-        locale: DiscordLocale
     ): MessageEditData {
-        val substitutor = user.let { PAPI.get(it) }
-        val builder = creator.getBuilder(locale, cmd.value, substitutor)
+        val substitutor = user.let { Placeholder.get(it) }
+        val builder = creator.getBuilder(event, substitutor)
 
         builder.setEmbeds(
             if (mode == Economy.Mode.Json) {
                 JsonManager.getEmbedBuilder(
                     type,
                     EmbedBuilder(builder.embeds[0]),
-                    creator.getMessageData(locale, cmd.value).embeds[0].fields[0],
+                    creator.getMessageData(event).embeds[0].fields[0],
                     substitutor
                 )
             } else {
                 SheetManager.getEmbedBuilder(
                     type,
                     EmbedBuilder(builder.embeds[0]),
-                    creator.getMessageData(locale, cmd.value).embeds[0].fields[0],
+                    creator.getMessageData(event).embeds[0].fields[0],
                     substitutor
                 )
             }.build()

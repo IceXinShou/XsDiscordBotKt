@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import tw.xserver.loader.util.FileGetter
 
 abstract class PluginEvent(val listener: Boolean) : ListenerAdapter() {
-    open lateinit var getter: FileGetter
+    open lateinit var fileGetter: FileGetter
 
     abstract fun load()
     abstract fun unload()

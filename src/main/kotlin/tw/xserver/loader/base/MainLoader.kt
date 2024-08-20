@@ -20,11 +20,11 @@ import kotlin.system.exitProcess
  * Main loader for the bot application, handles bot initialization, and management of events and plugins.
  */
 object MainLoader {
-    private val logger: Logger = LoggerFactory.getLogger(MainLoader::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     val ROOT_PATH: String = System.getProperty("user.dir")
     val guildCommands: ArrayList<CommandData> = ArrayList()
     val globalCommands: ArrayList<CommandData> = ArrayList()
-    val listeners: Queue<PluginEvent> = ArrayDeque()
+    val listenersQueue: Queue<PluginEvent> = ArrayDeque()
     lateinit var jdaBot: JDA
     lateinit var bot: User
     var botId: Long by Delegates.notNull()
@@ -61,8 +61,8 @@ object MainLoader {
                 botId = bot.idLong
 
                 addEventListener(ListenerManager(guildCommands))
-                addEventListener(InteractionLogger())
-                listeners.forEach { addEventListener(it) }
+                addEventListener(InteractionLogger)
+                listenersQueue.forEach { plugin -> addEventListener(plugin) }
                 updateCommands().addCommands(globalCommands).queue()
             }
 

@@ -4,6 +4,9 @@ import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import tw.xserver.loader.base.MainLoader
 
 /**
@@ -35,8 +38,18 @@ object GlobalUtil {
      * Checks if the command name of the given SlashCommandInteractionEvent matches the provided name.
      *
      * @param event The SlashCommandInteractionEvent to check.
-     * @param name The name to compare with the event's command name.
+     * @param fullName The name to compare with the event's command name.
      * @return True if the names do not match, false otherwise.
      */
-    fun checkCommandName(event: SlashCommandInteractionEvent, name: String): Boolean = (event.name != name)
+    fun checkCommandName(event: SlashCommandInteractionEvent, fullName: String): Boolean =
+        event.fullCommandName != fullName
+
+    fun checkCommandPrefix(event: EntitySelectInteractionEvent, prefix: String): Boolean =
+        !event.componentId.startsWith(prefix)
+
+    fun checkCommandPrefix(event: StringSelectInteractionEvent, prefix: String): Boolean =
+        !event.componentId.startsWith(prefix)
+
+    fun checkCommandPrefix(event: ButtonInteractionEvent, prefix: String): Boolean =
+        !event.componentId.startsWith(prefix)
 }

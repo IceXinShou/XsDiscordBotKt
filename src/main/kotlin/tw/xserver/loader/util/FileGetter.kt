@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream
  */
 class FileGetter(folderPath: String, private val clazz: Class<*>) {
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(FileGetter::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
     val dir = File(folderPath)
@@ -40,7 +40,7 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
         val file = File(dir, fileName)
         try {
             checkFileAvailable(fileName)
-            logger.info("Loaded file: {}", file.absolutePath)
+            logger.info("Loaded file: {}", file.canonicalPath)
             return Files.newInputStream(file.toPath())
         } catch (e: IOException) {
             logger.error("Failed to read resource: {}", e.message)

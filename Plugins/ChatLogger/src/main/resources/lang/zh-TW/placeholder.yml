@@ -1,0 +1,3 @@
+empty: "無"
+allow_list_format: "%allowlist_channel_mention% (`%allowlist_channel_id%`)\n"
+block_list_format: "%blocklist_channel_mention% (`%blocklist_channel_id%`)\n"

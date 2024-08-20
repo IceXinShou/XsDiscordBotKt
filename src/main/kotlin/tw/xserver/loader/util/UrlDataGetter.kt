@@ -9,7 +9,7 @@ import java.io.IOException
 
 object UrlDataGetter {
     private val client = OkHttpClient()
-    private val logger = LoggerFactory.getLogger(UrlDataGetter::class.java)
+    private val logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Sends a POST request to the specified URL with a given payload.

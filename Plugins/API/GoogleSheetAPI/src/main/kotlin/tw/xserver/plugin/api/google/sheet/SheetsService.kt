@@ -11,7 +11,7 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
-import tw.xserver.plugin.api.google.sheet.setting.AuthConfigSerializer
+import tw.xserver.plugin.api.google.sheet.serializer.AuthConfigSerializer
 import java.io.File
 
 class SheetsService(private val config: AuthConfigSerializer, private val folderPath: String) {

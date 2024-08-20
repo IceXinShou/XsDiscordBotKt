@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.DiscordLocale
 import okhttp3.internal.toImmutableMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tw.xserver.loader.util.Arguments
 import tw.xserver.loader.util.FileGetter
 import java.io.File
 import java.io.FileNotFoundException
@@ -20,20 +21,20 @@ import kotlin.reflect.full.memberProperties
  * Manages language settings for Discord interaction localization.
  * @param D the type of localized data class that hold single localized language strings.
  * @param L the type of localized data class that holds all localized strings.
- * @param getter used to access language files.
+ * @param fileGetter used to access language files.
  * @param defaultLocale the default locale to be used when no locale-specific data is available.
  * @param clazzD the class type of the single localized data.
  * @param clazzL the class type of the all localized data.
  */
 @OptIn(InternalSerializationApi::class)
 class LangManager<D : Any, L : Any>(
-    private val getter: FileGetter,
+    private val fileGetter: FileGetter,
     private val defaultLocale: DiscordLocale,
     private val clazzD: KClass<D>,
     private val clazzL: KClass<L>
 ) {
     private val lang: L = clazzL.objectInstance!!
-    private val dir = File(getter.dir, "./lang")
+    private val dir = File(fileGetter.dir, "./lang")
 
     init {
         dir.mkdirs()
@@ -45,33 +46,31 @@ class LangManager<D : Any, L : Any>(
         })
 
         dir.listFiles()?.filter { it.isDirectory }?.forEach { directory ->
-            directory.listFiles()?.filter { it.extension == "yml" }?.forEach lang@{ file ->
-                val locale = DiscordLocale.from(directory.name.replace("\\.\\w+$".toRegex(), ""))
-                if (locale == DiscordLocale.UNKNOWN) {
-                    logger.warn("Cannot identify Discord locale from file: ${file.absolutePath}")
-                    return@lang
-                }
+            val registerFile = directory.resolve("register.yml")
+            val locale = DiscordLocale.from(directory.name.replace("\\.\\w+$".toRegex(), ""))
+            if (locale == DiscordLocale.UNKNOWN) {
+                logger.warn("Cannot identify Discord locale from file: ${registerFile.canonicalPath}")
+                return@forEach
+            }
 
-                if (locale == defaultLocale) hasDefaultLocale = true
+            if (locale == defaultLocale) hasDefaultLocale = true
 
-                try {
-                    val decodedData: D = yaml.decodeFromString(clazzD.serializer(), file.readText())
-                    val result = parseToMap(decodedData)
-                    result.forEach { (path, value) ->
-                        getFieldByPath(lang, path).apply {
-                            if (locale == defaultLocale) setDefaultLocale(locale)
-                            set(locale, value)
-                        }
+            try {
+                val decodedData: D = yaml.decodeFromString(clazzD.serializer(), registerFile.readText())
+                val result = parseToMap(decodedData)
+                result.forEach { (path, value) ->
+                    getFieldByPath(lang, path).apply {
+                        if (locale == defaultLocale) setDefaultLocale(locale)
+                        set(locale, value)
                     }
-
-                } catch (e: Exception) {
-                    logger.error("Error decoding data for locale $locale from file: ${file.name}", e)
                 }
-            }
 
-            if (!hasDefaultLocale) {
-                throw IllegalStateException("Default locale not found in the provided language files.")
+            } catch (e: Exception) {
+                logger.error("Error decoding data for locale $locale from file: ${registerFile.name}", e)
             }
+        }
+        if (!hasDefaultLocale) {
+            throw IllegalStateException("Default locale not found in the provided language files.")
         }
     }
 
@@ -81,7 +80,7 @@ class LangManager<D : Any, L : Any>(
      */
     @Throws(IOException::class)
     private fun exportDefaultLang() {
-        val langFilenames = getter.getResourceFilenameList("./lang/")
+        val langFilenames = fileGetter.getResourceFilenameList("./lang/")
         if (langFilenames.isEmpty()) {
             logger.error("No default language files found.")
             throw FileNotFoundException("Default language files not found.")
@@ -89,8 +88,8 @@ class LangManager<D : Any, L : Any>(
 
         langFilenames.forEach { langFilename ->
             val langFile = File(dir, "./$langFilename")
-            if (!langFile.exists()) {
-                getter.exportResource("./lang/$langFilename", langFile)
+            if (Arguments.forceExportResources || !langFile.exists()) {
+                fileGetter.exportResource("./lang/$langFilename", langFile)
             }
         }
     }
@@ -152,6 +151,6 @@ class LangManager<D : Any, L : Any>(
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(LangManager::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 }

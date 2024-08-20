@@ -6,7 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.loader.base.MainLoader.globalCommands
 import tw.xserver.loader.base.MainLoader.guildCommands
-import tw.xserver.loader.base.MainLoader.listeners
+import tw.xserver.loader.base.MainLoader.listenersQueue
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.plugin.yaml.InfoSerializer
 import java.io.File
@@ -16,20 +16,20 @@ import java.util.jar.JarFile
  * Manages the lifecycle of all plugins, loading and unloading them as required.
  */
 object PluginLoader {
-    private val logger: Logger = LoggerFactory.getLogger(PluginLoader::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private val dir: File = File("./plugins")
-    private val plugins: MutableMap<String, InfoSimple> = HashMap()
+    private val pluginInfos: MutableMap<String, InfoSimple> = HashMap()
     val pluginQueue = LinkedHashMap<String, PluginEvent>()
 
     /**
      * Loads all plugins from the plugins directory.
      */
     fun run() {
-        var count = 0
+        var success = 0
         var fail = 0
         logger.info("Start loading plugins...")
 
-        val loader = tw.xserver.loader.plugin.ClassLoader()
+        val loader = tw.xserver.loader.plugin.ClassLoader
         dir.mkdirs()
 
         dir.listFiles()?.filter { it.extension == "jar" }?.forEach { file ->
@@ -39,17 +39,16 @@ object PluginLoader {
                         val config = Yaml().decodeFromStream<InfoSerializer>(inputStream)
                         logger.debug("-------> {}", config.name)
 
-                        if (plugins.containsKey(config.name)) {
+                        if (pluginInfos.containsKey(config.name)) {
                             logger.error("Duplicate plugin name: ${file.name}")
                             fail++
                             return
                         }
                         loader.addJar(file, config.main)
-                        val curPlugin =
-                            loader.getClass(config.main)?.getDeclaredField("INSTANCE")?.get(null) as? PluginEvent
-                        curPlugin?.let {
-                            plugins[config.name] = InfoSimple(config.name, it, config.depend, config.soft_depend)
-                            count++
+
+                        loader.getClass(config.main)?.let {
+                            pluginInfos[config.name] = InfoSimple(config.name, it, config.depend, config.softDepend)
+                            success++
                         } ?: run { fail++ }
 
                         logger.info("==ADD==> {}", config.name)
@@ -61,8 +60,8 @@ object PluginLoader {
             }
         }
 
-        plugins.values.forEach { info ->
-            if (!pluginQueue.containsKey(info.name) && loadPlugin(info)) {
+        pluginInfos.values.forEach { info ->
+            if (!pluginQueue.containsKey(info.name) && addPluginToQueue(info)) {
                 logger.error("Stopped loading plugins due to missing dependencies.")
                 return
             }
@@ -72,11 +71,11 @@ object PluginLoader {
             plugin.guildCommands()?.let { guildCommands.addAll(it) }
             plugin.globalCommands()?.let { globalCommands.addAll(it) }
 
-            if (plugin.listener) listeners.add(plugin)
+            if (plugin.listener) listenersQueue.add(plugin)
         }
 
         if (fail > 0) logger.error("$fail plugin(s) failed to load.")
-        logger.info("{} plugin(s) loaded successfully.", count)
+        logger.info("{} plugin(s) loaded successfully.", success)
     }
 
     /**
@@ -92,38 +91,39 @@ object PluginLoader {
      * @param pluginInfo Information about the plugin to load.
      * @return True if there is a failure in dependency loading, false otherwise.
      */
-    private fun loadPlugin(pluginInfo: InfoSimple?): Boolean {
+    private fun addPluginToQueue(pluginInfo: InfoSimple?): Boolean {
         // Check if all mandatory dependencies are loaded successfully.
         pluginInfo?.depend?.forEach { depend ->
             // If the dependency is not already loaded, and it exists in the plugin list, try to load it.
-            if (!pluginQueue.containsKey(depend)) {
-                if (plugins.containsKey(depend)) {
-                    // If loading the dependency fails, log and return true to indicate a failure.
-                    if (loadPlugin(plugins[depend])) {
-                        logger.error("Failed to load dependency $depend for plugin ${pluginInfo.name}.")
-                        return true
-                    }
-                } else {
-                    // If the dependency does not exist, log an error and return true.
-                    logger.error("Plugin: ${pluginInfo.name} is missing dependency: $depend")
+            if (pluginQueue.containsKey(depend))
+                return@forEach
+
+            if (pluginInfos.containsKey(depend)) {
+                // If loading the dependency fails, log and return true to indicate a failure.
+                if (addPluginToQueue(pluginInfos[depend])) {
+                    logger.error("Failed to load dependency $depend for plugin ${pluginInfo.name}.")
                     return true
                 }
+            } else {
+                // If the dependency does not exist, log an error and return true.
+                logger.error("Plugin: ${pluginInfo.name} is missing dependency: $depend")
+                return true
             }
         }
 
         // Check soft dependencies but do not fail if they are missing.
         pluginInfo?.softDepend?.forEach { depend ->
-            if (!pluginQueue.containsKey(depend) && plugins.containsKey(depend)) {
-                loadPlugin(plugins[depend])
+            if (!pluginQueue.containsKey(depend) && pluginInfos.containsKey(depend)) {
+                addPluginToQueue(pluginInfos[depend])
             }
         }
 
-        // All dependencies are satisfied, load the plugin.
+        // All dependencies are satisfied, load the self plugin.
         pluginInfo?.let {
             if (!pluginQueue.containsKey(it.name)) {
-                pluginQueue[it.name] = it.pluginInstance
+                pluginQueue[it.name] = (it.pluginInstance.getDeclaredField("INSTANCE").get(null) as? PluginEvent)!!
                 logger.info("Initializing {}", it.name)
-                it.pluginInstance.load()
+                pluginQueue[it.name]!!.load()
                 logger.info("{} load successfully", it.name)
             }
         }
@@ -134,7 +134,7 @@ object PluginLoader {
 
 private class InfoSimple(
     val name: String,
-    val pluginInstance: PluginEvent,
+    val pluginInstance: Class<*>,
     val depend: List<String>,
     val softDepend: List<String>
 )

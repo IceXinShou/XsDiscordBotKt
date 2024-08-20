@@ -1,5 +1,5 @@
 author: IceXinShou
-main: tw.xserver.plugin.botinfo.BotInfo
+main: tw.xserver.plugin.botinfo.Event
 name: BotInfo
 version: '2.0'
 depend:

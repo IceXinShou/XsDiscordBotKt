@@ -1,0 +1,15 @@
+embeds:
+  - author:
+      name: "Pocket Set Balance"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title: 
+      text: "☛ %user_name%'s Pocket"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "Balance [=]"
+        value: "%economy_money_before% ➣ %economy_money% $"
+
+      - name: "Cost"
+        value: "%economy_cost% $"

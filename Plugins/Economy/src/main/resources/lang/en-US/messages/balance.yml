@@ -1,0 +1,15 @@
+embeds:
+  - author:
+      name: "Pocket Query"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title: 
+      text: "☛ %user_name%'s Pocket"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "Balance"
+        value: "%economy_money% $"
+
+      - name: "Cost"
+        value: "%economy_cost% $"

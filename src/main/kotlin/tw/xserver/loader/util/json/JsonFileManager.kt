@@ -43,6 +43,6 @@ abstract class JsonFileManager<T : JsonElement>(private val file: File, private 
     }
 
     companion object {
-        protected val logger: Logger = LoggerFactory.getLogger(JsonFileManager::class.java)
+        protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 }

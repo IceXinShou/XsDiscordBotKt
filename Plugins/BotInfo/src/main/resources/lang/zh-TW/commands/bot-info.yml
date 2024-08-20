@@ -1,0 +1,17 @@
+embeds:
+  - author:
+      name: "狀態查詢"
+      icon_url: "https://i.imgur.com/a7z4ch2.png"
+    title: 
+      text: "☛ 序之徒的資訊"
+    footer:
+      text: ❖ 機器人狀態 ❖
+
+    fields:
+      - name: 伺服器總數
+        value: "%guild_counts%"
+
+      - name: 成員總數
+        value: "%member_counts%"
+
+    color_code: 0x00FFFF

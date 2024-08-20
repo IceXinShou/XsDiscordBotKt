@@ -27,6 +27,6 @@ class ListenerManager(
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(ListenerManager::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 }

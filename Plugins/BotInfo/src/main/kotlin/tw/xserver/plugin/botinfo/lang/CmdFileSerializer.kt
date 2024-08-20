@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CmdFileSerializer(
-    @SerialName("bot_info")
+    @SerialName("bot-info")
     val botInfo: SimpleCommand
 ) {
     @Serializable

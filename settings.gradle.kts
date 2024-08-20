@@ -25,3 +25,12 @@ findProject(":Plugins:Placeholder")?.name = "Placeholder"
 
 include("Plugins:BotInfo")
 findProject(":Plugins:BotInfo")?.name = "BotInfo"
+
+include("Plugins:ChatLogger")
+findProject(":Plugins:ChatLogger")?.name = "ChatLogger"
+
+include("Plugins:ChatLogger")
+findProject(":Plugins:ChatLogger")?.name = "ChatLogger"
+
+include("Plugins:API:SQLiteAPI")
+findProject(":Plugins:API:SQLiteAPI")?.name = "SQLiteAPI"

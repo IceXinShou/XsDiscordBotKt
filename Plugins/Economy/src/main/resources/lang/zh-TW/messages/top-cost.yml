@@ -1,0 +1,12 @@
+embeds:
+  - author:
+      name: "口袋排行榜"
+      icon_url: "https://i.imgur.com/PsEXCuY.png"
+    title: 
+      text: "☛ 總消費"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "%name%"
+        value: "%economy_board% 元"

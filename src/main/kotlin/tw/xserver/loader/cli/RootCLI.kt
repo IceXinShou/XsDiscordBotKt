@@ -15,7 +15,7 @@ import kotlin.system.exitProcess
  * This class allows binding to guilds, channels, and executing actions like sending messages or controlling audio settings.
  */
 open class RootCLI {
-    private val logger: Logger = LoggerFactory.getLogger(RootCLI::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Binds the command shell to a specific guild for further guild-specific commands.
