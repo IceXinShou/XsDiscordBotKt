@@ -14,7 +14,7 @@ import com.google.api.services.sheets.v4.SheetsScopes
 import tw.xserver.plugin.api.google.sheet.serializer.AuthConfigSerializer
 import java.io.File
 
-class SheetsService(private val config: AuthConfigSerializer, private val folderPath: String) {
+class SheetsService(private val config: AuthConfigSerializer, private val pluginDirFile: File) {
     private val httpTransport by lazy { GoogleNetHttpTransport.newTrustedTransport() }
     private val jsonFactory: JsonFactory by lazy { GsonFactory.getDefaultInstance() }
     private val credential by lazy { credential(httpTransport) }
@@ -30,7 +30,7 @@ class SheetsService(private val config: AuthConfigSerializer, private val folder
         val flow = GoogleAuthorizationCodeFlow.Builder(
             httpTransport, jsonFactory, config.client_id, config.client_secret, scopes
         )
-            .setDataStoreFactory(FileDataStoreFactory(File(folderPath, "tokens")))
+            .setDataStoreFactory(FileDataStoreFactory(File(pluginDirFile, "tokens")))
             .setAccessType("offline")
             .build()
 
