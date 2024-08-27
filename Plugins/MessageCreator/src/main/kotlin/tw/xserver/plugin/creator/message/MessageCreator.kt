@@ -4,6 +4,8 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.channel.ChannelType
@@ -18,6 +20,8 @@ import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
 import net.dv8tion.jda.internal.interactions.component.ButtonImpl
 import org.apache.commons.lang3.StringUtils.isNumeric
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import tw.xserver.loader.util.serializer.ColorSerializer
 import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
 import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer.EmbedSetting
@@ -28,20 +32,41 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.util.*
 
-class MessageCreator(langPath: String, private val componentPrefix: String = "") {
+class MessageCreator(langDirFile: File, private val componentPrefix: String = "") {
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    }
+
     private val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
         EnumMap(DiscordLocale::class.java)
 
     init {
-        File(langPath).listFiles()?.filter { it.isDirectory }?.forEach { directory ->
+        val yaml = Yaml(
+            serializersModule = SerializersModule {
+                contextual(ColorSerializer)
+                include(SerializersModule {
+                    polymorphic(MessageDataSerializer.Component::class) {
+                        subclass(MessageDataSerializer.Component.ButtonsComponent::class)
+                        subclass(MessageDataSerializer.Component.StringSelectMenuSetting::class)
+                        subclass(MessageDataSerializer.Component.EntitySelectMenuSetting::class)
+                    }
+                })
+            }
+        )
+
+        langDirFile.listFiles()?.filter { it.isDirectory }?.forEach { directory ->
             val locale = DiscordLocale.from(directory.name)
 
-            File(directory, "./messages/").listFiles()?.filter { it.isFile && it.extension == "yml" }
+            File(directory, "./message/").listFiles()?.filter { it.isFile && it.extension == "yml" }
                 ?.forEach { file ->
                     localeMapper.getOrPut(locale) { mutableMapOf() }[file.nameWithoutExtension] =
-                        Yaml(
-                            serializersModule = SerializersModule { contextual(ColorSerializer) }
-                        ).decodeFromString<MessageDataSerializer>(file.readText())
+                        yaml.decodeFromString<MessageDataSerializer>(file.readText())
+                    logger.debug(
+                        "Added message {} | {}: {}",
+                        langDirFile.parentFile.nameWithoutExtension,
+                        directory.name,
+                        file.nameWithoutExtension
+                    )
                 }
         }
     }
@@ -88,7 +113,6 @@ class MessageCreator(langPath: String, private val componentPrefix: String = "")
                                 4 -> ButtonStyle.DANGER
                                 5 -> ButtonStyle.LINK
                                 else -> throw IllegalArgumentException("Unknown style code: ${button.style}")
-
                             },
                             button.disabled,
                             button.emoji?.let { Emoji.fromUnicode(button.emoji.name) }
@@ -146,10 +170,9 @@ class MessageCreator(langPath: String, private val componentPrefix: String = "")
         return getMessageData(parseCommandName(event), event.userLocale)
     }
 
-    fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer {
-        return localeMapper[locale]?.get(key.removePrefix(componentPrefix))
+    fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer =
+        localeMapper[locale]?.get(key.removePrefix(componentPrefix))
             ?: throw IllegalStateException("Message data not found for command: $key")
-    }
 
     fun buildEmbeds(embeds: List<EmbedSetting>, substitutor: Substitutor? = null): List<MessageEmbed> =
         embeds.mapNotNull { embed -> buildEmbed(embed, substitutor) }
@@ -216,6 +239,6 @@ class MessageCreator(langPath: String, private val componentPrefix: String = "")
     }
 
     private fun parseCommandName(event: SlashCommandInteractionEvent): String {
-        return "${event.name}${{ event.subcommandName?.let { ":$it" } ?: "" }}"
+        return "${event.name}${event.subcommandName?.let { ":$it" } ?: ""}"
     }
 }

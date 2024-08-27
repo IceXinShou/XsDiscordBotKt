@@ -13,51 +13,52 @@ data class MessageDataSerializer(
 ) {
     @Serializable
     data class EmbedSetting(
-        var author: AuthorSetting? = null,
-        var title: TitleSetting? = null,
-        var description: String? = null, // 4096 length limit
+        val author: AuthorSetting? = null,
+        val title: TitleSetting? = null,
+        val description: String? = null, // 4096 length limit
 
         @SerialName("thumbnail_url")
-        var thumbnailUrl: String? = null, // 2000 length limit
+        val thumbnailUrl: String? = null, // 2000 length limit
 
         @SerialName("image_url")
-        var imageUrl: String? = null, // 2000 length limit
+        val imageUrl: String? = null, // 2000 length limit
 
         @Contextual
         @SerialName("color_code")
-        var colorCode: Color = Color.WHITE, // default: "#FFFFFF", allowed format: [ "0xFFFFFF", "#FFFFFF", "FFFFFFh" ]
-        var footer: FooterSetting? = null,
+        val colorCode: Color = Color.WHITE, // default: "#FFFFFF", allowed format: [ "0xFFFFFF", "#FFFFFF", "FFFFFFh" ]
+
+        val footer: FooterSetting? = null,
         val timestamp: String? = null, // allowed format: [ "%now%", "1723675788491" ]
-        var fields: List<FieldSetting> = emptyList(), // 25 size limit
+        val fields: List<FieldSetting> = emptyList(), // 25 size limit
     ) {
         @Serializable
         data class AuthorSetting(
-            var name: String, // 256 length limit
-            var url: String? = null, // 2000 length limit
+            val name: String, // 256 length limit
+            val url: String? = null, // 2000 length limit
 
             @SerialName("icon_url")
-            var iconUrl: String? = null, // 2000 length limit
+            val iconUrl: String? = null, // 2000 length limit
         )
 
         @Serializable
         data class TitleSetting(
-            var text: String, // 256 length limit
-            var url: String? = null, // 2000 length limit
+            val text: String, // 256 length limit
+            val url: String? = null, // 2000 length limit
         )
 
         @Serializable
         data class FooterSetting(
-            var text: String, // 2048 length limit
+            val text: String, // 2048 length limit
 
             @SerialName("icon_url")
-            var iconUrl: String? = null, // 2000 length limit
+            val iconUrl: String? = null, // 2000 length limit
         )
 
         @Serializable
         data class FieldSetting(
-            var name: String, // 256 length limit
-            var value: String, // 1024 length limit
-            var inline: Boolean = false,
+            val name: String, // 256 length limit
+            val value: String, // 1024 length limit
+            val inline: Boolean = false,
         )
     }
 
@@ -65,7 +66,7 @@ data class MessageDataSerializer(
     @Serializable
     sealed class Component {
         @Serializable
-        @SerialName("buttons")
+        @SerialName("!ButtonsComponent")
         data class ButtonsComponent(
             val buttons: List<Button>
         ) : Component() {
@@ -87,7 +88,7 @@ data class MessageDataSerializer(
         }
 
         @Serializable
-        @SerialName("string_select_menu")
+        @SerialName("!StringSelectMenu")
         data class StringSelectMenuSetting(
             val uid: String,
             val placeholder: String? = null,
@@ -112,7 +113,7 @@ data class MessageDataSerializer(
         }
 
         @Serializable
-        @SerialName("entity_select_menu")
+        @SerialName("!EntitySelectMenu")
         data class EntitySelectMenuSetting(
             val uid: String,
             val placeholder: String? = null,
