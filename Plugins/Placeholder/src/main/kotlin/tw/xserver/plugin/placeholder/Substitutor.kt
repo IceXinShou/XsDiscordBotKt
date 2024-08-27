@@ -10,10 +10,6 @@ class Substitutor(
 ) {
     private var substitutor = createSubstitutor()
 
-    init {
-        substitutor.isEnableSubstitutionInVariables = true
-    }
-
     // Convenience constructor to initialize with pairs
     constructor(vararg pairs: Pair<String, String>) :
             this(pairs.toMap().toMutableMap())
@@ -21,7 +17,7 @@ class Substitutor(
     // Constructor to inherit and add from another Substitutor
     constructor(parent: Substitutor, vararg pairs: Pair<String, String>) :
             this(pairs.toMap().toMutableMap()) {
-        addAll(parent)
+        addAll(parent) // refresh
     }
 
     // Retrieve the value for a key or return the key itself if not found
@@ -29,7 +25,7 @@ class Substitutor(
 
     // Add all mappings from another Substitutor
     fun addAll(substitutor: Substitutor): Substitutor = apply {
-        putAll(substitutor.mapper)
+        putAll(substitutor.mapper) // refresh
     }
 
     // Add a single pair to the map
@@ -62,7 +58,8 @@ class Substitutor(
     }
 
     // Create a new StringSubstitutor with current settings
-    private fun createSubstitutor() = StringSubstitutor(mapper)
+    private fun createSubstitutor() =
+        StringSubstitutor(mapper, delimiterStart, delimiterEnd, escape)
 
     // Replace placeholders in the content string using the current substitutor
     fun parse(content: String): String = substitutor.replace(content)
