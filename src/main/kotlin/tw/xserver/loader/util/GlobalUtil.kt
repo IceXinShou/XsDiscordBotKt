@@ -44,12 +44,12 @@ object GlobalUtil {
     fun checkCommandName(event: SlashCommandInteractionEvent, fullName: String): Boolean =
         event.fullCommandName != fullName
 
-    fun checkCommandPrefix(event: EntitySelectInteractionEvent, prefix: String): Boolean =
+    fun checkPrefix(event: EntitySelectInteractionEvent, prefix: String): Boolean =
         !event.componentId.startsWith(prefix)
 
-    fun checkCommandPrefix(event: StringSelectInteractionEvent, prefix: String): Boolean =
+    fun checkPrefix(event: StringSelectInteractionEvent, prefix: String): Boolean =
         !event.componentId.startsWith(prefix)
 
-    fun checkCommandPrefix(event: ButtonInteractionEvent, prefix: String): Boolean =
+    fun checkPrefix(event: ButtonInteractionEvent, prefix: String): Boolean =
         !event.componentId.startsWith(prefix)
 }
