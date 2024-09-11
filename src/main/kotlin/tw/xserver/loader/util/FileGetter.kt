@@ -15,16 +15,14 @@ import java.util.zip.ZipInputStream
  * Provides functionalities to interact with files and resources, supporting operations
  * such as reading, exporting, and listing files and resources, especially within JAR files.
  */
-class FileGetter(folderPath: String, private val clazz: Class<*>) {
+class FileGetter(private val pluginDirFile: File, private val clazz: Class<*>) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    val dir = File(folderPath)
-
     init {
-        if (dir.mkdirs()) {
-            logger.debug("Folder created: $folderPath")
+        if (pluginDirFile.mkdirs()) {
+            logger.debug("Folder created: {}", pluginDirFile.canonicalPath)
         }
     }
 
@@ -37,11 +35,11 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      */
     @Throws(IOException::class)
     fun readInputStream(fileName: String): InputStream {
-        val file = File(dir, fileName)
+        val file = File(pluginDirFile, fileName)
         try {
-            checkFileAvailable(fileName)
+            initFile(resourceFilePath = fileName, exportFile = file)
             logger.info("Loaded file: {}", file.canonicalPath)
-            return Files.newInputStream(file.toPath())
+            return file.inputStream()
         } catch (e: IOException) {
             logger.error("Failed to read resource: {}", e.message)
             throw e
@@ -58,24 +56,14 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      */
     @Throws(IOException::class)
     fun exportResource(resourceFilePath: String, outputFile: File = File(resourceFilePath)): File {
-        getResource(resourceFilePath).use { fileInJar ->
-            outputFile.parentFile.mkdirs()
+        val inputStream: InputStream = clazz.getResourceAsStream(resourceFilePath.removePrefix("/"))
+            ?: throw FileNotFoundException("Resource not found: $resourceFilePath")
+
+        inputStream.use { fileInJar ->
+            outputFile.parentFile.mkdirs() // init directories
             Files.copy(fileInJar, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
             return outputFile
         }
-    }
-
-    /**
-     * Retrieves a resource as an InputStream.
-     *
-     * @param sourceFilePath The path to the resource.
-     * @return An InputStream of the resource.
-     * @throws FileNotFoundException if the resource cannot be found.
-     */
-    @Throws(FileNotFoundException::class)
-    private fun getResource(sourceFilePath: String): InputStream {
-        return clazz.getResourceAsStream(sourceFilePath)
-            ?: throw FileNotFoundException("Resource not found: $sourceFilePath")
     }
 
     /**
@@ -86,10 +74,10 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
      * @throws IOException if an error occurs during resource listing.
      */
     @Throws(IOException::class)
-    fun getResourceFilenameList(path: String): Array<String> {
+    fun getResourceList(path: String): Array<ZipEntry> {
         val adjustedPath = path.removePrefix(".").removePrefix("/")
         val jarUrl = clazz.protectionDomain.codeSource.location
-        val filenames = mutableListOf<String>()
+        val filenames = mutableListOf<ZipEntry>()
 
         jarUrl.openStream().use { inputStream ->
             ZipInputStream(inputStream).use { zip ->
@@ -97,7 +85,7 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
                 while (zip.nextEntry.also { entry = it } != null) {
                     val entryName = entry!!.name
                     if (entryName.startsWith(adjustedPath) && !entryName.endsWith("/")) {
-                        filenames.add(entryName.substring(adjustedPath.length))
+                        filenames.add(entry!!)
                     }
                 }
             }
@@ -106,19 +94,41 @@ class FileGetter(folderPath: String, private val clazz: Class<*>) {
         return filenames.toTypedArray()
     }
 
+
+    /**
+     * Exports default language files from the resources to the language folder.
+     * @throws IOException if default language files are not found or cannot be exported.
+     */
+    @Throws(IOException::class)
+    fun exportDefaultDirectory(path: String, forceReplace: Boolean = Arguments.forceReplaceLangResources) {
+        val filenames = getResourceList(path)
+        if (filenames.isEmpty()) throw FileNotFoundException("No default files found in $path.")
+
+        filenames.forEach { zipEntry ->
+            val outputFile = File(pluginDirFile, zipEntry.name)
+
+            if (forceReplace || !outputFile.exists())
+                exportResource(zipEntry.name, outputFile)
+        }
+    }
+
     /**
      * Checks if a file is available; if not, it tries to export it.
      *
      * @param resourceFilePath Export from where.
-     * @param file The file to check.
+     * @param exportFile The file to check.
      * @return A File object pointing to the existing or newly created file.
      * @throws IOException if the file cannot be created.
      */
     @Throws(IOException::class)
-    private fun checkFileAvailable(resourceFilePath: String, file: File = File(dir, resourceFilePath)) {
-        if (!file.exists()) {
-            logger.info("Creating default file: {}", file.path)
-            exportResource(resourceFilePath, file)
+    private fun initFile(
+        resourceFilePath: String,
+        exportFile: File,
+        forceReplace: Boolean = false
+    ) {
+        if (forceReplace || !exportFile.exists()) {
+            logger.info("Creating default file: {}", exportFile.path)
+            exportResource(resourceFilePath, exportFile)
         }
     }
 }

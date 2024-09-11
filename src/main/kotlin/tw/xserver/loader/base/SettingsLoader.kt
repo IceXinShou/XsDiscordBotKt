@@ -4,7 +4,7 @@ import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.decodeFromString
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.util.yaml.SettingSerializer
+import tw.xserver.loader.setting.SettingSerializer
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
