@@ -8,11 +8,7 @@ import net.dv8tion.jda.api.interactions.DiscordLocale
 import okhttp3.internal.toImmutableMap
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.util.Arguments
-import tw.xserver.loader.util.FileGetter
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
@@ -21,32 +17,28 @@ import kotlin.reflect.full.memberProperties
  * Manages language settings for Discord interaction localization.
  * @param D the type of localized data class that hold single localized language strings.
  * @param L the type of localized data class that holds all localized strings.
- * @param fileGetter used to access language files.
+ * @param pluginDirFile used to access language file name in `./lang/%ZONE%/` resources path.
  * @param defaultLocale the default locale to be used when no locale-specific data is available.
- * @param clazzD the class type of the single localized data.
- * @param clazzL the class type of the all localized data.
+ * @param clazzSerializer the class type of the single localized data.
+ * @param clazzLocalization the class type of the all localized data.
  */
 @OptIn(InternalSerializationApi::class)
 class LangManager<D : Any, L : Any>(
-    private val fileGetter: FileGetter,
+    private val pluginDirFile: File,
+    private val fileName: String,
     private val defaultLocale: DiscordLocale,
-    private val clazzD: KClass<D>,
-    private val clazzL: KClass<L>
+    private val clazzSerializer: KClass<D>,
+    private val clazzLocalization: KClass<L>
 ) {
-    private val lang: L = clazzL.objectInstance!!
-    private val dir = File(fileGetter.dir, "./lang")
+    private val lang: L = clazzLocalization.objectInstance ?: throw Exception("Localization must be object!")
+    private var hasDefaultLocale = false // will be changed later
+    private val yaml = Yaml(serializersModule = SerializersModule {
+        contextual(clazzSerializer, clazzSerializer.serializer())
+    })
 
     init {
-        dir.mkdirs()
-        exportDefaultLang()
-
-        var hasDefaultLocale = false
-        val yaml = Yaml(serializersModule = SerializersModule {
-            contextual(clazzD, clazzD.serializer())
-        })
-
-        dir.listFiles()?.filter { it.isDirectory }?.forEach { directory ->
-            val registerFile = directory.resolve("register.yml")
+        File(pluginDirFile, "lang").listFiles()?.filter { it.isDirectory }?.forEach { directory ->
+            val registerFile = File(directory, fileName)
             val locale = DiscordLocale.from(directory.name.replace("\\.\\w+$".toRegex(), ""))
             if (locale == DiscordLocale.UNKNOWN) {
                 logger.warn("Cannot identify Discord locale from file: ${registerFile.canonicalPath}")
@@ -56,7 +48,7 @@ class LangManager<D : Any, L : Any>(
             if (locale == defaultLocale) hasDefaultLocale = true
 
             try {
-                val decodedData: D = yaml.decodeFromString(clazzD.serializer(), registerFile.readText())
+                val decodedData: D = yaml.decodeFromString(clazzSerializer.serializer(), registerFile.readText())
                 val result = parseToMap(decodedData)
                 result.forEach { (path, value) ->
                     getFieldByPath(lang, path).apply {
@@ -69,29 +61,9 @@ class LangManager<D : Any, L : Any>(
                 logger.error("Error decoding data for locale $locale from file: ${registerFile.name}", e)
             }
         }
-        if (!hasDefaultLocale) {
+
+        if (!hasDefaultLocale)
             throw IllegalStateException("Default locale not found in the provided language files.")
-        }
-    }
-
-    /**
-     * Exports default language files from the resources to the language folder.
-     * @throws IOException if default language files are not found or cannot be exported.
-     */
-    @Throws(IOException::class)
-    private fun exportDefaultLang() {
-        val langFilenames = fileGetter.getResourceFilenameList("./lang/")
-        if (langFilenames.isEmpty()) {
-            logger.error("No default language files found.")
-            throw FileNotFoundException("Default language files not found.")
-        }
-
-        langFilenames.forEach { langFilename ->
-            val langFile = File(dir, "./$langFilename")
-            if (Arguments.forceExportResources || !langFile.exists()) {
-                fileGetter.exportResource("./lang/$langFilename", langFile)
-            }
-        }
     }
 
     private fun parseToMap(obj: Any): Map<String, String> {
