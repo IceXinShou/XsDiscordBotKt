@@ -32,7 +32,7 @@ object PluginLoader {
         val loader = tw.xserver.loader.plugin.ClassLoader
         dir.mkdirs()
 
-        dir.listFiles()?.filter { it.extension == "jar" }?.forEach { file ->
+        dir.listFiles()?.filter { it.isFile && it.extension == "jar" }?.forEach { file ->
             JarFile(file).use { jarFile ->
                 try {
                     jarFile.getInputStream(jarFile.getEntry("info.yml")).use { inputStream ->
