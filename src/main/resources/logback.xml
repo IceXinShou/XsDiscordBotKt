@@ -4,7 +4,7 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!--        <withJansi>true</withJansi>-->
         <encoder>
-            <pattern>[%d{HH:mm:ss.SSS}] %highlight(%-5level) | %boldGreen(%-50(%logger{35}.%M{10}:%line{4})) -> %msg%n
+            <pattern>[%d{HH:mm:ss.SSS}] %highlight(%5level) | %boldGreen(%-50(%logger{35}.%M{10}:%line{4})) -> %msg%n
             </pattern>
             <!--            <pattern>[%d{HH:mm:ss.SSS}] %highlight(%-6level) %boldCyan(%thread) | %boldGreen(%-20logger{20}) ->  %msg%n</pattern>-->
             <!--            <pattern>%d{MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
@@ -13,7 +13,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
-            <pattern>[%d{MM-dd HH:mm:ss.SSS}] %-6level | %-65(%logger{50}.%M{10}:%line{4}) -> %msg%n</pattern>
+            <pattern>[%d{MM-dd HH:mm:ss.SSS}] %5level | %-65(%logger{50}.%M{10}:%line{4}) -> %msg%n</pattern>
             <!--            <pattern>%d{MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
             <charset>utf-8</charset>
         </encoder>
