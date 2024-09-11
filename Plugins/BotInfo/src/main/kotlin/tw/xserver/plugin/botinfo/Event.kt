@@ -12,13 +12,11 @@ import tw.xserver.loader.util.GlobalUtil
 import tw.xserver.plugin.botinfo.command.getGuildCommands
 import tw.xserver.plugin.botinfo.lang.CmdFileSerializer
 import tw.xserver.plugin.botinfo.lang.Localizations
-import tw.xserver.plugin.creator.message.MessageCreator
-import tw.xserver.plugin.placeholder.Placeholder
+import java.io.File
 
 object Event : PluginEvent(true) {
-    private const val DIR_PATH = "./plugins/BotInfo/"
+    internal val PLUGIN_DIR_FILE = File("./plugins/BotInfo/")
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-    private val creator = MessageCreator("$DIR_PATH./lang/")
 
     override fun load() {
         reloadAll()
@@ -27,15 +25,18 @@ object Event : PluginEvent(true) {
     override fun unload() {}
 
     override fun reloadConfigFile() {
-        fileGetter = FileGetter(DIR_PATH, this.javaClass)
+        fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
     }
 
     override fun reloadLang() {
+        fileGetter.exportDefaultDirectory("./lang")
+
         LangManager(
-            fileGetter = fileGetter,
+            pluginDirFile = PLUGIN_DIR_FILE,
+            fileName = "register.yml",
             defaultLocale = DiscordLocale.ENGLISH_US,
-            clazzD = CmdFileSerializer::class,
-            clazzL = Localizations::class
+            clazzSerializer = CmdFileSerializer::class,
+            clazzLocalization = Localizations::class
         )
     }
 
@@ -43,15 +44,7 @@ object Event : PluginEvent(true) {
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (GlobalUtil.checkCommandName(event, "bot-info")) return
-        val memberCounts = event.jda.guilds.sumOf { guild ->
-            guild.memberCount
-        }
 
-        Placeholder.globalPlaceholder.put("member_counts", "$memberCounts")
-        Placeholder.globalPlaceholder.put("guild_counts", "${event.jda.guilds.size}")
-
-        event.hook.editOriginal(
-            creator.getBuilder(event).build()
-        ).queue()
+        BotInfo.reply(event)
     }
 }
