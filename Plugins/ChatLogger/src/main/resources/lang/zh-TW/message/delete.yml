@@ -7,4 +7,4 @@ embeds:
     description: "刪除完成"
     footer:
       text: "❖ ORDERLY SERVER ❖"
-    color_code: "0x00FFFF"
+    color_code: "#00FFFF"

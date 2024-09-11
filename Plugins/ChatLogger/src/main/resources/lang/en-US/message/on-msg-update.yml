@@ -1,0 +1,28 @@
+embeds:
+  - title:
+      text: "☛ Message Updated"
+      url: "%cl_msg_after_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#D0D000"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`Category`"
+        value: "%cl_category_mention%"
+
+      - name: "`Channel`"
+        value: "%cl_channel_mention%"
+
+      - name: "`Member`"
+        value: "%user_mention%"
+
+      - name: "`Change Count`"
+        value: "%cl_change_count%\n\n\n"
+
+      - name: "`--> Before <--`"
+        value: "%cl_msg_before%"
+
+      - name: "`==> After <==`"
+        value: "%cl_msg_after%\n\n\n"
+

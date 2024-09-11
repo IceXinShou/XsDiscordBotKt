@@ -1,0 +1,27 @@
+embeds:
+  - title:
+      text: "☛ 變更訊息"
+      url: "%cl_msg_after_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#D0D000"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`類別`"
+        value: "%cl_category_mention%"
+
+      - name: "`頻道`"
+        value: "%cl_channel_mention%"
+
+      - name: "`使用者`"
+        value: "%user_mention%"
+
+      - name: "`變更次數`"
+        value: "%cl_change_count%\n\n\n"
+
+      - name: "`--> 變更前 <--`"
+        value: "%cl_msg_before%"
+
+      - name: "`==> 變更後 <==`"
+        value: "%cl_msg_after%\n\n\n"

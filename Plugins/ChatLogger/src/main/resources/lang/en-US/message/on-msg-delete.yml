@@ -1,0 +1,23 @@
+embeds:
+  - title:
+      text: "☛ Message Deleted"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#C02020"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`Category`"
+        value: "%cl_category_mention%"
+
+      - name: "`Channel`"
+        value: "%cl_channel_mention%"
+
+      - name: "`Member`"
+        value: "%user_mention%"
+
+      - name: "`Change Count`"
+        value: "%cl_change_count%\n\n\n"
+
+      - name: "`--> Content <--`"
+        value: "%cl_msg%"

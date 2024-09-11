@@ -1,0 +1,23 @@
+embeds:
+  - title:
+      text: "☛ 刪除訊息"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#C02020"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`類別`"
+        value: "%cl_category_mention%"
+
+      - name: "`頻道`"
+        value: "%cl_channel_mention%"
+
+      - name: "`使用者`"
+        value: "%user_mention%"
+
+      - name: "`變更次數`"
+        value: "%cl_change_count%\n\n\n"
+
+      - name: "`--> 內容 <--`"
+        value: "%cl_msg%"

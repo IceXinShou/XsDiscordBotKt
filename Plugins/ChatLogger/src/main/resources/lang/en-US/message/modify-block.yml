@@ -1,0 +1,18 @@
+components:
+  - !EntitySelectMenu
+    uid: "modify_block"
+    placeholder: "choose channels, categories or search here"
+    min: 1
+    max: 25
+    select_target_type: "CHANNEL"
+    channel_types:
+      - "TEXT"
+      - "VOICE"
+      - "CATEGORY"
+      - "NEWS"
+      - "STAGE"
+      - "FORUM"
+      - "MEDIA"
+      - "GUILD_NEWS_THREAD"
+      - "GUILD_PUBLIC_THREAD"
+      - "GUILD_PRIVATE_THREAD"

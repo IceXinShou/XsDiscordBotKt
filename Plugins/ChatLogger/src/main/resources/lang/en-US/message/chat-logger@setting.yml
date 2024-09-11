@@ -9,16 +9,17 @@ embeds:
 
     fields:
       - name: "Channel Mode"
-        value: "<%channel_mode%>"
+        value: "<%cl_channel_mode%>"
 
       - name: "Allowlist Channels"
-        value: "%allow_list_format%"
+        value: "%cl_allow_list_format%"
 
       - name: "Blocklist Channels"
-        value: "%block_list_format%"
+        value: "%cl_block_list_format%"
 
 components:
-  - buttons:
+  - !ButtonsComponent
+    buttons:
       - uid_or_url: "toggle"
         style: 1
         label: "Toggle Mode"

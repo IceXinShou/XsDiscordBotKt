@@ -1,137 +1,301 @@
 package tw.xserver.plugin.logger.chat
 
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.IMentionable
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent
+import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.plugin.creator.message.MessageCreator
 import tw.xserver.plugin.logger.chat.Event.COMPONENT_PREFIX
-import tw.xserver.plugin.logger.chat.Event.DIR_PATH
+import tw.xserver.plugin.logger.chat.Event.PLUGIN_DIR_FILE
+import tw.xserver.plugin.logger.chat.JsonManager.dataMap
 import tw.xserver.plugin.logger.chat.lang.PlaceholderLocalizations
 import tw.xserver.plugin.placeholder.Placeholder
 import tw.xserver.plugin.placeholder.Substitutor
+import java.io.File
 import java.util.stream.Collectors
 
+
 object ChatLogger {
+    internal const val KEEP_ALL_LOG = true
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    private val messageCreator = MessageCreator(DIR_PATH)
+    private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), COMPONENT_PREFIX)
 
     fun setting(event: SlashCommandInteractionEvent) = event.hook.editOriginal(
         getSettingMenu(
-            JsonManager.getOrDefault(event.guild!!.idLong, event.channel.idLong),
+            dataMap.computeIfAbsent(event.channelIdLong) { ChannelData(event.guild!!.idLong) },
             event.userLocale,
-            Placeholder.get(event)
-        ).build()
+            Placeholder.getSubstitutor(event)
+        )
     ).queue()
 
-    fun toggle(event: ButtonInteractionEvent) = event.hook.editOriginal(
-        getSettingMenu(
-            JsonManager.getOrDefault(event.guild!!.idLong, event.channel.idLong).toggle(),
-            event.userLocale,
-            Placeholder.get(event)
-        ).build()
-    ).queue()
+    fun onToggle(event: ButtonInteractionEvent) {
+        // update
+        val channelData = JsonManager.toggle(event.guild!!.idLong, event.channel.idLong)
 
-    fun delete(event: ButtonInteractionEvent) {
+        // reply
+        event.hook.editOriginal(
+            getSettingMenu(
+                channelData,
+                event.userLocale,
+                Placeholder.getSubstitutor(event)
+            )
+        ).queue()
+        event.deferEdit().queue()
+    }
+
+    fun onDelete(event: ButtonInteractionEvent) {
+
+        // update
         JsonManager.delete(event.guild!!.idLong, event.channel.idLong)
 
+        // reply
         event.editMessage(
-            messageCreator.getBuilder(
+            creator.getEditBuilder(
                 "delete",
                 event.userLocale,
-                Placeholder.get(event)
+                Placeholder.getSubstitutor(event)
             ).build()
         ).queue()
     }
 
-    fun select(event: EntitySelectInteractionEvent) {
+    fun onSelect(event: EntitySelectInteractionEvent) {
+        // update
         val guild = event.guild!!
-        val channelMode: ChannelSetting.ChannelMode = when (event.componentId.removePrefix(COMPONENT_PREFIX)) {
-            "modify_allow" -> ChannelSetting.ChannelMode.Allow
-            "modify_block" -> ChannelSetting.ChannelMode.Block
-            else -> throw Exception("Unknown key ${event.componentId.removePrefix(COMPONENT_PREFIX)}")
-        }
         val channelIds = event.values
             .stream()
             .map { obj: IMentionable -> obj.idLong }
             .collect(Collectors.toList())
+        val channelData = when (event.componentId.removePrefix(COMPONENT_PREFIX)) {
+            "modify_allow" -> {
+                JsonManager.addAllowChannels(
+                    guildId = guild.idLong,
+                    listenChannelId = event.channelIdLong,
+                    detectedChannelIds = channelIds
+                )
+            }
 
-        val setting = JsonManager.addChannels(
-            guildId = guild.idLong,
-            rootId = event.channelIdLong,
-            channelIds = channelIds,
-            channelMode = channelMode
-        )
+            "modify_block" -> {
+                JsonManager.addBlockChannels(
+                    guildId = guild.idLong,
+                    listenChannelId = event.channelIdLong,
+                    detectedChannelIds = channelIds
+                )
+            }
 
+            else -> throw Exception("Unknown key ${event.componentId.removePrefix(COMPONENT_PREFIX)}")
+        }
+
+        // reply
         event.hook.editOriginal(
             getSettingMenu(
-                setting,
+                channelData,
                 event.userLocale,
-                Placeholder.get(event)
+                Placeholder.getSubstitutor(event)
+            )
+        ).queue()
+        event.deferEdit().queue()
+    }
+
+    fun createSel(event: ButtonInteractionEvent, componentId: String) {
+        event.editMessage(
+            creator.getEditBuilder(
+                componentId,
+                event.userLocale, Placeholder.getSubstitutor(event)
             ).build()
         ).queue()
     }
 
-    fun createSel(event: ButtonInteractionEvent) {
-        event.editMessage(
-            messageCreator.getBuilder(event.componentId, event.userLocale, Placeholder.get(event)).build()
-        ).queue()
+    fun receiveMessage(event: MessageReceivedEvent) {
+        if (!DbManager.isListenable(event.channel.idLong)) return
+
+        val messageContent = getMessageContent(event.message)
+        DbManager.receiveMessage(
+            event.guild.id,
+            event.channel.idLong,
+            event.messageIdLong,
+            event.author.idLong,
+            messageContent
+        )
     }
 
-    private fun getSettingMenu(
-        setting: ChannelSetting,
-        locale: DiscordLocale,
-        substitutor: Substitutor
-    ): MessageEditBuilder {
-        val allowListFormat = PlaceholderLocalizations.allowListFormat[locale]
-        val blockListFormat = PlaceholderLocalizations.blockListFormat[locale]
-        val allowBuilder = StringBuilder().apply {
-            if (setting.allow.isNotEmpty()) setting.allow.forEach { i ->
-                append(
-                    substitutor.parse(
-                        allowListFormat
-                            .replace("%allowlist_channel_mention%", "<#${i.detectId}>")
-                            .replace("%allowlist_channel_id%", i.detectId.toString())
-                    )
-                )
-            } else {
-                append(substitutor.parse(PlaceholderLocalizations.empty[locale]))
-            }
+    fun updateMessage(event: MessageUpdateEvent) {
+        val channelId = event.channel.idLong
+        if (!DbManager.isListenable(channelId)) return
+
+        val listenChannelIds: List<Long> = dataMap.entries
+            .filter { (_, value) -> channelId in value.getCurrentDetectChannels() }
+            .map { (key, _) -> key }
+        if (listenChannelIds.isEmpty()) return
+        try {
+            val newMessage = getMessageContent(event.message)
+            val (oldMessage, _, updateCount) = DbManager.updateMessage(
+                event.guild.id,
+                event.channel.idLong,
+                event.messageIdLong,
+                newMessage
+            )
+            val substitutor = Placeholder.getSubstitutor(event.member!!).putAll(
+                "cl_msg_after_url" to event.message.jumpUrl,
+                "cl_category_mention" to event.guildChannel.asTextChannel().parentCategory!!.asMention,
+                "cl_channel_mention" to event.channel.asMention,
+                "cl_change_count" to updateCount.toString(),
+                "cl_msg_before" to oldMessage,
+                "cl_msg_after" to newMessage
+            )
+
+            sendListenChannel("on-msg-update", event.guild, listenChannelIds, substitutor)
+        } catch (e: MessageNotFound) {
+            return
         }
+    }
 
-        val blockBuilder = StringBuilder().apply {
-            if (setting.block.isNotEmpty()) setting.block.forEach { i ->
-                append(
-                    substitutor.parse(
-                        blockListFormat
-                            .replace("%blocklist_channel_mention%", "<#${i.detectId}>")
-                            .replace("%blocklist_channel_id%", i.detectId.toString())
-                    )
-                )
-            } else {
-                append(substitutor.parse(PlaceholderLocalizations.empty[locale]))
-            }
-        }
+    fun deleteMessage(event: MessageDeleteEvent) {
+        val channelId = event.channel.idLong
+        if (!DbManager.isListenable(event.channel.idLong)) return
 
+        val listenChannelIds: List<Long> = dataMap.entries
+            .filter { (_, value) -> channelId in value.getCurrentDetectChannels() }
+            .map { (key, _) -> key }
+        if (listenChannelIds.isEmpty()) return
 
-        val messageData = messageCreator.getMessageData("chat-logger:setting", locale)
-        messageData.embeds.forEach { embed ->
-            embed.fields.forEach { field ->
-                when (field.value) {
-                    "%allow_list_format%" -> field.value = allowBuilder.toString()
-                    "%block_list_format%" -> field.value = blockBuilder.toString()
+        val member: Member
+        val substitutor: Substitutor
+        try {
+            val (oldMessage: String, userId: Long, updateCount: Int) = DbManager.deleteMessage(
+                event.guild.id,
+                event.channel.idLong,
+                event.messageIdLong,
+            )
+            member = event.guild.retrieveMemberById(userId).complete()
+            substitutor = Placeholder.getSubstitutor(member).putAll(
+                "cl_category_mention" to event.guildChannel.asTextChannel().parentCategory!!.asMention,
+                "cl_channel_mention" to event.channel.asMention,
+                "cl_change_count" to updateCount.toString(),
+                "cl_msg" to oldMessage,
+            )
+            sendListenChannel("on-msg-delete", event.guild, listenChannelIds, substitutor)
+        } catch (e: MessageNotFound) {
+            return
+        } catch (e: ErrorResponseException) {
+            when (e.errorCode) {
+                // Unknown Member
+                10007 -> {
+                    sendListenChannel("on-msg-delete", event.guild, listenChannelIds, Placeholder.globalPlaceholder)
+                    return
                 }
             }
         }
+    }
 
-        substitutor.apply {
-            put("cl_channel_mode" to setting.channelMode.name.lowercase())
+    internal fun onGuildLeave(event: GuildLeaveEvent) {
+        if (KEEP_ALL_LOG) return
+        DbManager.deleteDatabase(event.guild.id)
+    }
+
+    private fun sendListenChannel(key: String, guild: Guild, listenChannelId: List<Long>, substitutor: Substitutor) {
+        val message = MessageCreateData.fromEditData(
+            creator.getEditBuilder(key, guild.locale, substitutor).build()
+        )
+
+        listenChannelId.forEach {
+            val listenChannel = guild.getGuildChannelById(it)
+            if (listenChannel == null) {
+                DbManager.markChannelAsUnavailable(it)
+                return
+            }
+
+            when (listenChannel) {
+                is TextChannel -> listenChannel.sendMessage(message).queue()
+                is VoiceChannel -> listenChannel.sendMessage(message).queue()
+                else -> throw Exception("Unknown channel type")
+            }
+        }
+    }
+
+
+    private fun getMessageContent(message: Message): String {
+        if (message.embeds.isEmpty()) {
+            // It's a default message
+            return message.contentRaw
         }
 
-        return messageCreator.getBuilder(messageData, substitutor)
+        // It's an embed message
+        return StringBuilder().apply {
+            for (embed in message.embeds) {
+                append(embed.author?.let { "${it.name}\n" } ?: "")
+                append("${embed.title}\n\n")
+                append(embed.description)
+
+                for (field in embed.fields) {
+                    append("${field.name}\n")
+                    append("${field.value}\n\n")
+                }
+            }
+        }.toString()
+    }
+
+
+    private fun getSettingMenu(
+        channelData: ChannelData,
+        locale: DiscordLocale,
+        substitutor: Substitutor
+    ): MessageEditData {
+        val allowListFormat = PlaceholderLocalizations.allowListFormat[locale]
+        val blockListFormat = PlaceholderLocalizations.blockListFormat[locale]
+
+        val allowString = StringBuilder().apply {
+            if (!channelData.getAllowArray().isEmpty) channelData.getAllowArray().map { it.asString }
+                .forEach { detectedChannelId ->
+                    append(
+                        substitutor.parse(
+                            allowListFormat
+                                .replace("%allowlist_channel_mention%", "<#${detectedChannelId}>")
+                                .replace("%allowlist_channel_id%", detectedChannelId)
+                        )
+                    )
+                } else {
+                append(substitutor.parse(PlaceholderLocalizations.empty[locale]))
+            }
+        }.toString()
+
+        val blockString = StringBuilder().apply {
+            if (!channelData.getBlockArray().isEmpty) channelData.getBlockArray().map { it.asString }
+                .forEach { detectedChannelId ->
+                    append(
+                        substitutor.parse(
+                            blockListFormat
+                                .replace("%blocklist_channel_mention%", "<#${detectedChannelId}>")
+                                .replace("%blocklist_channel_id%", detectedChannelId)
+                        )
+                    )
+                } else {
+                append(substitutor.parse(PlaceholderLocalizations.empty[locale]))
+            }
+        }.toString()
+
+        substitutor.apply {
+            putAll(
+                "cl_channel_mode" to if (channelData.getChannelMode()) "ALLOW" else "BLOCK",
+                "cl_allow_list_format" to allowString,
+                "cl_block_list_format" to blockString
+            )
+        }
+
+        return creator.getEditBuilder("chat-logger@setting", locale, substitutor).build()
     }
 }
