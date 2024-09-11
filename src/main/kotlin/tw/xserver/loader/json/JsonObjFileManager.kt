@@ -1,4 +1,4 @@
-package tw.xserver.loader.util.json
+package tw.xserver.loader.json
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
@@ -38,6 +38,7 @@ class JsonObjFileManager(file: File) : JsonFileManager<JsonObject>(file, JsonObj
     fun asBigDecimal(): BigDecimal = data.asBigDecimal
     fun asJsonPrimitive(): JsonPrimitive = data.asJsonPrimitive
     fun asNumber(): Number = data.asNumber
+    fun keySet(): MutableSet<String> = data.keySet()
 
     fun add(key: String, value: Number?): JsonObjFileManager {
         data.addProperty(key, value)

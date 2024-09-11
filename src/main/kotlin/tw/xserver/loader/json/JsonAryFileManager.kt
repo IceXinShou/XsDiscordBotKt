@@ -1,4 +1,4 @@
-package tw.xserver.loader.util.json
+package tw.xserver.loader.json
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
