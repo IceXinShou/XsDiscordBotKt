@@ -45,3 +45,4 @@ bin/
 
 /log/
 /.idea/vcs.xml
+/.idea/sqldialects.xml
