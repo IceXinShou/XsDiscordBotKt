@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory
 
 
 object Arguments : CliktCommand() {
-    val forceExportResources: Boolean
+    val forceReplaceLangResources: Boolean
             by option(
                 "-F",
                 "--force-export-resources",
-                help = "Force all plugins export theirs resources such as lang files."
+                help = "Force all plugins export theirs language resources"
             ).flag(default = false)
 
     val ignoreVersionCheck: Boolean
@@ -23,6 +23,13 @@ object Arguments : CliktCommand() {
                 "-I",
                 "--ignore-update",
                 help = "Ignore the version check from GitHub"
+            ).flag(default = false)
+
+    val noBuild: Boolean
+            by option(
+                "-N",
+                "--no-build",
+                help = "Do not let bot online"
             ).flag(default = false)
 
     private val logLevel: String
