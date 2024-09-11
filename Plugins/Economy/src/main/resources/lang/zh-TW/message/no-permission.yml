@@ -1,9 +1,9 @@
 embeds:
   - author:
-      name: "Pocket Failed"
+      name: "口袋失敗"
       icon_url: "https://i.imgur.com/PsEXCuY.png"
     title: 
-      text: "You have no permission ><"
-    color_code: 0xFF0000
+      text: "你沒有權限 ><"
+    color_code: "#FF0000"
     footer:
       text: "❖ ORDERLY SERVER ❖"

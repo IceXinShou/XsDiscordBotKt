@@ -7,8 +7,8 @@ import tw.xserver.loader.util.GlobalUtil.getUserById
 import tw.xserver.plugin.api.google.sheet.SheetsService
 import tw.xserver.plugin.api.google.sheet.serializer.AuthConfigSerializer
 import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
-import tw.xserver.plugin.economy.Event.DIR_PATH
 import tw.xserver.plugin.economy.Economy.Type
+import tw.xserver.plugin.economy.Event.PLUGIN_DIR_FILE
 import tw.xserver.plugin.economy.Event.config
 import tw.xserver.plugin.economy.UserData
 import tw.xserver.plugin.placeholder.Substitutor
@@ -17,10 +17,12 @@ import kotlin.math.min
 /**
  * Manages interactions with a Google Sheets spreadsheet for economy-related data operations.
  */
-internal object SheetManager {
+internal object SheetImpl : StorageInterface {
     private val spreadsheet = SheetsService(
-        AuthConfigSerializer(config.client_id, config.client_secret, config.port), DIR_PATH
+        AuthConfigSerializer(config.client_id, config.client_secret, config.port), PLUGIN_DIR_FILE
     ).sheets.spreadsheets().values()
+
+    override fun init() {}
 
     /**
      * Queries the Google Sheet to retrieve or initialize economy data for a specific user.
@@ -28,7 +30,7 @@ internal object SheetManager {
      * @param user The Discord user to query.
      * @return UserData containing the user's economy data.
      */
-    fun query(user: User): UserData {
+    override fun query(user: User): UserData {
         val current = query()
         val index = current[0].indexOf(user.idLong)
 
@@ -47,7 +49,7 @@ internal object SheetManager {
      *
      * @param data The user data to be updated.
      */
-    fun update(data: UserData) {
+    override fun update(data: UserData) {
         update(data.id, data.money, data.cost)
     }
 
@@ -57,7 +59,7 @@ internal object SheetManager {
      * @param type The type of economic data to display.
      * @return EmbedBuilder configured to display the leaderboard.
      */
-    fun getEmbedBuilder(
+    override fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
         fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
@@ -88,6 +90,11 @@ internal object SheetManager {
             }
         }
     }
+
+    override fun sortMoneyBoard() {}
+
+    override fun sortCostBoard() {}
+    override fun nameUpdate(user: User) {}
 
     private fun update(userId: Long, money: Int, cost: Int) {
         val index = indexOfUserId(userId)
