@@ -9,15 +9,17 @@ import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tw.xserver.loader.json.JsonObjFileManager
 import tw.xserver.loader.localizations.LangManager
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter
-import tw.xserver.loader.util.json.JsonObjFileManager
 import tw.xserver.plugin.economy.command.getGuildCommands
 import tw.xserver.plugin.economy.lang.CmdFileSerializer
 import tw.xserver.plugin.economy.lang.Localizations
 import tw.xserver.plugin.economy.serializer.MainConfigSerializer
-import tw.xserver.plugin.economy.storage.JsonManager
+import tw.xserver.plugin.economy.storage.JsonImpl
+import tw.xserver.plugin.economy.storage.SheetImpl
+import tw.xserver.plugin.economy.storage.StorageInterface
 import java.io.File
 import java.io.IOException
 
@@ -25,10 +27,12 @@ import java.io.IOException
  * Main class for the Economy plugin managing configurations, commands, and data handling.
  */
 object Event : PluginEvent(true) {
-    internal const val DIR_PATH = "./plugins/Economy/"
+    internal val PLUGIN_DIR_FILE = File("./plugins/Economy/")
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-    internal val MODE = Economy.Mode.Json
+    private val MODE = Mode.Json
     internal lateinit var config: MainConfigSerializer
+    internal lateinit var storageManager: StorageInterface
+
 
     override fun load() {
         reloadAll()
@@ -37,32 +41,44 @@ object Event : PluginEvent(true) {
     override fun unload() {}
 
     override fun reloadConfigFile() {
-        fileGetter = FileGetter(DIR_PATH, this.javaClass)
+        fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
 
         try {
             fileGetter.readInputStream("./config.yml").use {
                 config = Yaml().decodeFromStream<MainConfigSerializer>(it)
             }
         } catch (e: IOException) {
-            logger.error("Please configure ${DIR_PATH}./config.yml", e)
+            logger.error("Please configure ${PLUGIN_DIR_FILE.canonicalPath}./config.yml", e)
         }
 
         logger.info("Setting file loaded successfully")
-        if (File(DIR_PATH, "data").mkdirs()) {
+        if (File(PLUGIN_DIR_FILE, "data").mkdirs()) {
             logger.info("Default data folder created")
         }
 
-        if (MODE == Economy.Mode.Json)
-            JsonManager.json = JsonObjFileManager(File(DIR_PATH, "data/data.json"))
+        when (MODE) {
+            Mode.Json -> {
+                JsonImpl.json = JsonObjFileManager(File(PLUGIN_DIR_FILE, "data/data.json"))
+                storageManager = JsonImpl
+            }
+
+            Mode.GoogleSheet -> {
+                storageManager = SheetImpl
+            }
+        }
+
         logger.info("Data file loaded successfully")
     }
 
     override fun reloadLang() {
+        fileGetter.exportDefaultDirectory("./lang")
+
         LangManager(
-            fileGetter = fileGetter,
+            pluginDirFile = PLUGIN_DIR_FILE,
+            fileName = "register.yml",
             defaultLocale = DiscordLocale.ENGLISH_US,
-            clazzD = CmdFileSerializer::class,
-            clazzL = Localizations::class
+            clazzSerializer = CmdFileSerializer::class,
+            clazzLocalization = Localizations::class
         )
     }
 
@@ -72,10 +88,9 @@ object Event : PluginEvent(true) {
      * Initializes data handling when the bot is ready.
      */
     override fun onReady(event: ReadyEvent) {
-        if (MODE == Economy.Mode.Json)
-            JsonManager.initFile()
-        Economy.updateMoneyBoard()
-        Economy.updateCostBoard()
+        storageManager.init()
+        storageManager.sortMoneyBoard()
+        storageManager.sortCostBoard()
     }
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
@@ -94,6 +109,10 @@ object Event : PluginEvent(true) {
      * Updates user's global name changes in the data storage.
      */
     override fun onUserUpdateGlobalName(event: UserUpdateGlobalNameEvent) =
-        JsonManager.nameUpdate(event.user)
+        storageManager.nameUpdate(event.user)
 
+    private enum class Mode {
+        Json,
+        GoogleSheet,
+    }
 }

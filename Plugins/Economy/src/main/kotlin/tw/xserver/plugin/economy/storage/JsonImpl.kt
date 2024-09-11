@@ -4,8 +4,8 @@ import com.google.gson.JsonObject
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import tw.xserver.loader.json.JsonObjFileManager
 import tw.xserver.loader.util.GlobalUtil.getUserById
-import tw.xserver.loader.util.json.JsonObjFileManager
 import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
 import tw.xserver.plugin.economy.Economy.Type
 import tw.xserver.plugin.economy.Event.config
@@ -16,7 +16,7 @@ import kotlin.math.min
 /**
  * Manages user data and rankings via a JSON file system.
  */
-internal object JsonManager {
+internal object JsonImpl : StorageInterface {
     internal lateinit var json: JsonObjFileManager
     private val userData: MutableMap<Long, UserData> = HashMap()
     private val moneyBoard: MutableList<UserData> = ArrayList()
@@ -25,7 +25,7 @@ internal object JsonManager {
     /**
      * Initializes the JSON file by loading existing users or creating new entries.
      */
-    fun initFile() {
+    override fun init() {
         json.get().keySet().forEach { key ->
             val id = key.toLong()
             val obj = json.computeIfAbsent(key, JsonObject()).getAsJsonObject()
@@ -53,7 +53,7 @@ internal object JsonManager {
      * @param user The user to query.
      * @return UserData for the requested user.
      */
-    fun query(user: User): UserData {
+    override fun query(user: User): UserData {
         initUserData(user)
         return userData[user.idLong]!!
     }
@@ -63,25 +63,25 @@ internal object JsonManager {
      *
      * @param user The user data to update.
      */
-    fun update(user: UserData) {
+    override fun update(user: UserData) {
         update(user.id, user.money, user.cost)
     }
 
     /**
      * Sorts the leaderboard based on money.
      */
-    fun sortMoneyBoard() {
+    override fun sortMoneyBoard() {
         moneyBoard.sortByDescending { it.money }
     }
 
     /**
      * Sorts the leaderboard based on cost.
      */
-    fun sortCostBoard() {
+    override fun sortCostBoard() {
         costBoard.sortByDescending { it.money }
     }
 
-    fun getEmbedBuilder(
+    override fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
         fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
@@ -113,6 +113,15 @@ internal object JsonManager {
     }
 
     /**
+     * Updates the name in the user data to reflect any changes.
+     *
+     * @param user The user whose name needs updating.
+     */
+    override fun nameUpdate(user: User) {
+        userData[user.idLong]?.name = user.name
+    }
+
+    /**
      * Initializes user data if it does not exist in the system.
      *
      * @param user The user for whom data needs to be initialized.
@@ -130,15 +139,6 @@ internal object JsonManager {
             obj.addProperty("cost", 0)
             json.save()
         }
-    }
-
-    /**
-     * Updates the name in the user data to reflect any changes.
-     *
-     * @param user The user whose name needs updating.
-     */
-    fun nameUpdate(user: User) {
-        userData[user.idLong]?.name = user.name
     }
 
     /**

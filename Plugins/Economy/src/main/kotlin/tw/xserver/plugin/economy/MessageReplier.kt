@@ -1,46 +1,34 @@
 package tw.xserver.plugin.economy
 
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import tw.xserver.plugin.creator.message.MessageCreator
-import tw.xserver.plugin.economy.Event.DIR_PATH
-import tw.xserver.plugin.economy.storage.JsonManager
-import tw.xserver.plugin.economy.storage.SheetManager
+import tw.xserver.plugin.economy.Event.PLUGIN_DIR_FILE
+import tw.xserver.plugin.economy.Event.storageManager
 import tw.xserver.plugin.placeholder.Placeholder
+import java.io.File
 
 internal object MessageReplier {
-    private val creator = MessageCreator("$DIR_PATH./lang/")
+    private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"))
 
     fun reply(event: SlashCommandInteractionEvent): MessageEditData =
-        creator.getBuilder(event, event.user.let { Placeholder.get(it) }).build()
+        creator.getEditBuilder(event, event.user.let { Placeholder.getSubstitutor(it) }).build()
 
     fun replyBoard(
-        user: User,
         event: SlashCommandInteractionEvent,
         type: Economy.Type,
-        mode: Economy.Mode,
     ): MessageEditData {
-        val substitutor = user.let { Placeholder.get(it) }
-        val builder = creator.getBuilder(event, substitutor)
+        val substitutor = event.user.let { Placeholder.getSubstitutor(it) }
+        val builder = creator.getEditBuilder(event, substitutor)
 
         builder.setEmbeds(
-            if (mode == Economy.Mode.Json) {
-                JsonManager.getEmbedBuilder(
-                    type,
-                    EmbedBuilder(builder.embeds[0]),
-                    creator.getMessageData(event).embeds[0].fields[0],
-                    substitutor
-                )
-            } else {
-                SheetManager.getEmbedBuilder(
-                    type,
-                    EmbedBuilder(builder.embeds[0]),
-                    creator.getMessageData(event).embeds[0].fields[0],
-                    substitutor
-                )
-            }.build()
+            storageManager.getEmbedBuilder(
+                type,
+                EmbedBuilder(builder.embeds[0]),
+                creator.getMessageData(event).embeds[0].fields[0],
+                substitutor
+            ).build()
         )
 
         return builder.build()

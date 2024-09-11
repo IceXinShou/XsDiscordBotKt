@@ -2,10 +2,8 @@ package tw.xserver.plugin.economy
 
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import tw.xserver.plugin.economy.Event.MODE
 import tw.xserver.plugin.economy.Event.config
-import tw.xserver.plugin.economy.storage.JsonManager
-import tw.xserver.plugin.economy.storage.SheetManager
+import tw.xserver.plugin.economy.Event.storageManager
 import tw.xserver.plugin.placeholder.Placeholder
 
 object Economy {
@@ -14,10 +12,8 @@ object Economy {
 
         event.hook.editOriginal(
             MessageReplier.replyBoard(
-                event.user,
                 event,
                 if (event.name == "top-money") Type.Money else Type.Cost,
-                MODE,
             )
         ).queue()
     }
@@ -42,7 +38,7 @@ object Economy {
                 val before = data.money
                 data.add(value)
                 saveAndUpdate(event, data, before, "economy_money_before")
-                updateMoneyBoard()
+                storageManager.sortMoneyBoard()
             }
 
             "remove-money" -> {
@@ -56,22 +52,22 @@ object Economy {
                     "economy_money_before",
                     "economy_cost_before" to "$beforeCost"
                 )
-                updateMoneyBoard()
-                updateCostBoard()
+                storageManager.sortMoneyBoard()
+                storageManager.sortCostBoard()
             }
 
             "set-money" -> {
                 val before = data.money
                 data.setMoney(value)
                 saveAndUpdate(event, data, before, "economy_money_before")
-                updateMoneyBoard()
+                storageManager.sortMoneyBoard()
             }
 
             "set-cost" -> {
                 val before = data.cost
                 data.cost = value
                 saveAndUpdate(event, data, before, "economy_cost_before")
-                updateCostBoard()
+                storageManager.sortCostBoard()
             }
         }
     }
@@ -96,15 +92,9 @@ object Economy {
         return true
     }
 
-    private fun queryData(user: User): UserData = when (MODE) {
-        Mode.Json -> JsonManager.query(user)
-        Mode.GoogleSheet -> SheetManager.query(user)
-    }
+    private fun queryData(user: User): UserData = storageManager.query(user)
 
-    private fun saveData(data: UserData) = when (MODE) {
-        Mode.Json -> JsonManager.update(data)
-        Mode.GoogleSheet -> SheetManager.update(data)
-    }
+    private fun saveData(data: UserData) = storageManager.update(data)
 
     private fun updatePapi(user: User, data: UserData, map: Map<String, String> = emptyMap()) {
         Placeholder.update(
@@ -113,14 +103,6 @@ object Economy {
                 "economy_cost" to "${data.cost}"
             ).apply { putAll(map) }
         )
-    }
-
-    internal fun updateMoneyBoard() {
-        if (MODE == Mode.Json) JsonManager.sortMoneyBoard()
-    }
-
-    internal fun updateCostBoard() {
-        if (MODE == Mode.Json) JsonManager.sortCostBoard()
     }
 
     private fun getTargetUser(event: SlashCommandInteractionEvent): User {
@@ -141,10 +123,6 @@ object Economy {
         return false
     }
 
-    internal enum class Mode {
-        Json,
-        GoogleSheet,
-    }
 
     internal enum class Type {
         Money,
