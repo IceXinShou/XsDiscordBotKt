@@ -31,7 +31,7 @@ object ClassLoader : URLClassLoader(arrayOfNulls(0), MainLoader::class.java.clas
         val mainPath = main.substring(0, main.lastIndexOf('.')).replace('.', '/')
         try {
             val url = file.toURI().toURL()
-            if (resourcePath.containsKey(mainPath)) {
+            if (mainPath in resourcePath) {
                 throw RuntimeException("Duplicate resource path: $mainPath")
             }
             resourcePath[mainPath] = url
