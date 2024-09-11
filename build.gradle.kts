@@ -2,10 +2,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.0.20-RC2"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20-RC2"
+    kotlin("jvm") version "2.0.20"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
     id("com.gradleup.shadow") version "8.3.0"
-    id("com.github.ben-manes.versions") version "0.51.0" // Check updates by running `./gradlew dependencyUpdates`
 }
 
 group = "tw.xserver.loader"
@@ -22,7 +21,9 @@ repositories {
 }
 
 dependencies {
-    api("net.dv8tion:JDA:5.0.2") // JDA
+    compileOnly("org.jetbrains:annotations:24.1.0")
+
+    api("net.dv8tion:JDA:5.1.0") // JDA
     api("ch.qos.logback:logback-classic:1.5.7") // Log
     api("com.charleskorn.kaml:kaml:0.61.0") // Yaml
     api("com.google.code.gson:gson:2.11.0") // Json
