@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -47,5 +49,13 @@ object InteractionLogger : ListenerAdapter() {
      */
     override fun onModalInteraction(event: ModalInteractionEvent) {
         logger.info("[MODAL] {}: {}", event.user.name, event.modalId)
+    }
+
+    override fun onEntitySelectInteraction(event: EntitySelectInteractionEvent) {
+        logger.info("[ENTITY] {}: {}", event.user.name, event.componentId)
+    }
+
+    override fun onStringSelectInteraction(event: StringSelectInteractionEvent) {
+        logger.info("[STRING] {}: {}", event.user.name, event.componentId)
     }
 }
