@@ -22,9 +22,9 @@ import net.dv8tion.jda.internal.interactions.component.ButtonImpl
 import org.apache.commons.lang3.StringUtils.isNumeric
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.util.serializer.ColorSerializer
 import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
 import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer.EmbedSetting
+import tw.xserver.plugin.creator.message.serializer.list.ColorSerializer
 import tw.xserver.plugin.placeholder.Placeholder
 import tw.xserver.plugin.placeholder.Substitutor
 import java.io.File
@@ -72,22 +72,22 @@ class MessageCreator(langDirFile: File, private val componentPrefix: String = ""
     }
 
 
-    fun getBuilder(
+    fun getEditBuilder(
         event: SlashCommandInteractionEvent,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
     ): MessageEditBuilder {
-        return getBuilder(getMessageData(event), substitutor)
+        return getEditBuilder(getMessageData(event), substitutor)
     }
 
-    fun getBuilder(
+    fun getEditBuilder(
         key: String,
         locale: DiscordLocale,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
     ): MessageEditBuilder {
-        return getBuilder(getMessageData(key, locale), substitutor)
+        return getEditBuilder(getMessageData(key, locale), substitutor)
     }
 
-    fun getBuilder(
+    fun getEditBuilder(
         messageData: MessageDataSerializer,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
     ): MessageEditBuilder {
@@ -205,9 +205,7 @@ class MessageCreator(langDirFile: File, private val componentPrefix: String = ""
         }
 
         // Apply color and timestamp directly since they don't involve parsing
-        embed.colorCode.let {
-            builder.setColor(it)
-        }
+        embed.colorCode.let { builder.setColor(it) }
 
         embed.timestamp?.let {
             when {
@@ -239,6 +237,6 @@ class MessageCreator(langDirFile: File, private val componentPrefix: String = ""
     }
 
     private fun parseCommandName(event: SlashCommandInteractionEvent): String {
-        return "${event.name}${event.subcommandName?.let { ":$it" } ?: ""}"
+        return "${event.name}${event.subcommandName?.let { "@$it" } ?: ""}"
     }
 }
