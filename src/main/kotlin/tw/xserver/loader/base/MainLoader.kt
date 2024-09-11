@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import tw.xserver.loader.builtin.StatusChanger
 import tw.xserver.loader.logger.InteractionLogger
 import tw.xserver.loader.plugin.PluginEvent
+import tw.xserver.loader.util.Arguments
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
@@ -40,6 +41,11 @@ object MainLoader {
 
         SettingsLoader.run()
         PluginLoader.run()
+
+        if (Arguments.noBuild) {
+            logger.warn("Skip building bot!")
+            return
+        }
 
         jdaBot = JDABuilder.createDefault(SettingsLoader.token)
             .setBulkDeleteSplittingEnabled(false)
