@@ -2,10 +2,10 @@ embeds:
   - author:
       name: "Info Query"
       icon_url: "https://i.imgur.com/a7z4ch2.png"
-    title: 
+    title:
       text: "☛ ORDERLY BOT's INFORMATION"
     footer:
-      text: "❖ Bot's Info ❖"
+      text: "❖ ORDERLY SERVER ❖"
 
     fields:
       - name: Server Counts
@@ -14,4 +14,4 @@ embeds:
       - name: Member Counts
         value: "%member_counts%"
 
-    color_code: 0x00FFFF
+    color_code: "#00FFFF"

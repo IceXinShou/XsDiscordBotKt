@@ -2,10 +2,10 @@ embeds:
   - author:
       name: "狀態查詢"
       icon_url: "https://i.imgur.com/a7z4ch2.png"
-    title: 
+    title:
       text: "☛ 序之徒的資訊"
     footer:
-      text: ❖ 機器人狀態 ❖
+      text: "❖ ORDERLY SERVER ❖"
 
     fields:
       - name: 伺服器總數
@@ -14,4 +14,4 @@ embeds:
       - name: 成員總數
         value: "%member_counts%"
 
-    color_code: 0x00FFFF
+    color_code: "#00FFFF"
