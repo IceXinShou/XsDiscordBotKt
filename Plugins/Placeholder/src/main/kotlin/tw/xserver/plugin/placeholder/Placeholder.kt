@@ -31,6 +31,7 @@ object Placeholder {
             Substitutor(globalPlaceholder, "user_id" to user.id)
         }.apply { // force update some changeable data
             putAll(
+                "user_mention" to user.asMention,
                 "user_name" to user.name,
                 "user_avatar_url" to user.effectiveAvatarUrl,
             )
@@ -42,10 +43,13 @@ object Placeholder {
             member.idLong,
         ) { Substitutor(globalPlaceholder, "user_id" to member.id) }.apply { // force update some changeable data
             putAll(
+                "user_mention" to member.asMention,
                 "user_name" to member.user.name,
                 "user_avatar_url" to member.user.effectiveAvatarUrl,
-                "member_nickname" to member.effectiveName,
+                "member_display_name" to member.effectiveName,
                 "member_avatar_url" to member.effectiveAvatarUrl,
+                "member_fixed_name" to  // "nickname (username)" or "username"
+                        (member.nickname?.let { "${member.nickname} (${member.user.name})" } ?: member.user.name)
             )
         }
     }
@@ -58,12 +62,16 @@ object Placeholder {
                 "language" to event.userLocale.nativeName,
                 "command_string" to event.commandString,
             )
-            event.channel.let {
-                putAll(
-                    "channel_id" to it.id,
-                    "channel_name" to it.name,
-                )
+            if (event.isFromGuild) {
+                event.guildChannel.let {
+                    putAll(
+                        "channel_id" to it.id,
+                        "channel_name" to it.name,
+                        "channel_category_name" to it.asTextChannel().parentCategory!!.name,
+                    )
+                }
             }
+
             event.subcommandName?.let { put("subcommand_name", it) }
         }
     }
