@@ -30,6 +30,7 @@ dependencies {
     api("commons-io:commons-io:2.16.1") // Commons io
     api("org.apache.commons:commons-text:1.12.0") // StringSubstitutor
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jline:jline:3.26.3")
     implementation("com.github.ajalt.clikt:clikt:4.4.0")
     implementation("commons-cli:commons-cli:1.9.0") // CLI arg
