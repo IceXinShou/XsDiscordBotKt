@@ -1,0 +1,3 @@
+listeners:
+  - url: "https://status.xinshou.tw/api/push/xxxxxxxxxx?status=up&msg=OK"
+    interval: 60
