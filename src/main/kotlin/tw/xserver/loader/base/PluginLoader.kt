@@ -121,8 +121,13 @@ object PluginLoader {
         // All dependencies are satisfied, load the self plugin.
         pluginInfo?.let {
             if (!pluginQueue.containsKey(it.name)) {
-                pluginQueue[it.name] = (it.pluginInstance.getDeclaredField("INSTANCE").get(null) as? PluginEvent)!!
                 logger.info("Initializing {}", it.name)
+                val event: PluginEvent? = it.pluginInstance.getDeclaredField("INSTANCE").get(null) as? PluginEvent
+                if (event == null) {
+                    logger.error("Cannot get object instance of plugin: {}", it.name)
+                    return@let
+                }
+                pluginQueue[it.name] = (it.pluginInstance.getDeclaredField("INSTANCE").get(null) as? PluginEvent)!!
                 pluginQueue[it.name]!!.load()
                 logger.info("{} load successfully", it.name)
             }
