@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/Plugins/BotInfo" />
             <option value="$PROJECT_DIR$/Plugins/ChatLogger" />
             <option value="$PROJECT_DIR$/Plugins/Economy" />
+            <option value="$PROJECT_DIR$/Plugins/IntervalPusher" />
             <option value="$PROJECT_DIR$/Plugins/MessageCreator" />
             <option value="$PROJECT_DIR$/Plugins/Placeholder" />
           </set>

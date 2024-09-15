@@ -34,3 +34,6 @@ findProject(":Plugins:ChatLogger")?.name = "ChatLogger"
 
 include("Plugins:API:SQLiteAPI")
 findProject(":Plugins:API:SQLiteAPI")?.name = "SQLiteAPI"
+
+include("Plugins:IntervalPusher")
+findProject(":Plugins:IntervalPusher")?.name = "IntervalPusher"
