@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tw.xserver.loader.base.MainLoader.jdaBot
 import java.io.IOException
 
 class IntervalPusher(
@@ -20,7 +21,7 @@ class IntervalPusher(
             while (isActive) {
                 try {
                     val request = Request.Builder()
-                        .url(url)
+                        .url(buildUrl(url))
                         .build()
 
                     client.newCall(request).execute().use { response ->
@@ -47,5 +48,8 @@ class IntervalPusher(
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+
+        private fun buildUrl(url: String): String =
+            url.replace("%ping%", jdaBot.gatewayPing.toString())
     }
 }
