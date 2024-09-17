@@ -2,7 +2,7 @@ embeds:
   - author:
       name: "Pocket Failed"
       icon_url: "https://i.imgur.com/PsEXCuY.png"
-    title: 
+    title:
       text: "You have no permission ><"
     color_code: "#FF0000"
     footer:

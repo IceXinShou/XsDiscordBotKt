@@ -2,7 +2,7 @@ embeds:
   - author:
       name: "口袋失敗"
       icon_url: "https://i.imgur.com/PsEXCuY.png"
-    title: 
+    title:
       text: "你沒有權限 ><"
     color_code: "#FF0000"
     footer:

@@ -2,7 +2,7 @@ embeds:
   - author:
       name: "Pocket Reduce Balance"
       icon_url: "https://i.imgur.com/PsEXCuY.png"
-    title: 
+    title:
       text: "☛ %user_name%'s Pocket"
     footer:
       text: "❖ ORDERLY SERVER ❖"

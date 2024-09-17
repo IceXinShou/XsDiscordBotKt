@@ -2,7 +2,7 @@ embeds:
   - author:
       name: "口袋扣款"
       icon_url: "https://i.imgur.com/PsEXCuY.png"
-    title: 
+    title:
       text: "☛ %user_name% 的口袋"
     footer:
       text: "❖ ORDERLY SERVER ❖"

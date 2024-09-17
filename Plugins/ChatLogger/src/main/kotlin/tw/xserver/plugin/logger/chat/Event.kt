@@ -18,7 +18,6 @@ import tw.xserver.loader.localizations.LangManager
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter
 import tw.xserver.loader.util.GlobalUtil
-import tw.xserver.plugin.api.sqlite.SQLiteFileManager
 import tw.xserver.plugin.logger.chat.JsonManager.dataMap
 import tw.xserver.plugin.logger.chat.command.getGuildCommands
 import tw.xserver.plugin.logger.chat.lang.CmdFileSerializer
