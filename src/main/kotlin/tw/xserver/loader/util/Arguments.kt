@@ -1,13 +1,11 @@
 package tw.xserver.loader.util
 
 import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
-import ch.qos.logback.classic.LoggerContext
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import org.slf4j.LoggerFactory
+import tw.xserver.loader.logger.LogBackManager
 
 
 object Arguments : CliktCommand() {
@@ -40,7 +38,6 @@ object Arguments : CliktCommand() {
             ).default("INFO")
 
     override fun run() {
-        (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger(Logger.ROOT_LOGGER_NAME).level =
-            Level.toLevel(logLevel)
+        LogBackManager.setLevel(Level.toLevel(logLevel))
     }
 }

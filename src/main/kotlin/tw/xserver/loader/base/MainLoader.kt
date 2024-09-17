@@ -33,7 +33,7 @@ object MainLoader {
     /**
      * Starts the bot by loading settings, initializing plugins, and setting up JDA.
      */
-    fun start() {
+    fun main() {
         if (UpdateChecker.versionCheck()) {
             logger.error("Version check failed, exiting.")
             exitProcess(2)
