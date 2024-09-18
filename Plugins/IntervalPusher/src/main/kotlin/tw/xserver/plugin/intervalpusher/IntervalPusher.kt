@@ -9,12 +9,13 @@ import tw.xserver.loader.base.MainLoader.jdaBot
 import java.io.IOException
 
 class IntervalPusher(
-    private val url: String,
+    private val originUrl: String,
     private val intervalSeconds: Int,
     private val scope: CoroutineScope
 ) {
     private val client = OkHttpClient()
     private var job: Job? = null
+    private val url = buildUrl(originUrl)
 
     fun start() {
         job = scope.launch(Dispatchers.IO) {
@@ -26,13 +27,16 @@ class IntervalPusher(
 
                     client.newCall(request).execute().use { response ->
                         if (!response.isSuccessful) {
-                            logger.error("Query URL $url failed, code: ${response.code}")
+                            when (response.code) {
+                                521 -> logger.error("Status Monitor is OFFLINE!")
+                                else -> logger.error("Query URL $url failed, code: ${response.code}")
+                            }
                         }
                     }
                 } catch (e: IOException) {
-                    logger.error("Query URL $url internet error: ${e.message}")
+                    logger.error("Query URL $originUrl internet error: ${e.message}")
                 } catch (e: Exception) {
-                    logger.error("Query URL $url failed: ${e.message}")
+                    logger.error("Query URL $originUrl failed: ${e.message}")
                 }
                 delay(intervalSeconds * 1000L)
             }
