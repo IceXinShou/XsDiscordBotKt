@@ -26,7 +26,7 @@ object Arguments : CliktCommand() {
     val noBuild: Boolean
             by option(
                 "-N",
-                "--no-build",
+                "--no-online",
                 help = "Do not let bot online"
             ).flag(default = false)
 
