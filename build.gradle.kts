@@ -30,11 +30,9 @@ dependencies {
     api("commons-io:commons-io:2.16.1") // Commons io
     api("org.apache.commons:commons-text:1.12.0") // StringSubstitutor
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("org.jline:jline:3.26.3")
-    implementation("com.github.ajalt.clikt:clikt:4.4.0")
-    implementation("commons-cli:commons-cli:1.9.0") // CLI arg
-    implementation("com.googlecode.clichemaven:cliche:110413") // CLI cmd
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1") // coroutine
+    implementation("org.jline:jline:3.26.3") // CLI
+    implementation("com.github.ajalt.clikt:clikt:4.4.0") // Run Arg
     implementation("org.fusesource.jansi:jansi:2.4.1") // AnsiConsole
     implementation("org.jsoup:jsoup:1.18.1") // Connection
     implementation(kotlin("reflect"))

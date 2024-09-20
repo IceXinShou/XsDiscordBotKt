@@ -5,23 +5,10 @@
             converterClass="tw.xserver.loader.logger.HighlightingCompositeConverter"
     />
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <!--        <withJansi>true</withJansi>-->
-        <encoder>
-            <pattern>
-                [%d{HH:mm:ss.SSS}] %highlight2(%5level) | %boldGreen(%-50.50(%logger{35}.%M{10}:%line)) -> %msg%n
-            </pattern>
-            <!--            <pattern>[%d{HH:mm:ss.SSS}] %highlight(%-6level) %boldCyan(%thread) | %boldGreen(%-20logger{20}) ->  %msg%n</pattern>-->
-            <!--            <pattern>%d{MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
-
-
-        </encoder>
-    </appender>
-
+    <appender name="CONSOLE" class="tw.xserver.loader.logger.JLineAppender"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
             <pattern>[%d{MM-dd HH:mm:ss.SSS}] %5level | %-65(%logger{50}.%M{10}:%line{4}) -> %msg%n</pattern>
-            <!--            <pattern>%d{MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
             <charset>utf-8</charset>
         </encoder>
         <file>log/output.log</file>
@@ -33,7 +20,7 @@
         </triggeringPolicy>
     </appender>
 
-    <root level="INFO"> <!--  FATAL > ERROR > WARN > INFO > DEBUG > TRACE  -->
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>

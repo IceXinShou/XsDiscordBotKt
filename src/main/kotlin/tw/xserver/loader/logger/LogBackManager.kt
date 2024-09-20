@@ -7,6 +7,9 @@ import org.fusesource.jansi.AnsiConsole
 import org.slf4j.LoggerFactory
 
 object LogBackManager {
+    private val rootLogger =
+        (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger(Logger.ROOT_LOGGER_NAME)
+
     fun configureSystem() {
         System.setProperty("jansi.passthrough", "true")
         AnsiConsole.systemInstall()
@@ -17,6 +20,6 @@ object LogBackManager {
     }
 
     fun setLevel(logLevel: Level) {
-        (LoggerFactory.getILoggerFactory() as LoggerContext).getLogger(Logger.ROOT_LOGGER_NAME).level = logLevel
+        rootLogger.level = logLevel
     }
 }
