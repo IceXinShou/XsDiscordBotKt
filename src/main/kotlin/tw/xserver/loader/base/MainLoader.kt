@@ -89,15 +89,17 @@ object MainLoader {
      * Stops the bot and cleans up resources, including shutting down JDA and unloading plugins.
      */
     fun stop() {
-        jdaBot.apply {
-            registeredListeners.forEach { removeEventListener(it) }
-            shutdown()
+        if (::jdaBot.isInitialized) {
+            jdaBot.apply {
+                registeredListeners.forEach { removeEventListener(it) }
+                shutdown()
+            }
         }
 
         PluginLoader.apply {
             pluginQueue.reversed().forEach { (name, plugin) ->
                 plugin.unload()
-                logger.info("{} load successfully", name)
+                logger.info("{} unload successfully", name)
             }
         }
 
