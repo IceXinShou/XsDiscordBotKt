@@ -28,7 +28,6 @@ object MainLoader {
     val listenersQueue: Queue<PluginEvent> = ArrayDeque()
     lateinit var jdaBot: JDA
     lateinit var bot: User
-    var botId: Long by Delegates.notNull()
 
     /**
      * Starts the bot by loading settings, initializing plugins, and setting up JDA.
@@ -64,7 +63,6 @@ object MainLoader {
                 GatewayIntent.MESSAGE_CONTENT
             ).build().apply {
                 selfUser.also { bot = it }
-                botId = bot.idLong
 
                 addEventListener(ListenerManager(guildCommands))
                 addEventListener(InteractionLogger)
