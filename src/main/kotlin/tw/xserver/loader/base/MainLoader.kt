@@ -14,7 +14,6 @@ import tw.xserver.loader.logger.InteractionLogger
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.Arguments
 import java.util.*
-import kotlin.properties.Delegates
 import kotlin.system.exitProcess
 
 /**
