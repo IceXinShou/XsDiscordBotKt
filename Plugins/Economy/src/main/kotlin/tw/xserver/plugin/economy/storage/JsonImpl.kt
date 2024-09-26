@@ -78,7 +78,7 @@ internal object JsonImpl : StorageInterface {
      * Sorts the leaderboard based on cost.
      */
     override fun sortCostBoard() {
-        costBoard.sortByDescending { it.money }
+        costBoard.sortByDescending { it.cost }
     }
 
     override fun getEmbedBuilder(
