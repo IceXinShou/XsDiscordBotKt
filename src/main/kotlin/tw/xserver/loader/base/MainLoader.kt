@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.builtin.StatusChanger
+import tw.xserver.loader.builtin.statuschanger.StatusChanger
 import tw.xserver.loader.logger.InteractionLogger
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.Arguments
@@ -52,14 +52,14 @@ object MainLoader {
             .enableCache(
                 CacheFlag.ONLINE_STATUS,
                 CacheFlag.CLIENT_STATUS,
-                CacheFlag.ACTIVITY
+                CacheFlag.ACTIVITY,
             )
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_VOICE_STATES,
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.GUILD_PRESENCES,
-                GatewayIntent.MESSAGE_CONTENT
+                GatewayIntent.MESSAGE_CONTENT,
             ).build().apply {
                 selfUser.also { bot = it }
 
@@ -69,8 +69,7 @@ object MainLoader {
                 updateCommands().addCommands(globalCommands).queue()
             }
 
-        StatusChanger.run()
-        logger.info("Bot initialized and ready.")
+        logger.info("Bot initialized.")
     }
 
     /**
