@@ -2,5 +2,3 @@ author: IceXinShou
 main: tw.xserver.plugin.creator.message.Event
 name: MessageCreator
 version: '2.0'
-depend:
-  - Placeholder
