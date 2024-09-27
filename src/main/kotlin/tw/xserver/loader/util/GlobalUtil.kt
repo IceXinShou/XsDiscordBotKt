@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction
 import tw.xserver.loader.base.MainLoader
 
 /**
@@ -19,8 +20,8 @@ object GlobalUtil {
      * @param id The unique Id of the user.
      * @return The User object.
      */
-    fun getUserById(id: Long): User = MainLoader.jdaBot.retrieveUserById(id).complete()
-    fun getUserById(id: String): User = MainLoader.jdaBot.retrieveUserById(id).complete()
+    fun getUserById(id: Long): CacheRestAction<User> = MainLoader.jdaBot.retrieveUserById(id)
+    fun getUserById(id: String): CacheRestAction<User> = MainLoader.jdaBot.retrieveUserById(id)
 
     /**
      * Gets the nickname of a user in a guild or their username if the nickname is not available.
