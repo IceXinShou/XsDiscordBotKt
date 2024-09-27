@@ -1,4 +1,4 @@
-package tw.xserver.plugin.placeholder
+package tw.xserver.loader.builtin.placeholder
 
 import org.apache.commons.text.StringSubstitutor
 

@@ -1,4 +1,4 @@
-package tw.xserver.plugin.placeholder
+package tw.xserver.loader.builtin.placeholder
 
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
