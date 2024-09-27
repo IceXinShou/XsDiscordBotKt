@@ -10,7 +10,7 @@ import tw.xserver.loader.json.JsonObjFileManager
 import tw.xserver.plugin.logger.chat.Event.PLUGIN_DIR_FILE
 import java.io.File
 
-object JsonManager {
+internal object JsonManager {
     private val fileManagers: MutableMap<Long, JsonObjFileManager> = HashMap()
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 

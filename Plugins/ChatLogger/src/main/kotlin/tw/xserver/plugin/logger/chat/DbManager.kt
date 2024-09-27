@@ -12,7 +12,7 @@ import java.io.File
 import java.sql.Connection
 
 
-object DbManager {
+internal object DbManager {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     // Long may be too small but for efficiency performance. Watchful waiting

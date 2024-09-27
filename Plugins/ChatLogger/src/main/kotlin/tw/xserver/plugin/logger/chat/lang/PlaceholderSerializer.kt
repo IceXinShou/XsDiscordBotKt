@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PlaceholderSerializer(
+internal data class PlaceholderSerializer(
     val empty: String,
 
     @SerialName("allow_list_format")

@@ -19,18 +19,18 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tw.xserver.loader.builtin.placeholder.Placeholder
+import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.plugin.creator.message.MessageCreator
 import tw.xserver.plugin.logger.chat.Event.COMPONENT_PREFIX
 import tw.xserver.plugin.logger.chat.Event.PLUGIN_DIR_FILE
 import tw.xserver.plugin.logger.chat.JsonManager.dataMap
 import tw.xserver.plugin.logger.chat.lang.PlaceholderLocalizations
-import tw.xserver.plugin.placeholder.Placeholder
-import tw.xserver.plugin.placeholder.Substitutor
 import java.io.File
 import java.util.stream.Collectors
 
 
-object ChatLogger {
+internal object ChatLogger {
     internal const val KEEP_ALL_LOG = true
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), COMPONENT_PREFIX)
@@ -173,22 +173,22 @@ object ChatLogger {
             .map { (key, _) -> key }
         if (listenChannelIds.isEmpty()) return
 
-        val member: Member
-        val substitutor: Substitutor
         try {
             val (oldMessage: String, userId: Long, updateCount: Int) = DbManager.deleteMessage(
                 event.guild.id,
                 event.channel.idLong,
                 event.messageIdLong,
             )
-            member = event.guild.retrieveMemberById(userId).complete()
-            substitutor = Placeholder.getSubstitutor(member).putAll(
-                "cl_category_mention" to event.guildChannel.asTextChannel().parentCategory!!.asMention,
-                "cl_channel_mention" to event.channel.asMention,
-                "cl_change_count" to updateCount.toString(),
-                "cl_msg" to oldMessage,
-            )
-            sendListenChannel("on-msg-delete", event.guild, listenChannelIds, substitutor)
+
+            event.guild.retrieveMemberById(userId).queue { member ->
+                val substitutor = Placeholder.getSubstitutor(member).putAll(
+                    "cl_category_mention" to event.guildChannel.asTextChannel().parentCategory!!.asMention,
+                    "cl_channel_mention" to event.channel.asMention,
+                    "cl_change_count" to updateCount.toString(),
+                    "cl_msg" to oldMessage,
+                )
+                sendListenChannel("on-msg-delete", event.guild, listenChannelIds, substitutor)
+            }
         } catch (e: MessageNotFound) {
             return
         } catch (e: ErrorResponseException) {
