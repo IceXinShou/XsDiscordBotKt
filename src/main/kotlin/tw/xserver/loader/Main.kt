@@ -7,11 +7,10 @@ import tw.xserver.loader.util.Arguments
 
 
 fun main(args: Array<String>) {
-    LogBackManager.configureSystem()
-    Arguments.main(args)
-    MainLoader.main()
-
     try {
+        LogBackManager.configureSystem()
+        Arguments.main(args)
+        MainLoader.main()
         JLineManager.main()
         Thread.currentThread().join()
     } catch (e: Exception) {
