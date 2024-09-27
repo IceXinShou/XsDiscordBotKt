@@ -1,9 +1,9 @@
 package tw.xserver.plugin.botinfo
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import tw.xserver.loader.builtin.placeholder.Placeholder
 import tw.xserver.plugin.botinfo.Event.PLUGIN_DIR_FILE
 import tw.xserver.plugin.creator.message.MessageCreator
-import tw.xserver.plugin.placeholder.Placeholder
 import java.io.File
 
 object BotInfo {
