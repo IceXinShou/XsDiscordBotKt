@@ -137,7 +137,7 @@ internal object DbManager {
 
     internal fun disconnect() {
         dataMap.keys.forEach { channelId ->
-            SQLiteFileManager.disconnect("CL:$channelId")
+            SQLiteFileManager.tryDisconnect("CL:$channelId")
         }
     }
 
