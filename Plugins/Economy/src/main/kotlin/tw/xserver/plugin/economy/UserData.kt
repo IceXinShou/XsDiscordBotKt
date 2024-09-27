@@ -6,13 +6,11 @@ package tw.xserver.plugin.economy
  * @property id Unique identifier for the user.
  * @property money Current balance of money the user holds.
  * @property cost Total expenses or costs recorded for the user.
- * @property name Optional name of the user.
  */
 internal class UserData(
     val id: Long,
     var money: Int = 0,
     var cost: Int = 0,
-    var name: String? = null
 ) {
     /**
      * Adds a specified amount of money to the user's balance.

@@ -3,8 +3,8 @@ package tw.xserver.plugin.economy
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
-import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
@@ -13,6 +13,7 @@ import tw.xserver.loader.json.JsonObjFileManager
 import tw.xserver.loader.localizations.LangManager
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter
+import tw.xserver.loader.util.GlobalUtil
 import tw.xserver.plugin.economy.command.getGuildCommands
 import tw.xserver.plugin.economy.lang.CmdFileSerializer
 import tw.xserver.plugin.economy.lang.Localizations
@@ -28,6 +29,7 @@ import java.io.IOException
  */
 object Event : PluginEvent(true) {
     internal val PLUGIN_DIR_FILE = File("./plugins/Economy/")
+    internal const val COMPONENT_PREFIX = "xs:economy:v2:"
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private val MODE = Mode.Json
     internal lateinit var config: MainConfigSerializer
@@ -105,11 +107,10 @@ object Event : PluginEvent(true) {
         }
     }
 
-    /**
-     * Updates user's global name changes in the data storage.
-     */
-    override fun onUserUpdateGlobalName(event: UserUpdateGlobalNameEvent) =
-        storageManager.nameUpdate(event.user)
+    override fun onButtonInteraction(event: ButtonInteractionEvent) {
+        if (GlobalUtil.checkPrefix(event, COMPONENT_PREFIX)) return
+        ButtonReplier.onQuery(event)
+    }
 
     private enum class Mode {
         Json,

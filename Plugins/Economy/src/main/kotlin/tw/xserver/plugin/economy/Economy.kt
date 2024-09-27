@@ -2,9 +2,11 @@ package tw.xserver.plugin.economy
 
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.interactions.InteractionHook
+import tw.xserver.loader.builtin.placeholder.Placeholder
 import tw.xserver.plugin.economy.Event.config
 import tw.xserver.plugin.economy.Event.storageManager
-import tw.xserver.plugin.placeholder.Placeholder
 
 object Economy {
     internal fun handleTopCommands(event: SlashCommandInteractionEvent) {
@@ -16,6 +18,11 @@ object Economy {
                 if (event.name == "top-money") Type.Money else Type.Cost,
             )
         ).queue()
+    }
+
+    internal fun handleButtonBalance(event: ButtonInteractionEvent, hook: InteractionHook) {
+        updatePapi(event.user, queryData(event.user))
+        hook.editOriginal(MessageReplier.reply(event)).queue()
     }
 
     internal fun handleBalance(
@@ -46,11 +53,7 @@ object Economy {
                 val beforeCost = data.cost
                 data.remove(value)
                 saveAndUpdate(
-                    event,
-                    data,
-                    beforeMoney,
-                    "economy_money_before",
-                    "economy_cost_before" to "$beforeCost"
+                    event, data, beforeMoney, "economy_money_before", "economy_cost_before" to "$beforeCost"
                 )
                 storageManager.sortMoneyBoard()
                 storageManager.sortCostBoard()
@@ -72,6 +75,13 @@ object Economy {
         }
     }
 
+    private fun updatePapi(user: User, data: UserData, map: Map<String, String> = emptyMap()) {
+        Placeholder.update(user, hashMapOf(
+            "economy_money" to "${data.money}", "economy_cost" to "${data.cost}"
+        ).apply { putAll(map) })
+    }
+
+
     private fun saveAndUpdate(
         event: SlashCommandInteractionEvent,
         data: UserData,
@@ -84,7 +94,6 @@ object Economy {
         event.hook.editOriginal(MessageReplier.reply(event)).queue()
     }
 
-
     private fun checkValue(value: Int, event: SlashCommandInteractionEvent): Boolean {
         if (value >= 0) return false
 
@@ -96,21 +105,9 @@ object Economy {
 
     private fun saveData(data: UserData) = storageManager.update(data)
 
-    private fun updatePapi(user: User, data: UserData, map: Map<String, String> = emptyMap()) {
-        Placeholder.update(
-            user, hashMapOf(
-                "economy_money" to "${data.money}",
-                "economy_cost" to "${data.cost}"
-            ).apply { putAll(map) }
-        )
-    }
-
     private fun getTargetUser(event: SlashCommandInteractionEvent): User {
-        return if (config.admin_id.none { it == event.user.idLong })
-            event.user
-        else
-            event.getOption("member")?.asUser ?: event.user
-
+        return if (config.admin_id.none { it == event.user.idLong }) event.user
+        else event.getOption("member")?.asUser ?: event.user
     }
 
     private fun checkPermission(event: SlashCommandInteractionEvent): Boolean {
@@ -123,9 +120,7 @@ object Economy {
         return false
     }
 
-
     internal enum class Type {
-        Money,
-        Cost
+        Money, Cost
     }
 }

@@ -6,7 +6,4 @@ embeds:
       text: "☛ Cost Board"
     footer:
       text: "❖ ORDERLY SERVER ❖"
-
-    fields:
-      - name: "%name%"
-        value: "%economy_board% $"
+    description: "%index%.\t%name_mention%\n%economy_board% $\n\n"

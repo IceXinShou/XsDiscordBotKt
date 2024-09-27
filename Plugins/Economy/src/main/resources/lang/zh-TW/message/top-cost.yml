@@ -6,7 +6,4 @@ embeds:
       text: "☛ 總消費"
     footer:
       text: "❖ ORDERLY SERVER ❖"
-
-    fields:
-      - name: "%name%"
-        value: "%economy_board% 元"
+    description: "%index%.\t%name_mention%\n%economy_board% 元\n\n"

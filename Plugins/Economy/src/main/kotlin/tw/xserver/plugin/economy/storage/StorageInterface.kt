@@ -2,10 +2,9 @@ package tw.xserver.plugin.economy.storage
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
-import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
+import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.plugin.economy.Economy.Type
 import tw.xserver.plugin.economy.UserData
-import tw.xserver.plugin.placeholder.Substitutor
 
 internal interface StorageInterface {
     fun init()
@@ -14,11 +13,10 @@ internal interface StorageInterface {
     fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
-        fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
+        descriptionTemplate: String,
         substitutor: Substitutor
     ): EmbedBuilder
 
     fun sortMoneyBoard()
     fun sortCostBoard()
-    fun nameUpdate(user: User)
 }

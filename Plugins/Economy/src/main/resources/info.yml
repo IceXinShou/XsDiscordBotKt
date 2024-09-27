@@ -2,6 +2,7 @@ author: IceXinShou
 main: tw.xserver.plugin.economy.Event
 name: Economy
 version: '2.0'
+component_prefix: "xs:economy:v2:"
 depend:
   - SQLiteAPI
   - GoogleSheetAPI

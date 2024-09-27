@@ -3,14 +3,11 @@ package tw.xserver.plugin.economy.storage
 import com.google.gson.JsonObject
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.loader.json.JsonObjFileManager
-import tw.xserver.loader.util.GlobalUtil.getUserById
-import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
 import tw.xserver.plugin.economy.Economy.Type
 import tw.xserver.plugin.economy.Event.config
 import tw.xserver.plugin.economy.UserData
-import tw.xserver.plugin.placeholder.Substitutor
 import kotlin.math.min
 
 /**
@@ -28,16 +25,8 @@ internal object JsonImpl : StorageInterface {
     override fun init() {
         json.get().keySet().forEach { key ->
             val id = key.toLong()
-            val obj = json.computeIfAbsent(key, JsonObject()).getAsJsonObject()
-            try {
-                getUserById(id).apply {
-                    userData[id] = UserData(id, obj["money"].asInt, obj["cost"].asInt, name)
-                }
-            } catch (e: ErrorResponseException) {
-                UserData(id, obj["money"].asInt, obj["cost"].asInt, "unknown ($key)").also {
-                    userData[id] = it
-                }
-            }
+            val obj = json.computeIfAbsent(key, JsonObject()).asJsonObject
+            userData[id] = UserData(id, obj["money"].asInt, obj["cost"].asInt)
         }
 
         moneyBoard.addAll(userData.values)
@@ -84,7 +73,7 @@ internal object JsonImpl : StorageInterface {
     override fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
-        fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
+        descriptionTemplate: String,
         substitutor: Substitutor
     ): EmbedBuilder {
         val board = when (type) {
@@ -95,31 +84,22 @@ internal object JsonImpl : StorageInterface {
         val count = min(board.size, min(config.board_user_show_limit, 25))
 
         return embedBuilder.apply {
-            clearFields()
+            setDescription("")
+
             for (i in 1..count) {
                 val data = board[i - 1]
-
-                addField(
-                    substitutor.parse(fieldSetting.name)
-                        .replace("%index%", "$i")
-                        .replace("%name%", getUserById(data.id).name),
-                    substitutor.parse(fieldSetting.value).replace(
-                        "%economy_board%", "${if (type == Type.Money) data.money else data.cost}"
-                    ),
-                    fieldSetting.inline
+                appendDescription(
+                    substitutor
+                        .putAll(
+                            "index" to "$i",
+                            "name_mention" to "<@${data.id}>",
+                            "economy_board" to "${if (type == Type.Money) data.money else data.cost}",
+                        ).parse(descriptionTemplate)
                 )
             }
         }
     }
 
-    /**
-     * Updates the name in the user data to reflect any changes.
-     *
-     * @param user The user whose name needs updating.
-     */
-    override fun nameUpdate(user: User) {
-        userData[user.idLong]?.name = user.name
-    }
 
     /**
      * Initializes user data if it does not exist in the system.
@@ -129,7 +109,7 @@ internal object JsonImpl : StorageInterface {
     private fun initUserData(user: User) {
         val id = user.idLong
         if (!userData.containsKey(id)) {
-            val data = UserData(id, name = user.name)
+            val data = UserData(id)
             userData[id] = data
             moneyBoard.add(data)
             costBoard.add(data)

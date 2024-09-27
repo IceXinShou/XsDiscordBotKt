@@ -3,15 +3,13 @@ package tw.xserver.plugin.economy.storage
 import com.google.api.services.sheets.v4.model.ValueRange
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.User
-import tw.xserver.loader.util.GlobalUtil.getUserById
+import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.plugin.api.google.sheet.SheetsService
 import tw.xserver.plugin.api.google.sheet.serializer.AuthConfigSerializer
-import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
 import tw.xserver.plugin.economy.Economy.Type
 import tw.xserver.plugin.economy.Event.PLUGIN_DIR_FILE
 import tw.xserver.plugin.economy.Event.config
 import tw.xserver.plugin.economy.UserData
-import tw.xserver.plugin.placeholder.Substitutor
 import kotlin.math.min
 
 /**
@@ -35,12 +33,12 @@ internal object SheetImpl : StorageInterface {
         val index = current[0].indexOf(user.idLong)
 
         return if (index == -1)
-            UserData(user.idLong, name = getUserById(user.idLong).name)
+            UserData(user.idLong)
         else
             UserData(
                 user.idLong,
                 money = current[1][index].toString().toInt(),
-                cost = current[2][index].toString().toInt()
+                cost = current[2][index].toString().toInt(),
             )
     }
 
@@ -62,7 +60,7 @@ internal object SheetImpl : StorageInterface {
     override fun getEmbedBuilder(
         type: Type,
         embedBuilder: EmbedBuilder,
-        fieldSetting: MessageDataSerializer.EmbedSetting.FieldSetting,
+        descriptionTemplate: String,
         substitutor: Substitutor
     ): EmbedBuilder {
         val board = when (type) {
@@ -73,19 +71,17 @@ internal object SheetImpl : StorageInterface {
         val count = min(board.size, min(config.board_user_show_limit, 25))
 
         return embedBuilder.apply {
-            clearFields()
+            setDescription("")
+
             for (i in 1..count) {
                 val data = board[i - 1]
-
-                addField(
-                    substitutor.parse(fieldSetting.name)
-                        .replace("%index%", "$i")
-                        .replace("%name%", getUserById(data.id).name),
-                    substitutor.parse(fieldSetting.value).replace(
-                        "%economy_board%",
-                        "${if (type == Type.Money) data.money else data.cost}"
-                    ),
-                    fieldSetting.inline
+                appendDescription(
+                    substitutor
+                        .putAll(
+                            "index" to "$i",
+                            "name_mention" to "<@${data.id}>",
+                            "economy_board" to "${if (type == Type.Money) data.money else data.cost}",
+                        ).parse(descriptionTemplate)
                 )
             }
         }
@@ -94,7 +90,6 @@ internal object SheetImpl : StorageInterface {
     override fun sortMoneyBoard() {}
 
     override fun sortCostBoard() {}
-    override fun nameUpdate(user: User) {}
 
     private fun update(userId: Long, money: Int, cost: Int) {
         val index = indexOfUserId(userId)
@@ -131,7 +126,7 @@ internal object SheetImpl : StorageInterface {
     private fun queryAll(): List<UserData> {
         val data = query()
         return data[0].mapIndexed { index, id ->
-            UserData(id, data[1][index].toInt(), data[2][index].toInt(), getUserById(id).name)
+            UserData(id, data[1][index].toInt(), data[2][index].toInt())
         }
     }
 
