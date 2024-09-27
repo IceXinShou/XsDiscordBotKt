@@ -1,4 +1,4 @@
-package tw.xserver.loader.builtin
+package tw.xserver.loader.builtin.statuschanger
 
 import net.dv8tion.jda.api.entities.Activity
 import org.slf4j.Logger
@@ -11,24 +11,10 @@ import java.util.concurrent.TimeUnit
 object StatusChanger {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private var threadPool = Executors.newSingleThreadScheduledExecutor()
-    private val botStatus = SettingsLoader.config.generalSettings.activityMessage
-
-    fun stop() {
-        if (!threadPool.isShutdown) {
-            threadPool.shutdownNow()  // Attempt to stop all actively executing tasks
-            try {
-                if (!threadPool.awaitTermination(3, TimeUnit.SECONDS)) {
-                    logger.warn("Thread pool did not terminate; tasks may still be running.")
-                }
-            } catch (e: InterruptedException) {
-                logger.error("Interrupted during shutdown.", e)
-                Thread.currentThread().interrupt()  // Preserve interrupt status
-            }
-        }
-    }
+    private val botStatusList = SettingsLoader.config.builtinSettings.statusChangerSetting.activityMessages
 
     fun run() {
-        if (botStatus.isEmpty()) {
+        if (botStatusList.isEmpty()) {
             logger.info("No bot status messages to display.")
             return
         }
@@ -47,9 +33,23 @@ object StatusChanger {
         }
     }
 
+    fun stop() {
+        if (!threadPool.isShutdown) {
+            threadPool.shutdownNow()  // Attempt to stop all actively executing tasks
+            try {
+                if (!threadPool.awaitTermination(3, TimeUnit.SECONDS)) {
+                    logger.warn("Thread pool did not terminate; tasks may still be running.")
+                }
+            } catch (e: InterruptedException) {
+                logger.error("Interrupted during shutdown.", e)
+                Thread.currentThread().interrupt()  // Preserve interrupt status
+            }
+        }
+    }
+
     private fun cycleActivities() {
         while (!Thread.interrupted()) {
-            for (status in botStatus) {
+            for (status in botStatusList) {
                 val args = status.split(";")
                 if (args.size < 3) {
                     logger.error("Invalid status configuration: $status")
