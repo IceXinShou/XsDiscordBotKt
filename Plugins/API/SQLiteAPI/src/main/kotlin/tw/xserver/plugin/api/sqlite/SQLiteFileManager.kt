@@ -30,6 +30,15 @@ object SQLiteFileManager {
     fun removeConnection(uniqueKey: String) = disconnect(uniqueKey)
 
     @Synchronized
+    fun tryDisconnect(uniqueKey: String) {
+        dbConn[uniqueKey]?.let {
+            it.connection.close()
+            dbConn.remove(uniqueKey)
+        }
+    }
+
+
+    @Synchronized
     fun disconnect(uniqueKey: String) {
         dbConn[uniqueKey]?.let {
             it.connection.close()
