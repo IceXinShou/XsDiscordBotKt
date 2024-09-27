@@ -23,7 +23,7 @@ repositories {
 dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
 
-    api("net.dv8tion:JDA:5.1.0") // JDA
+    api("net.dv8tion:JDA:5.1.1") // JDA
     api("ch.qos.logback:logback-classic:1.5.7") // Log
     api("com.charleskorn.kaml:kaml:0.61.0") // Yaml
     api("com.google.code.gson:gson:2.11.0") // Json

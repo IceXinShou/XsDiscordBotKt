@@ -10,10 +10,10 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.0-rc1")
+    api("com.fasterxml.jackson.core:jackson-databind:2.18.0")
     api("com.google.api-client:google-api-client:2.7.0")
     api("com.google.oauth-client:google-oauth-client-jetty:1.36.0")
-    api("com.google.apis:google-api-services-sheets:v4-rev20240826-2.0.0")
+    api("com.google.apis:google-api-services-sheets:v4-rev20240917-2.0.0")
 }
 
 tasks.build {
