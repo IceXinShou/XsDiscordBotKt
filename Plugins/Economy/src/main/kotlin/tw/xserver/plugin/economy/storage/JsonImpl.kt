@@ -81,7 +81,7 @@ internal object JsonImpl : StorageInterface {
             Type.Cost -> costBoard
         }
 
-        val count = min(board.size, min(config.board_user_show_limit, 25))
+        val count = min(board.size, min(config.boardUserShowLimit, 25))
 
         return embedBuilder.apply {
             setDescription("")

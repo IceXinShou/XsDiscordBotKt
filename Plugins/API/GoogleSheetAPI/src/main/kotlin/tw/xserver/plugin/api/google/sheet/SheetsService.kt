@@ -28,7 +28,7 @@ class SheetsService(private val config: AuthConfigSerializer, private val plugin
 
     private fun credential(httpTransport: NetHttpTransport): Credential {
         val flow = GoogleAuthorizationCodeFlow.Builder(
-            httpTransport, jsonFactory, config.client_id, config.client_secret, scopes
+            httpTransport, jsonFactory, config.clientId, config.clientSecret, scopes
         )
             .setDataStoreFactory(FileDataStoreFactory(File(pluginDirFile, "tokens")))
             .setAccessType("offline")

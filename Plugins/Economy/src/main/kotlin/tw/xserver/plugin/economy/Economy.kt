@@ -120,12 +120,12 @@ object Economy {
     private fun saveData(data: UserData) = storageManager.update(data)
 
     private fun getTargetUser(event: SlashCommandInteractionEvent): User {
-        return if (config.admin_id.none { it == event.user.idLong }) event.user
+        return if (config.adminId.none { it == event.user.idLong }) event.user
         else event.getOption("member")?.asUser ?: event.user
     }
 
     private fun checkPermission(event: SlashCommandInteractionEvent): Boolean {
-        if (config.admin_id.none { it == event.user.idLong }) {
+        if (config.adminId.none { it == event.user.idLong }) {
             event.hook.editOriginal(
                 MessageReplier.reply(event)
             ).queue()

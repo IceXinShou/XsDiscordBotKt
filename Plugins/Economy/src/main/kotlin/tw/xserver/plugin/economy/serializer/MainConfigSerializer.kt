@@ -1,19 +1,35 @@
 package tw.xserver.plugin.economy.serializer
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MainConfigSerializer(
-    val client_id: String = "",
-    val client_secret: String = "",
+    @SerialName("client_id")
+    val clientId: String = "",
+
+    @SerialName("client_secret")
+    val clientSecret: String = "",
     val port: Int = 8888,
 
-    val sheet_id: String = "",
-    val sheet_label: String = "",
-    val sheet_range_id: String = "",
-    val sheet_range_money: String = "",
-    val sheet_range_cost: String = "",
+    @SerialName("sheet_id")
+    val sheetId: String = "",
 
-    val admin_id: List<Long> = emptyList(),
-    val board_user_show_limit: Int = 10
+    @SerialName("sheet_label")
+    val sheetLabel: String = "",
+
+    @SerialName("sheet_range_id")
+    val sheetRangeId: String = "",
+
+    @SerialName("sheet_range_money")
+    val sheetRangeMoney: String = "",
+
+    @SerialName("sheet_range_cost")
+    val sheetRangeCost: String = "",
+
+    @SerialName("admin_id")
+    val adminId: List<Long> = emptyList(),
+
+    @SerialName("board_user_show_limit")
+    val boardUserShowLimit: Int = 10
 )

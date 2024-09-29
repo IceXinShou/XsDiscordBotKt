@@ -17,7 +17,7 @@ import kotlin.math.min
  */
 internal object SheetImpl : StorageInterface {
     private val spreadsheet = SheetsService(
-        AuthConfigSerializer(config.client_id, config.client_secret, config.port), PLUGIN_DIR_FILE
+        AuthConfigSerializer(config.clientId, config.clientSecret, config.port), PLUGIN_DIR_FILE
     ).sheets.spreadsheets().values()
 
     override fun init() {}
@@ -68,7 +68,7 @@ internal object SheetImpl : StorageInterface {
             Type.Cost -> queryAll().sortedByDescending { it.cost }
         }
 
-        val count = min(board.size, min(config.board_user_show_limit, 25))
+        val count = min(board.size, min(config.boardUserShowLimit, 25))
 
         return embedBuilder.apply {
             setDescription("")
@@ -97,7 +97,7 @@ internal object SheetImpl : StorageInterface {
             // User not in the sheet, append new entry
             spreadsheet
                 .append(
-                    config.sheet_id, parseRange(config.sheet_range_id),
+                    config.sheetId, parseRange(config.sheetRangeId),
                     ValueRange().setValues(listOf(listOf("$userId", "$money", "$cost")))
                 )
                 .setValueInputOption("RAW")
@@ -106,8 +106,8 @@ internal object SheetImpl : StorageInterface {
             // Update existing entry
             spreadsheet
                 .update(
-                    config.sheet_id,
-                    parseRange(offsetRange(config.sheet_range_id, index)),
+                    config.sheetId,
+                    parseRange(offsetRange(config.sheetRangeId, index)),
                     ValueRange().setValues(listOf(listOf("$userId", "$money", "$cost")))
                 )
                 .setValueInputOption("RAW")
@@ -117,9 +117,9 @@ internal object SheetImpl : StorageInterface {
 
     private fun query(): List<List<Long>> = getBatchRange(
         listOf(
-            parseRange(config.sheet_range_id),
-            parseRange(config.sheet_range_money),
-            parseRange(config.sheet_range_cost),
+            parseRange(config.sheetRangeId),
+            parseRange(config.sheetRangeMoney),
+            parseRange(config.sheetRangeCost),
         )
     )
 
@@ -130,22 +130,22 @@ internal object SheetImpl : StorageInterface {
         }
     }
 
-    private fun indexOfUserId(userId: Long): Int = getRange(config.sheet_range_id).indexOf(userId)
+    private fun indexOfUserId(userId: Long): Int = getRange(config.sheetRangeId).indexOf(userId)
 
     private fun offsetRange(baseCell: String, offset: Int): String {
         val (column, row) = Regex("([A-Za-z]+)(\\d+)").find(baseCell)!!.destructured
         return "$column${row.toInt() + offset}"
     }
 
-    private fun parseRange(range: String): String = "${config.sheet_label}!${range}"
+    private fun parseRange(range: String): String = "${config.sheetLabel}!${range}"
 
     private fun getRange(range: String): List<Long> =
-        (spreadsheet.get(config.sheet_id, parseRange(range)).execute().getValues() ?: listOf())
+        (spreadsheet.get(config.sheetId, parseRange(range)).execute().getValues() ?: listOf())
             .flatten()
             .map { it.toString().toLong() }
 
     private fun getBatchRange(ranges: List<String>): List<List<Long>> {
-        val valueRanges = spreadsheet.batchGet(config.sheet_id).setRanges(ranges).execute().valueRanges
+        val valueRanges = spreadsheet.batchGet(config.sheetId).setRanges(ranges).execute().valueRanges
         return valueRanges.map { range ->
             range.getValues()?.flatten()?.map { it.toString().toLong() } ?: emptyList()
         }
