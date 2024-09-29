@@ -103,7 +103,8 @@ object Event : PluginEvent(true) {
 
         when (event.name) {
             "balance" -> Economy.handleBalance(event)
-            "add-money", "remove-money", "set-money", "set-cost" -> Economy.handleMoneyAndCostCommands(event)
+            "add-money", "remove-money", "set-money", "add-cost", "remove-cost", "set-cost" ->
+                Economy.handleMoneyAndCostCommands(event)
         }
     }
 

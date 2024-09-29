@@ -9,6 +9,8 @@ internal object Localizations {
     val addMoney = CommandWithMemberValueLd()
     val removeMoney = CommandWithMemberValueLd()
     val setMoney = CommandWithMemberValueLd()
+    val addCost = CommandWithMemberValueLd()
+    val removeCost = CommandWithMemberValueLd()
     val setCost = CommandWithMemberValueLd()
 
     class ND {

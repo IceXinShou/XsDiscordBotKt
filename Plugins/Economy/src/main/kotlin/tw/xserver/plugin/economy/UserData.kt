@@ -18,7 +18,7 @@ internal class UserData(
      * @param money Amount to add to the user's balance.
      * @return Updated balance after the addition.
      */
-    fun add(money: Int): Int {
+    fun addMoney(money: Int): Int {
         this.money += money
         return this.money
     }
@@ -29,7 +29,7 @@ internal class UserData(
      * @param money Amount to remove from the balance and add to cost.
      * @return Updated balance after the removal.
      */
-    fun remove(money: Int): Int {
+    fun removeMoneyAddCost(money: Int): Int {
         this.money -= money
         this.cost += money
         return this.money
@@ -44,6 +44,16 @@ internal class UserData(
     fun setMoney(money: Int): Int {
         this.money = money
         return this.money
+    }
+
+    fun addCost(cost: Int): Int {
+        this.cost += cost
+        return this.cost
+    }
+
+    fun removeCost(cost: Int): Int {
+        this.cost -= cost
+        return this.cost
     }
 
     /**

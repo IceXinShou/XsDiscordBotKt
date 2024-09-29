@@ -43,7 +43,7 @@ object Economy {
         when (event.name) {
             "add-money" -> {
                 val before = data.money
-                data.add(value)
+                data.addMoney(value)
                 saveAndUpdate(event, data, before, "economy_money_before")
                 storageManager.sortMoneyBoard()
             }
@@ -51,7 +51,7 @@ object Economy {
             "remove-money" -> {
                 val beforeMoney = data.money
                 val beforeCost = data.cost
-                data.remove(value)
+                data.removeMoneyAddCost(value)
                 saveAndUpdate(
                     event, data, beforeMoney, "economy_money_before", "economy_cost_before" to "$beforeCost"
                 )
@@ -66,9 +66,23 @@ object Economy {
                 storageManager.sortMoneyBoard()
             }
 
+            "add-cost" -> {
+                val before = data.cost
+                data.addCost(value)
+                saveAndUpdate(event, data, before, "economy_cost_before")
+                storageManager.sortCostBoard()
+            }
+
+            "remove-cost" -> {
+                val beforeCost = data.cost
+                data.removeCost(value)
+                saveAndUpdate(event, data, beforeCost, "economy_cost_before")
+                storageManager.sortCostBoard()
+            }
+
             "set-cost" -> {
                 val before = data.cost
-                data.cost = value
+                data.setCost(value)
                 saveAndUpdate(event, data, before, "economy_cost_before")
                 storageManager.sortCostBoard()
             }

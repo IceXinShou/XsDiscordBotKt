@@ -88,9 +88,36 @@ fun getGuildCommands(): Array<CommandData> = arrayOf(
             OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
                 .setNameLocalizations(Localizations.setCost.options.member.name)
                 .setDescriptionLocalizations(Localizations.setCost.options.member.description),
-            OptionData(OptionType.INTEGER, "value", "Specify the log amount.", true)
+            OptionData(OptionType.INTEGER, "value", "Specify the new balance.", true)
                 .setNameLocalizations(Localizations.setCost.options.value.name)
                 .setDescriptionLocalizations(Localizations.setCost.options.value.description)
+        )
+        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
+
+
+    Commands.slash("add-cost", "Add money log to member")
+        .setNameLocalizations(Localizations.addCost.name)
+        .setDescriptionLocalizations(Localizations.addCost.description)
+        .addOptions(
+            OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
+                .setNameLocalizations(Localizations.addCost.options.member.name)
+                .setDescriptionLocalizations(Localizations.addCost.options.member.description),
+            OptionData(OptionType.INTEGER, "value", "Specify the amount to add.", true)
+                .setNameLocalizations(Localizations.addCost.options.value.name)
+                .setDescriptionLocalizations(Localizations.addCost.options.value.description)
+        )
+        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
+
+    Commands.slash("remove-cost", "Remove money log to member")
+        .setNameLocalizations(Localizations.removeCost.name)
+        .setDescriptionLocalizations(Localizations.removeCost.description)
+        .addOptions(
+            OptionData(OptionType.USER, "member", "Specify the member to modify.", true)
+                .setNameLocalizations(Localizations.removeCost.options.member.name)
+                .setDescriptionLocalizations(Localizations.removeCost.options.member.description),
+            OptionData(OptionType.INTEGER, "value", "Specify the amount to remove.", true)
+                .setNameLocalizations(Localizations.removeCost.options.value.name)
+                .setDescriptionLocalizations(Localizations.removeCost.options.value.description)
         )
         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 )
