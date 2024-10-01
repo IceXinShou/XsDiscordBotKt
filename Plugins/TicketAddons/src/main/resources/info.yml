@@ -1,0 +1,6 @@
+author: IceXinShou
+main: tw.xserver.plugin.addons.ticket.Event
+name: TicketAddons
+version: '1.0'
+depend:
+  - MessageCreator

@@ -37,3 +37,6 @@ findProject(":Plugins:API:SQLiteAPI")?.name = "SQLiteAPI"
 
 include("Plugins:IntervalPusher")
 findProject(":Plugins:IntervalPusher")?.name = "IntervalPusher"
+
+include("Plugins:TicketAddons")
+findProject(":Plugins:TicketAddons")?.name = "TicketAddons"
