@@ -8,6 +8,7 @@ import tw.xserver.plugin.addons.ticket.Event.config
 import tw.xserver.plugin.addons.ticket.Event.targetMember
 import tw.xserver.plugin.creator.message.MessageCreator
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 object TicketAddons {
     private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), DiscordLocale.CHINESE_TAIWAN)
@@ -16,12 +17,13 @@ object TicketAddons {
         if (!event.isFromGuild && event.guild.id != config.guildId) return
         if (!event.channel.name.startsWith(config.prefix)) return
         if (targetMember.onlineStatus != OnlineStatus.OFFLINE) return
+        val delay: Long = config.delayMillis
 
         event.channel.asTextChannel().sendMessage(
             creator.getCreateBuilder(
                 "not_online",
                 DiscordLocale.CHINESE_TAIWAN
             ).build()
-        ).queue()
+        ).queueAfter(delay, TimeUnit.MILLISECONDS)
     }
 }
