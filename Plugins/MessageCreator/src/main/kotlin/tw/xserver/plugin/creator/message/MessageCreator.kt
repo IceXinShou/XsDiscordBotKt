@@ -8,7 +8,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tw.xserver.loader.builtin.placeholder.Placeholder
@@ -17,7 +17,8 @@ import tw.xserver.plugin.creator.message.serializer.MessageDataSerializer
 import tw.xserver.plugin.creator.message.serializer.list.ColorSerializer
 import java.io.File
 
-class MessageCreator(langDirFile: File, componentPrefix: String = "") : Builder(componentPrefix) {
+class MessageCreator(langDirFile: File, defaultLocale: DiscordLocale, componentPrefix: String = "") :
+    Builder(componentPrefix, defaultLocale) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     }
@@ -57,18 +58,18 @@ class MessageCreator(langDirFile: File, componentPrefix: String = "") : Builder(
         return getMessageData(parseCommandName(event), event.userLocale)
     }
 
-    fun getEditBuilder(
+    fun getCreateBuilder(
         event: GenericInteractionCreateEvent,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
-    ): MessageEditBuilder {
-        return getEditBuilder(getMessageData(event), substitutor)
+    ): MessageCreateBuilder {
+        return getCreateBuilder(getMessageData(event), substitutor)
     }
 
-    fun getEditBuilder(
+    fun getCreateBuilder(
         key: String,
         locale: DiscordLocale,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
-    ): MessageEditBuilder {
-        return getEditBuilder(getMessageData(key, locale), substitutor)
+    ): MessageCreateBuilder {
+        return getCreateBuilder(getMessageData(key, locale), substitutor)
     }
 }

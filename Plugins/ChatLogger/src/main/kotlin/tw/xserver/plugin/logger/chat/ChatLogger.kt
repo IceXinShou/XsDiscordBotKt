@@ -2,7 +2,6 @@ package tw.xserver.plugin.logger.chat
 
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.IMentionable
-import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
@@ -15,7 +14,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -33,7 +31,7 @@ import java.util.stream.Collectors
 internal object ChatLogger {
     internal const val KEEP_ALL_LOG = true
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), COMPONENT_PREFIX)
+    private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), DiscordLocale.CHINESE_TAIWAN, COMPONENT_PREFIX)
 
     fun setting(event: SlashCommandInteractionEvent) = event.hook.editOriginal(
         getSettingMenu(
@@ -65,11 +63,13 @@ internal object ChatLogger {
 
         // reply
         event.editMessage(
-            creator.getEditBuilder(
-                "delete",
-                event.userLocale,
-                Placeholder.getSubstitutor(event)
-            ).build()
+            MessageEditData.fromCreateData(
+                creator.getCreateBuilder(
+                    "delete",
+                    event.userLocale,
+                    Placeholder.getSubstitutor(event)
+                ).build()
+            )
         ).queue()
     }
 
@@ -113,10 +113,12 @@ internal object ChatLogger {
 
     fun createSel(event: ButtonInteractionEvent, componentId: String) {
         event.editMessage(
-            creator.getEditBuilder(
-                componentId,
-                event.userLocale, Placeholder.getSubstitutor(event)
-            ).build()
+            MessageEditData.fromCreateData(
+                creator.getCreateBuilder(
+                    componentId,
+                    event.userLocale, Placeholder.getSubstitutor(event)
+                ).build()
+            )
         ).queue()
     }
 
@@ -208,9 +210,7 @@ internal object ChatLogger {
     }
 
     private fun sendListenChannel(key: String, guild: Guild, listenChannelId: List<Long>, substitutor: Substitutor) {
-        val message = MessageCreateData.fromEditData(
-            creator.getEditBuilder(key, guild.locale, substitutor).build()
-        )
+        val message = creator.getCreateBuilder(key, guild.locale, substitutor).build()
 
         listenChannelId.forEach {
             val listenChannel = guild.getGuildChannelById(it)
@@ -296,6 +296,9 @@ internal object ChatLogger {
             )
         }
 
-        return creator.getEditBuilder("chat-logger@setting", locale, substitutor).build()
+
+        return MessageEditData.fromCreateData(
+            creator.getCreateBuilder("chat-logger@setting", locale, substitutor).build()
+        )
     }
 }

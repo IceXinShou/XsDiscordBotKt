@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.interactions.components.LayoutComponent
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.internal.interactions.component.ButtonImpl
 import org.apache.commons.lang3.StringUtils.isNumeric
 import tw.xserver.loader.builtin.placeholder.Placeholder
@@ -24,7 +24,7 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.util.*
 
-open class Builder(private val componentPrefix: String) {
+open class Builder(private val componentPrefix: String, private val defaultLocale: DiscordLocale) {
     protected val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
         EnumMap(DiscordLocale::class.java)
 
@@ -41,14 +41,15 @@ open class Builder(private val componentPrefix: String) {
     }
 
     protected fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer =
-        localeMapper[locale]?.get(key.removePrefix(componentPrefix))
+        localeMapper.getOrDefault(locale, localeMapper[defaultLocale])
+            ?.get(key.removePrefix(componentPrefix))
             ?: throw IllegalStateException("Message data not found for command: $key")
 
-    protected fun getEditBuilder(
+    protected fun getCreateBuilder(
         messageData: MessageDataSerializer,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
-    ): MessageEditBuilder {
-        val builder = MessageEditBuilder()
+    ): MessageCreateBuilder {
+        val builder = MessageCreateBuilder()
 
         messageData.content.let { builder.setContent(substitutor.parse(it)) }
         messageData.embeds.let { embeds ->
