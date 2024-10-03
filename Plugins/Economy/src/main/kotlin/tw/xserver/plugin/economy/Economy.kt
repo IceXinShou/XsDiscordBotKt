@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.interactions.InteractionHook
 import tw.xserver.loader.builtin.placeholder.Placeholder
+import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.plugin.economy.Event.config
 import tw.xserver.plugin.economy.Event.storageManager
 
@@ -21,15 +22,20 @@ object Economy {
     }
 
     internal fun handleButtonBalance(event: ButtonInteractionEvent, hook: InteractionHook) {
-        updatePapi(event.user, queryData(event.user))
-        hook.editOriginal(MessageReplier.reply(event)).queue()
+        updatePapi(event.user)
+        hook.editOriginal(
+            MessageReplier.getMessageEditData(event, event.userLocale, Placeholder.getSubstitutor(event.user))
+        ).queue()
     }
 
     internal fun handleBalance(
         event: SlashCommandInteractionEvent
     ) {
-        updatePapi(event.user, queryData(getTargetUser(event)))
-        event.hook.editOriginal(MessageReplier.reply(event)).queue()
+        val targetUser = getTargetUser(event)
+        updatePapi(targetUser)
+        event.hook.editOriginal(
+            MessageReplier.getMessageEditData(event, event.userLocale, Placeholder.getSubstitutor(targetUser))
+        ).queue()
     }
 
     internal fun handleMoneyAndCostCommands(
@@ -39,12 +45,14 @@ object Economy {
         val value: Int = event.getOption("value", 0) { it.asInt }
         if (checkValue(value, event)) return
 
-        val data = queryData(getTargetUser(event))
+        val targetUser = getTargetUser(event)
+        val data = queryData(targetUser)
         when (event.name) {
             "add-money" -> {
                 val before = data.money
                 data.addMoney(value)
-                saveAndUpdate(event, data, before, "economy_money_before")
+                saveAndUpdate(targetUser, data, "economy_money_before" to "$before")
+                reply(event, Placeholder.getSubstitutor(targetUser))
                 storageManager.sortMoneyBoard()
             }
 
@@ -53,8 +61,11 @@ object Economy {
                 val beforeCost = data.cost
                 data.removeMoneyAddCost(value)
                 saveAndUpdate(
-                    event, data, beforeMoney, "economy_money_before", "economy_cost_before" to "$beforeCost"
+                    targetUser, data,
+                    "economy_money_before" to "$beforeMoney",
+                    "economy_cost_before" to "$beforeCost"
                 )
+                reply(event, Placeholder.getSubstitutor(targetUser))
                 storageManager.sortMoneyBoard()
                 storageManager.sortCostBoard()
             }
@@ -62,31 +73,44 @@ object Economy {
             "set-money" -> {
                 val before = data.money
                 data.setMoney(value)
-                saveAndUpdate(event, data, before, "economy_money_before")
+                saveAndUpdate(targetUser, data, "economy_money_before" to "$before")
+                reply(event, Placeholder.getSubstitutor(targetUser))
                 storageManager.sortMoneyBoard()
             }
 
             "add-cost" -> {
                 val before = data.cost
                 data.addCost(value)
-                saveAndUpdate(event, data, before, "economy_cost_before")
+                saveAndUpdate(targetUser, data, "economy_cost_before" to "$before")
+                reply(event, Placeholder.getSubstitutor(targetUser))
                 storageManager.sortCostBoard()
             }
 
             "remove-cost" -> {
-                val beforeCost = data.cost
+                val before = data.cost
                 data.removeCost(value)
-                saveAndUpdate(event, data, beforeCost, "economy_cost_before")
+                saveAndUpdate(targetUser, data, "economy_cost_before" to "$before")
+                reply(event, Placeholder.getSubstitutor(targetUser))
                 storageManager.sortCostBoard()
             }
 
             "set-cost" -> {
                 val before = data.cost
                 data.setCost(value)
-                saveAndUpdate(event, data, before, "economy_cost_before")
+                saveAndUpdate(targetUser, data, "economy_cost_before" to "$before")
+                reply(event, Placeholder.getSubstitutor(targetUser))
                 storageManager.sortCostBoard()
             }
         }
+    }
+
+    private fun updatePapi(user: User) {
+        val data = queryData(user)
+        Placeholder.update(
+            user, hashMapOf(
+                "economy_money" to "${data.money}", "economy_cost" to "${data.cost}"
+            )
+        )
     }
 
     private fun updatePapi(user: User, data: UserData, map: Map<String, String> = emptyMap()) {
@@ -97,21 +121,25 @@ object Economy {
 
 
     private fun saveAndUpdate(
-        event: SlashCommandInteractionEvent,
+        user: User,
         data: UserData,
-        before: Int,
-        key: String,
         vararg placeholders: Pair<String, String>
     ) {
         saveData(data)
-        updatePapi(event.user, data, mapOf(key to "$before") + placeholders)
-        event.hook.editOriginal(MessageReplier.reply(event)).queue()
+        updatePapi(user, data, placeholders.toMap())
+
+    }
+
+    private fun reply(event: SlashCommandInteractionEvent, substitutor: Substitutor) {
+        event.hook.editOriginal(
+            MessageReplier.getMessageEditData(event, event.userLocale, substitutor)
+        ).queue()
     }
 
     private fun checkValue(value: Int, event: SlashCommandInteractionEvent): Boolean {
         if (value >= 0) return false
 
-        event.hook.editOriginal("").queue()
+        event.hook.editOriginal("Bad Value").queue()
         return true
     }
 
@@ -127,7 +155,7 @@ object Economy {
     private fun checkPermission(event: SlashCommandInteractionEvent): Boolean {
         if (config.adminId.none { it == event.user.idLong }) {
             event.hook.editOriginal(
-                MessageReplier.reply(event)
+                MessageReplier.getNoPermissionMessageData(event.userLocale)
             ).queue()
             return true
         }
