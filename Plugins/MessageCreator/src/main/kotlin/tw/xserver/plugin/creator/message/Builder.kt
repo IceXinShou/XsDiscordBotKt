@@ -4,11 +4,10 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.entities.emoji.Emoji
-import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.interactions.DiscordLocale
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload
 import net.dv8tion.jda.api.interactions.components.ActionRow
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction
 import net.dv8tion.jda.api.interactions.components.LayoutComponent
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu
@@ -28,19 +27,21 @@ open class Builder(private val componentPrefix: String, private val defaultLocal
     protected val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
         EnumMap(DiscordLocale::class.java)
 
-    protected open fun parseCommandName(event: GenericInteractionCreateEvent): String {
-        return when (event) {
-            is SlashCommandInteractionEvent ->
-                "${event.name}${event.subcommandName?.let { "@$it" } ?: ""}"
+    open fun parseCommandName(event: CommandInteractionPayload): String =
+        "${event.name}${event.subcommandName?.let { "@$it" } ?: ""}"
 
-            is ButtonInteractionEvent ->
-                event.componentId.removePrefix(componentPrefix)
+    open fun parseCommandName(event: ComponentInteraction): String =
+        event.componentId.removePrefix(componentPrefix)
 
-            else -> throw IllegalArgumentException("Unsupported event type")
-        }
+    fun getCreateBuilder(
+        key: String,
+        locale: DiscordLocale,
+        substitutor: Substitutor = Placeholder.globalPlaceholder,
+    ): MessageCreateBuilder {
+        return getCreateBuilder(getMessageData(key, locale), substitutor)
     }
 
-    protected fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer =
+    fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer =
         localeMapper.getOrDefault(locale, localeMapper[defaultLocale])
             ?.get(key.removePrefix(componentPrefix))
             ?: throw IllegalStateException("Message data not found for command: $key")

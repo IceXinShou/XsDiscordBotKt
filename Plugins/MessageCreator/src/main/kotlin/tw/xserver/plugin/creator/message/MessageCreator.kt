@@ -6,8 +6,9 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.interactions.DiscordLocale
+import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -54,22 +55,25 @@ class MessageCreator(langDirFile: File, defaultLocale: DiscordLocale, componentP
         }
     }
 
-    fun getMessageData(event: GenericInteractionCreateEvent): MessageDataSerializer {
+    fun getMessageData(event: CommandInteractionPayload): MessageDataSerializer {
+        return getMessageData(parseCommandName(event), event.userLocale)
+    }
+
+    fun getMessageData(event: ComponentInteraction): MessageDataSerializer {
         return getMessageData(parseCommandName(event), event.userLocale)
     }
 
     fun getCreateBuilder(
-        event: GenericInteractionCreateEvent,
+        event: CommandInteractionPayload,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
     ): MessageCreateBuilder {
         return getCreateBuilder(getMessageData(event), substitutor)
     }
 
     fun getCreateBuilder(
-        key: String,
-        locale: DiscordLocale,
+        event: ComponentInteraction,
         substitutor: Substitutor = Placeholder.globalPlaceholder,
     ): MessageCreateBuilder {
-        return getCreateBuilder(getMessageData(key, locale), substitutor)
+        return getCreateBuilder(getMessageData(event), substitutor)
     }
 }
