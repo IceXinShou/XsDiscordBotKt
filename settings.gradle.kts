@@ -40,3 +40,6 @@ findProject(":Plugins:IntervalPusher")?.name = "IntervalPusher"
 
 include("Plugins:TicketAddons")
 findProject(":Plugins:TicketAddons")?.name = "TicketAddons"
+
+include("Plugins:VoiceLogger")
+findProject(":Plugins:VoiceLogger")?.name = "VoiceLogger"

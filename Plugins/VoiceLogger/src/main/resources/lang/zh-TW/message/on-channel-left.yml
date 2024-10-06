@@ -1,0 +1,18 @@
+embeds:
+  - title:
+      text: "☛ 退出語音頻道"
+      url: "%vl_channel_left_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#C02020"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`使用者`"
+        value: "%user_mention%\n\n\n"
+
+      - name: "`類別`"
+        value: "%vl_category_left_mention%"
+
+      - name: "`頻道`"
+        value: "%vl_channel_left_mention%"

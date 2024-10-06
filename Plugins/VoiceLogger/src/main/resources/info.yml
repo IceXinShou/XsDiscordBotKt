@@ -1,0 +1,7 @@
+author: IceXinShou
+main: tw.xserver.plugin.logger.voice.Event
+name: VoiceLogger
+version: '2.0'
+component_prefix: "xs:voice-logger:v2:"
+depend:
+  - MessageCreator

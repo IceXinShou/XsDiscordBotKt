@@ -1,0 +1,24 @@
+embeds:
+  - title:
+      text: "☛ 轉換語音頻道"
+      url: "%vl_channel_join_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#D0D000"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`使用者`"
+        value: "%user_mention%\n\n\n"
+
+      - name: "`退出類別`"
+        value: "%vl_category_left_mention%"
+
+      - name: "`退出頻道`"
+        value: "%vl_channel_left_mention%"
+
+      - name: "`進入類別`"
+        value: "%vl_category_join_mention%"
+
+      - name: "`進入頻道`"
+        value: "%vl_channel_join_mention%"

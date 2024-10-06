@@ -1,0 +1,36 @@
+embeds:
+  - author:
+      name: "Voice Log"
+    title:
+      text: "☛ %channel_name%'s Channel Setting"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "Channel Mode"
+        value: "<%vl_channel_mode%>"
+
+      - name: "Allowlist Channels"
+        value: "%vl_allow_list_format%"
+
+      - name: "Blocklist Channels"
+        value: "%vl_block_list_format%"
+
+components:
+  - !ButtonsComponent
+    buttons:
+      - uid_or_url: "toggle"
+        style: 1
+        label: "Toggle Mode"
+
+      - uid_or_url: "modify-allow"
+        style: 3
+        label: "Modify Allowlist"
+
+      - uid_or_url: "modify-block"
+        style: 2
+        label: "Modify Blocklist"
+
+      - uid_or_url: "delete"
+        style: 4
+        label: "Delete"

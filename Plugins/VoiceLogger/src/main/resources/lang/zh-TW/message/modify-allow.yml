@@ -1,0 +1,10 @@
+components:
+  - !EntitySelectMenu
+    uid: "modify_allow"
+    placeholder: "選擇頻道、類別或在此搜尋"
+    min: 1
+    max: 25
+    select_target_type: "CHANNEL"
+    channel_types:
+      - "VOICE"
+      - "CATEGORY"

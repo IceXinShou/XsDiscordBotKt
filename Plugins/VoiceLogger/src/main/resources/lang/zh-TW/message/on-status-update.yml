@@ -1,0 +1,24 @@
+embeds:
+  - title:
+      text: "☛ 變更語音狀態"
+      url: "%vl_channel_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#D0D000"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`使用者`"
+        value: "%user_mention%\n\n\n"
+
+      - name: "`類別`"
+        value: "%vl_category_mention%"
+
+      - name: "`頻道`"
+        value: "%vl_channel_mention%"
+
+      - name: "`--> 變更前 <--`"
+        value: "%vl_status_before%"
+
+      - name: "`==> 變更後 <==`"
+        value: "%vl_status_after%"

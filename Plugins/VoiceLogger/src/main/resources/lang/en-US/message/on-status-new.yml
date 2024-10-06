@@ -1,0 +1,22 @@
+embeds:
+  - title:
+      text: "☛ New Voice Status"
+      url: "%vl_channel_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#0EE000"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`Member`"
+        value: "%user_mention%\n\n\n"
+
+      - name: "`Category`"
+        value: "%vl_category_mention%"
+
+      - name: "`Channel`"
+        value: "%vl_channel_mention%"
+
+      - name: "`--> Content <--`"
+        value: "%vl_status_after%"
+

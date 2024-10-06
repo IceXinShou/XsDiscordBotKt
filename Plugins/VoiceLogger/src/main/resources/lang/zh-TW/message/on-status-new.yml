@@ -1,0 +1,21 @@
+embeds:
+  - title:
+      text: "☛ 新增語音狀態"
+      url: "%vl_channel_url%"
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#0EE000"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "`使用者`"
+        value: "%user_mention%\n\n\n"
+
+      - name: "`類別`"
+        value: "%vl_category_mention%"
+
+      - name: "`頻道`"
+        value: "%vl_channel_mention%"
+
+      - name: "`--> 狀態 <--`"
+        value: "%vl_status_after%"

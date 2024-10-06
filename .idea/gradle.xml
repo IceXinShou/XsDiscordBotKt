@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/Plugins/MessageCreator" />
             <option value="$PROJECT_DIR$/Plugins/Placeholder" />
             <option value="$PROJECT_DIR$/Plugins/TicketAddons" />
+            <option value="$PROJECT_DIR$/Plugins/VoiceLogger" />
           </set>
         </option>
       </GradleProjectSettings>
