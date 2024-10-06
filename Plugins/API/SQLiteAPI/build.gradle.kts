@@ -5,7 +5,7 @@ group = "tw.xserver.api"
 version = "v2.0"
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.3"
 }
 
 dependencies {
