@@ -35,7 +35,7 @@ internal object ChatLogger {
 
     fun setting(event: SlashCommandInteractionEvent) = event.hook.editOriginal(
         getSettingMenu(
-            dataMap.computeIfAbsent(event.channelIdLong) { ChannelData(event.guild!!.idLong) },
+            dataMap.computeIfAbsent(event.channelIdLong) { ChannelData(event.guild!!) },
             event.userLocale,
             Placeholder.getSubstitutor(event)
         )
@@ -43,7 +43,7 @@ internal object ChatLogger {
 
     fun onToggle(event: ButtonInteractionEvent) {
         // update
-        val channelData = JsonManager.toggle(event.guild!!.idLong, event.channel.idLong)
+        val channelData = JsonManager.toggle(event.guild!!, event.channel.idLong)
 
         // reply
         event.hook.editOriginal(
@@ -83,7 +83,7 @@ internal object ChatLogger {
         val channelData = when (event.componentId.removePrefix(COMPONENT_PREFIX)) {
             "modify_allow" -> {
                 JsonManager.addAllowChannels(
-                    guildId = guild.idLong,
+                    guild = guild,
                     listenChannelId = event.channelIdLong,
                     detectedChannelIds = channelIds
                 )
@@ -91,7 +91,7 @@ internal object ChatLogger {
 
             "modify_block" -> {
                 JsonManager.addBlockChannels(
-                    guildId = guild.idLong,
+                    guild = guild,
                     listenChannelId = event.channelIdLong,
                     detectedChannelIds = channelIds
                 )
@@ -123,7 +123,7 @@ internal object ChatLogger {
     }
 
     fun receiveMessage(event: MessageReceivedEvent) {
-        if (!DbManager.isListenable(event.channel.idLong)) return
+        if (!isListenable(event.channel.idLong)) return
 
         val messageContent = getMessageContent(event.message)
         DbManager.receiveMessage(
@@ -136,25 +136,27 @@ internal object ChatLogger {
     }
 
     fun updateMessage(event: MessageUpdateEvent) {
-        val channelId = event.channel.idLong
-        if (!DbManager.isListenable(channelId)) return
-
+        val channel = event.guildChannel
+        if (!isListenable(channel.idLong)) return
         val listenChannelIds: List<Long> = dataMap.entries
-            .filter { (_, value) -> channelId in value.getCurrentDetectChannels() }
+            .filter { (_, value) -> channel in value.getCurrentDetectChannels() }
             .map { (key, _) -> key }
-        if (listenChannelIds.isEmpty()) return
+
         try {
             val newMessage = getMessageContent(event.message)
             val (oldMessage, _, updateCount) = DbManager.updateMessage(
                 event.guild.id,
-                event.channel.idLong,
+                channel.idLong,
                 event.messageIdLong,
                 newMessage
             )
+
+            if (listenChannelIds.isEmpty()) return
+
             val substitutor = Placeholder.getSubstitutor(event.member!!).putAll(
                 "cl_msg_after_url" to event.message.jumpUrl,
-                "cl_category_mention" to event.guildChannel.asTextChannel().parentCategory!!.asMention,
-                "cl_channel_mention" to event.channel.asMention,
+                "cl_category_mention" to channel.asTextChannel().parentCategory!!.asMention,
+                "cl_channel_mention" to channel.asMention,
                 "cl_change_count" to updateCount.toString(),
                 "cl_msg_before" to oldMessage,
                 "cl_msg_after" to newMessage
@@ -167,27 +169,27 @@ internal object ChatLogger {
     }
 
     fun deleteMessage(event: MessageDeleteEvent) {
-        val channelId = event.channel.idLong
-        if (!DbManager.isListenable(event.channel.idLong)) return
-
+        val channel = event.guildChannel
+        if (!isListenable(channel.idLong)) return
         val listenChannelIds: List<Long> = dataMap.entries
-            .filter { (_, value) -> channelId in value.getCurrentDetectChannels() }
+            .filter { (_, value) -> channel in value.getCurrentDetectChannels() }
             .map { (key, _) -> key }
-        if (listenChannelIds.isEmpty()) return
 
         try {
             val (oldMessage: String, userId: Long, updateCount: Int) = DbManager.deleteMessage(
                 event.guild.id,
-                event.channel.idLong,
+                channel.idLong,
                 event.messageIdLong,
             )
 
+            if (listenChannelIds.isEmpty()) return
+
             event.guild.retrieveMemberById(userId).queue { member ->
                 val substitutor = Placeholder.getSubstitutor(member).putAll(
-                    "cl_category_mention" to event.guildChannel.asTextChannel().parentCategory!!.asMention,
-                    "cl_channel_mention" to event.channel.asMention,
+                    "cl_category_mention" to channel.asTextChannel().parentCategory!!.asMention,
+                    "cl_channel_mention" to channel.asMention,
                     "cl_change_count" to updateCount.toString(),
-                    "cl_msg" to oldMessage,
+                    "cl_msg_before" to oldMessage,
                 )
                 sendListenChannel("on-msg-delete", event.guild, listenChannelIds, substitutor)
             }
@@ -300,5 +302,9 @@ internal object ChatLogger {
         return MessageEditData.fromCreateData(
             creator.getCreateBuilder("chat-logger@setting", locale, substitutor).build()
         )
+    }
+
+    private fun isListenable(channelId: Long): Boolean {
+        return KEEP_ALL_LOG || DbManager.isChannelInTableCache(channelId)
     }
 }

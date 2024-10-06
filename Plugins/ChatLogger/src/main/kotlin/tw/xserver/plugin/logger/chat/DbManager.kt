@@ -18,6 +18,9 @@ internal object DbManager {
     // Long may be too small but for efficiency performance. Watchful waiting
     private val channelTableCache: MutableSet<Long> = mutableSetOf() // Avoid multiple database exist query
 
+    internal fun isChannelInTableCache(channelId: Long): Boolean =
+        channelId in channelTableCache
+
     @Synchronized
     internal fun initAfterReady() {
         val dataFolder = File(PLUGIN_DIR_FILE, "data")
@@ -110,17 +113,6 @@ internal object DbManager {
 
     internal fun deleteDatabase(guildId: String) {
         SQLiteFileManager.deleteDatabase(guildId)
-    }
-
-    /**
-     * Checks if a channel is listenable based on the channel ID.
-     * If the channel is not listenable and logging is not required for all, returns -1.
-     *
-     * @param channelId The ID of the channel to check.
-     * @return The listenable status of the channel or -1 if not listenable and KEEP_ALL_LOG is false.
-     */
-    internal fun isListenable(channelId: Long): Boolean {
-        return KEEP_ALL_LOG || channelId in channelTableCache
     }
 
     internal fun markChannelAsUnavailable(channelId: Long) {

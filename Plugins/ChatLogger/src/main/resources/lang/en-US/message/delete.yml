@@ -1,7 +1,6 @@
 embeds:
   - author:
       name: "Message Log"
-      icon_url: "https://i.imgur.com/PsEXCuY.png"
     title:
       text: "☛ %channel_name%'s Channel Setting"
     description: "Deleted Successfully"

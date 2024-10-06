@@ -24,4 +24,4 @@ embeds:
         value: "%cl_msg_before%"
 
       - name: "`==> 變更後 <==`"
-        value: "%cl_msg_after%\n\n\n"
+        value: "%cl_msg_after%"

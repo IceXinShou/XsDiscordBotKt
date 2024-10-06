@@ -1,7 +1,6 @@
 embeds:
   - author:
       name: "訊息日誌"
-      icon_url: "https://i.imgur.com/PsEXCuY.png"
     title:
       text: "☛ %channel_name% 的頻道設定"
     footer:

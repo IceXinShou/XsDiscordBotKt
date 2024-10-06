@@ -20,4 +20,4 @@ embeds:
         value: "%cl_change_count%\n\n\n"
 
       - name: "`--> 內容 <--`"
-        value: "%cl_msg%"
+        value: "%cl_msg_before%"

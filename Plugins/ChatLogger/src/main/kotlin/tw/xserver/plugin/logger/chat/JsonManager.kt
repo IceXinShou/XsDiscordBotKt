@@ -58,7 +58,7 @@ internal object JsonManager {
                             .forEach { add(it) }
                     })
 
-                    dataMap[listenChannelId.toLong()] = ChannelData(guildId, this)
+                    dataMap[listenChannelId.toLong()] = ChannelData(guild, this)
                 }
             }
 
@@ -66,21 +66,21 @@ internal object JsonManager {
         }
     }
 
-    private fun getOrPut(guildId: Long, listenChannelId: Long): Pair<JsonObjFileManager, JsonObject> {
+    private fun getOrPut(guild: Guild, listenChannelId: Long): Pair<JsonObjFileManager, JsonObject> {
         val fileManager = fileManagers
-            .getOrPut(guildId) { JsonObjFileManager(File(PLUGIN_DIR_FILE, "setting/$guildId.json")) }
+            .getOrPut(guild.idLong) { JsonObjFileManager(File(PLUGIN_DIR_FILE, "setting/${guild.id}.json")) }
         val obj: JsonObject =
-            fileManager.computeIfAbsent(listenChannelId.toString(), ChannelData(guildId).getJsonObject()).asJsonObject
+            fileManager.computeIfAbsent(listenChannelId.toString(), ChannelData(guild).getJsonObject()).asJsonObject
 
         return Pair(fileManager, obj)
     }
 
-    internal fun toggle(guildId: Long, listenChannelId: Long): ChannelData {
+    internal fun toggle(guild: Guild, listenChannelId: Long): ChannelData {
         // update map
-        val setting = getChannelData(listenChannelId, guildId).toggle()
+        val setting = getChannelData(listenChannelId, guild).toggle()
 
         // update json file
-        val (fileManager, obj) = getOrPut(guildId, listenChannelId)
+        val (fileManager, obj) = getOrPut(guild, listenChannelId)
         obj.addProperty("allow_mode", setting.getChannelMode())
         fileManager.save()
 
@@ -88,15 +88,15 @@ internal object JsonManager {
     }
 
     internal fun addAllowChannels(
-        guildId: Long,
+        guild: Guild,
         listenChannelId: Long,
         detectedChannelIds: List<Long>,
     ): ChannelData {
         // update map
-        val setting = getChannelData(listenChannelId, guildId).addAllows(detectedChannelIds)
+        val setting = getChannelData(listenChannelId, guild).addAllows(detectedChannelIds)
 
         // update json file
-        val (fileManager, obj) = getOrPut(guildId, listenChannelId)
+        val (fileManager, obj) = getOrPut(guild, listenChannelId)
         obj.add("allow", setting.getAllowArray())
         fileManager.save()
 
@@ -104,15 +104,15 @@ internal object JsonManager {
     }
 
     internal fun addBlockChannels(
-        guildId: Long,
+        guild: Guild,
         listenChannelId: Long,
         detectedChannelIds: List<Long>,
     ): ChannelData {
         // update map
-        val setting = getChannelData(listenChannelId, guildId).addBlocks(detectedChannelIds)
+        val setting = getChannelData(listenChannelId, guild).addBlocks(detectedChannelIds)
 
         // update json file
-        val (fileManager, obj) = getOrPut(guildId, listenChannelId)
+        val (fileManager, obj) = getOrPut(guild, listenChannelId)
         obj.add("block", setting.getBlockArray())
         fileManager.save()
 
@@ -128,7 +128,7 @@ internal object JsonManager {
     }
 
     // getOrDefault
-    private fun getChannelData(listenChannelId: Long, guildId: Long): ChannelData {
-        return dataMap.computeIfAbsent(listenChannelId) { ChannelData(guildId) }
+    private fun getChannelData(listenChannelId: Long, guild: Guild): ChannelData {
+        return dataMap.computeIfAbsent(listenChannelId) { ChannelData(guild) }
     }
 }

@@ -2,15 +2,17 @@ package tw.xserver.plugin.logger.chat
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import tw.xserver.loader.base.MainLoader.jdaBot
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.channel.concrete.Category
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
 
 internal class ChannelData(
-    private val guild: Long,
+    private val guild: Guild,
     initData: JsonObject? = null
 ) {
     private var channelMode: ChannelMode = ChannelMode.Allow
-    private val allow: MutableSet<Long> = HashSet()
-    private val block: MutableSet<Long> = HashSet()
+    private val allow: MutableSet<Long> = mutableSetOf()
+    private val block: MutableSet<Long> = mutableSetOf()
 
     fun getJsonObject(): JsonObject = JsonObject().apply {
         addProperty("allow_mode", getChannelMode())
@@ -33,17 +35,23 @@ internal class ChannelData(
         }
     }
 
-    fun getCurrentDetectChannels(): List<Long> = when (channelMode) {
+    fun getCurrentDetectChannels(): List<GuildChannel> = when (channelMode) {
         ChannelMode.Allow -> {
-            allow.toList()
+            allow.mapNotNull { guild.getGuildChannelById(it) }
+                .flatMap { channel ->
+                    if (channel is Category) channel.channels else listOf(channel)
+                }
         }
 
         ChannelMode.Block -> {
-            jdaBot.getGuildById(guild)!!.channels
-                .map { it.idLong }
-                .filter { it !in block }
+            block.mapNotNull { guild.getGuildChannelById(it) }
+                .flatMap { channel ->
+                    if (channel is Category) channel.channels else listOf(channel)
+                }
+                .let { ignoreChannels -> guild.channels.filter { it !in ignoreChannels } }
         }
     }
+
 
     fun toggle(): ChannelData {
         channelMode = if (channelMode == ChannelMode.Allow) {

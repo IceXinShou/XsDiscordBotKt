@@ -7,17 +7,17 @@ embeds:
       text: "❖ ORDERLY SERVER ❖"
 
     fields:
+      - name: "`Member`"
+        value: "%user_mention%"
+
       - name: "`Category`"
         value: "%cl_category_mention%"
 
       - name: "`Channel`"
         value: "%cl_channel_mention%"
 
-      - name: "`Member`"
-        value: "%user_mention%"
-
       - name: "`Change Count`"
         value: "%cl_change_count%\n\n\n"
 
       - name: "`--> Content <--`"
-        value: "%cl_msg%"
+        value: "%cl_msg_before%"
