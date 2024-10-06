@@ -48,17 +48,14 @@ object MainLoader {
         jdaBot = JDABuilder.createDefault(SettingsLoader.token)
             .setBulkDeleteSplittingEnabled(false)
             .setLargeThreshold(250)
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
+            .setMemberCachePolicy(MemberCachePolicy.DEFAULT)
             .enableCache(
-                CacheFlag.ONLINE_STATUS,
-                CacheFlag.CLIENT_STATUS,
-                CacheFlag.ACTIVITY,
+                CacheFlag.VOICE_STATE,
             )
             .enableIntents(
                 GatewayIntent.GUILD_MEMBERS,
                 GatewayIntent.GUILD_VOICE_STATES,
                 GatewayIntent.GUILD_MESSAGES,
-                GatewayIntent.GUILD_PRESENCES,
                 GatewayIntent.MESSAGE_CONTENT,
             ).build().apply {
                 selfUser.also { bot = it }
