@@ -27,7 +27,7 @@ embeds: # Ignorable, 10 size limit
 components: # 5 size limit, allowed values: [ "buttons", "string_select_menu", "entity_select_menu" ]
   - !ButtonsComponent
     buttons: # 5 size limit
-      - uid_or_url: "xs:messagecreator:template:btn1" # Nonnull, 512 length limit
+      - uid_or_url: "template:btn1" # Nonnull, 512 length limit
         style: 1 # Nonnull, allowed values [ 1 (BLUE), 2 (GREY), 3 (GREEN), 4 (RED), 5 (LINK) ]
         label: "CUTE" # Ignorable, 80 length limit
         disabled: false # Ignorable, default: false
@@ -41,7 +41,7 @@ components: # 5 size limit, allowed values: [ "buttons", "string_select_menu", "
 
   - !StringSelectMenu
     string_select_menu:
-      uid: "xs:messagecreator:template:selectmenu1" # Nonnull
+      uid: "template:selectmenu1" # Nonnull
       placeholder: "Choose one:" # Ignorable
       min: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
       max: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
@@ -59,7 +59,7 @@ components: # 5 size limit, allowed values: [ "buttons", "string_select_menu", "
 
   - !EntitySelectMenu
     entity_select_menu:
-      uid: "xs:messagecreator:template:selectmenu2" # Nonnull
+      uid: "template:selectmenu2" # Nonnull
       placeholder: "Choose one:" # Ignorable
       min: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]
       max: 1 # Ignorable, default: 1, allowed range: [ 1-25 ]

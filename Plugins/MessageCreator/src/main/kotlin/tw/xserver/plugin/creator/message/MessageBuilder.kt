@@ -23,8 +23,8 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.util.*
 
-open class Builder(private val componentPrefix: String, private val defaultLocale: DiscordLocale) {
-    protected val localeMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
+open class MessageBuilder(private val componentPrefix: String, private val defaultLocale: DiscordLocale) {
+    protected val messageLocaleMapper: MutableMap<DiscordLocale, MutableMap<String, MessageDataSerializer>> =
         EnumMap(DiscordLocale::class.java)
 
     open fun parseCommandName(event: CommandInteractionPayload): String =
@@ -42,7 +42,7 @@ open class Builder(private val componentPrefix: String, private val defaultLocal
     }
 
     fun getMessageData(key: String, locale: DiscordLocale): MessageDataSerializer =
-        localeMapper.getOrDefault(locale, localeMapper[defaultLocale])
+        messageLocaleMapper.getOrDefault(locale, messageLocaleMapper[defaultLocale])
             ?.get(key.removePrefix(componentPrefix))
             ?: throw IllegalStateException("Message data not found for command: $key")
 
@@ -51,7 +51,6 @@ open class Builder(private val componentPrefix: String, private val defaultLocal
         substitutor: Substitutor = Placeholder.globalPlaceholder,
     ): MessageCreateBuilder {
         val builder = MessageCreateBuilder()
-
         messageData.content.let { builder.setContent(substitutor.parse(it)) }
         messageData.embeds.let { embeds ->
             builder.setEmbeds(buildEmbeds(embeds, substitutor))
