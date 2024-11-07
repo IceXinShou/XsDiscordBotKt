@@ -40,7 +40,7 @@ object PluginLoader {
                         logger.debug("-------> {}", config.name)
 
                         if (pluginInfos.containsKey(config.name)) {
-                            logger.error("Duplicate plugin name: ${file.name}")
+                            logger.error("Duplicate plugin name: ${file.name}!")
                             fail++
                             return
                         }
@@ -55,7 +55,7 @@ object PluginLoader {
                     }
                 } catch (e: Exception) {
                     fail++
-                    logger.error("Error occurred with file: ${file.name}", e)
+                    logger.error("Error occurred with file: ${file.name}!", e)
                 }
             }
         }
@@ -121,7 +121,7 @@ object PluginLoader {
         // All dependencies are satisfied, load the self plugin.
         pluginInfo?.let {
             if (!pluginQueue.containsKey(it.name)) {
-                logger.info("Initializing {}", it.name)
+                logger.info("Initializing {}.", it.name)
                 val event: PluginEvent? = it.pluginInstance.getDeclaredField("INSTANCE").get(null) as? PluginEvent
                 if (event == null) {
                     logger.error("Cannot get object instance of plugin: {}", it.name)
@@ -129,7 +129,7 @@ object PluginLoader {
                 }
                 pluginQueue[it.name] = (it.pluginInstance.getDeclaredField("INSTANCE").get(null) as? PluginEvent)!!
                 pluginQueue[it.name]!!.load()
-                logger.info("{} load successfully", it.name)
+                logger.info("{} load successfully.", it.name)
             }
         }
 

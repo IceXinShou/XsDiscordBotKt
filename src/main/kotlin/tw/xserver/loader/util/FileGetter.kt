@@ -38,10 +38,10 @@ class FileGetter(private val pluginDirFile: File, private val clazz: Class<*>) {
         val file = File(pluginDirFile, fileName)
         try {
             initFile(resourceFilePath = fileName, exportFile = file)
-            logger.info("Loaded file: {}", file.canonicalPath)
+            logger.info("Loaded file: {}.", file.canonicalPath)
             return file.inputStream()
         } catch (e: IOException) {
-            logger.error("Failed to read resource: {}", e.message)
+            logger.error("Failed to read resource: {}!", e.message)
             throw e
         }
     }
@@ -127,7 +127,7 @@ class FileGetter(private val pluginDirFile: File, private val clazz: Class<*>) {
         forceReplace: Boolean = false
     ) {
         if (forceReplace || !exportFile.exists()) {
-            logger.info("Creating default file: {}", exportFile.path)
+            logger.info("Creating default file: {}.", exportFile.path)
             exportResource(resourceFilePath, exportFile)
         }
     }

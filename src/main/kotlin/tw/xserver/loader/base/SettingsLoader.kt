@@ -22,11 +22,11 @@ object SettingsLoader {
     fun run() {
         var settingFile = File("./$CONFIG_NAME")
         if (!settingFile.exists()) {
-            logger.info("{} not found, create default {}", CONFIG_NAME, CONFIG_NAME)
+            logger.info("{} not found, create default {}!", CONFIG_NAME, CONFIG_NAME)
             settingFile = exportResource()
         }
 
-        logger.info("Loading {}", settingFile.path)
+        logger.info("Loading {}.", settingFile.path)
         config = Yaml().decodeFromString<SettingSerializer>(settingFile.readText())
         token = config.generalSettings.botToken
         logger.info("Setting file loaded.")
@@ -36,9 +36,9 @@ object SettingsLoader {
         try {
             this@SettingsLoader.javaClass.classLoader.getResourceAsStream(CONFIG_NAME).use { fileInJar ->
                 if (fileInJar == null) {
-                    logger.error("Cannot find resource: $CONFIG_NAME")
+                    logger.error("Cannot find resource: $CONFIG_NAME!")
                     throw MissingResourceException(
-                        "Cannot find resource $CONFIG_NAME",
+                        "Cannot find resource $CONFIG_NAME!",
                         this@SettingsLoader.javaClass.classLoader.name,
                         CONFIG_NAME
                     )
@@ -51,7 +51,7 @@ object SettingsLoader {
                 return File("./$CONFIG_NAME")
             }
         } catch (e: IOException) {
-            logger.error("Read resource failed: {}", e.message)
+            logger.error("Read resource failed: {}!", e.message)
             throw e
         }
     }
