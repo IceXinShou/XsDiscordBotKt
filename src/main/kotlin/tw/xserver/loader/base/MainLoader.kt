@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tw.xserver.loader.base.SettingsLoader.token
 import tw.xserver.loader.builtin.statuschanger.StatusChanger
 import tw.xserver.loader.logger.InteractionLogger
 import tw.xserver.loader.plugin.PluginEvent
@@ -45,7 +46,7 @@ object MainLoader {
             return
         }
 
-        jdaBot = JDABuilder.createDefault(SettingsLoader.token)
+        jdaBot = JDABuilder.createDefault(Arguments.botToken ?: token)
             .setBulkDeleteSplittingEnabled(false)
             .setLargeThreshold(250)
             .setMemberCachePolicy(MemberCachePolicy.DEFAULT)
@@ -92,7 +93,7 @@ object MainLoader {
         PluginLoader.apply {
             pluginQueue.reversed().forEach { (name, plugin) ->
                 plugin.unload()
-                logger.info("{} unload successfully", name)
+                logger.info("{} unload successfully.", name)
             }
         }
 

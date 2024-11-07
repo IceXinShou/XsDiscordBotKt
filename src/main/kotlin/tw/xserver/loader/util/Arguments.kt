@@ -30,6 +30,13 @@ object Arguments : CliktCommand() {
                 help = "Do not let bot online"
             ).flag(default = false)
 
+    val botToken: String?
+            by option(
+                "-t",
+                "--token",
+                help = "Set bot token",
+            )
+
     private val logLevel: String
             by option(
                 "-l",
