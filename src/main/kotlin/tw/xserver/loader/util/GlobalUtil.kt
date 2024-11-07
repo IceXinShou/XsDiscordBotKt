@@ -3,6 +3,7 @@ package tw.xserver.loader.util
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
@@ -53,4 +54,7 @@ object GlobalUtil {
 
     fun checkPrefix(event: ButtonInteractionEvent, prefix: String): Boolean =
         !event.componentId.startsWith(prefix)
+
+    fun checkPrefix(event: ModalInteractionEvent, prefix: String): Boolean =
+        !event.modalId.startsWith(prefix)
 }
