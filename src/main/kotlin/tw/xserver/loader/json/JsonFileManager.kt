@@ -14,6 +14,7 @@ abstract class JsonFileManager<T : JsonElement>(
 ) : AutoCloseable {
     protected lateinit var data: T
     protected abstract fun defaultFileAndData(): T
+    private var isDeleted: Boolean = false
 
     init {
         initData()
@@ -40,14 +41,30 @@ abstract class JsonFileManager<T : JsonElement>(
     }
 
     @Synchronized
-    fun save() = try {
-        file.writeText(data.toString())
-    } catch (e: IOException) {
-        logger.error("Cannot save file.", e)
+    fun save() {
+        ensureNotDeleted()
+        try {
+            file.writeText(data.toString())
+        } catch (e: IOException) {
+            logger.error("Cannot save file.", e)
+        }
     }
 
+    @Synchronized
+    fun delete() {
+        ensureNotDeleted()
+        file.delete()
+        isDeleted = true
+    }
+
+    @Synchronized
     override fun close() {
         save()
+    }
+
+    private fun ensureNotDeleted() {
+        if (isDeleted)
+            throw IllegalStateException("Cannot perform operation: This class couldn't be used after delete method called.")
     }
 
     companion object {
