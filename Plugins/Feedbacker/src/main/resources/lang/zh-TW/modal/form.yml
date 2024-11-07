@@ -1,0 +1,10 @@
+title: "您覺得今天的服務怎麼樣呢？ :D" # Nonnull, 100 length limit
+uid: "submit:%stars%" # Nonnull, 45 length limit
+text_inputs:
+  - uid: "form" # Nonnull, 100 length limit
+    label: "請簡述評價內容" # Nonnull, 45 length limit
+    placeholder: "超讚" # Ignorable, 100 length limit
+    min_length: -1 # Ignorable, default: -1
+    max_length: 1024 # Must less or equals to 1024
+    style: "PARAGRAPH" # Nonnull, allowed values: [ "SHORT", "PARAGRAPH" ]
+    required: false # Ignorable, default: true

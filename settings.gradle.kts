@@ -20,9 +20,6 @@ findProject(":Plugins:Economy")?.name = "Economy"
 include("Plugins:MessageCreator")
 findProject(":Plugins:MessageCreator")?.name = "MessageCreator"
 
-include("Plugins:Placeholder")
-findProject(":Plugins:Placeholder")?.name = "Placeholder"
-
 include("Plugins:BotInfo")
 findProject(":Plugins:BotInfo")?.name = "BotInfo"
 
@@ -43,3 +40,9 @@ findProject(":Plugins:TicketAddons")?.name = "TicketAddons"
 
 include("Plugins:VoiceLogger")
 findProject(":Plugins:VoiceLogger")?.name = "VoiceLogger"
+
+include("Plugins:DynamicVoiceChannel")
+findProject(":Plugins:DynamicVoiceChannel")?.name = "DynamicVoiceChannel"
+
+include("Plugins:Feedbacker")
+findProject(":Plugins:Feedbacker")?.name = "Feedbacker"

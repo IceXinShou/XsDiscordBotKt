@@ -1,0 +1,12 @@
+embeds:
+  - title:
+      text: "☛ 來自 %user_name% 的新評價"
+    description: "%fb_stars%" # Ignorable, 4096 length limit
+    thumbnail_url: "%member_avatar_url%"
+    color_code: "#60C0C0"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "評價內容"
+        value: "%fb_content%"

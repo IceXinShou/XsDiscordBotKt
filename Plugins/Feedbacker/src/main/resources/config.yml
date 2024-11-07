@@ -1,0 +1,11 @@
+language: "zh-TW"
+guild_id: 817940392418607124
+allow_role_id:
+  - 817940392451506206
+
+submit_channel_id: 1303465499577024514
+
+form_warning: "請先選擇星等再提交！"
+form_no_permission: "您沒有權限！"
+form_not_you: "這個表單不是為你建立的！"
+form_success: "建立成功"
