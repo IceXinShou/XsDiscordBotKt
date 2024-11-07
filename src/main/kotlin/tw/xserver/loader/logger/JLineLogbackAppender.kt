@@ -13,7 +13,7 @@ class JLineAppender : AppenderBase<ILoggingEvent>() {
         layout = PatternLayout().apply {
             context = this@JLineAppender.context // Set the context
             pattern =
-                "[%d{HH:mm:ss.SSS}] %highlight2(%5level) | %boldGreen(%-50.50(%logger{35}.%M{10}:%line)) -> %msg%n"
+                "[%d{HH:mm:ss.SSS}] %highlight2(%5level) | %boldGreen(%-40.40(%logger{25}.%M{10}:%line)) -> %msg%n"
             start()
         }
     }
