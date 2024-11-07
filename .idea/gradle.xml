@@ -14,10 +14,11 @@
             <option value="$PROJECT_DIR$/Plugins/API/SQLiteAPI" />
             <option value="$PROJECT_DIR$/Plugins/BotInfo" />
             <option value="$PROJECT_DIR$/Plugins/ChatLogger" />
+            <option value="$PROJECT_DIR$/Plugins/DynamicVoiceChannel" />
             <option value="$PROJECT_DIR$/Plugins/Economy" />
+            <option value="$PROJECT_DIR$/Plugins/Feedbacker" />
             <option value="$PROJECT_DIR$/Plugins/IntervalPusher" />
             <option value="$PROJECT_DIR$/Plugins/MessageCreator" />
-            <option value="$PROJECT_DIR$/Plugins/Placeholder" />
             <option value="$PROJECT_DIR$/Plugins/TicketAddons" />
             <option value="$PROJECT_DIR$/Plugins/VoiceLogger" />
           </set>
