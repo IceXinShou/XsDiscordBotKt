@@ -9,7 +9,7 @@ data class SettingSerializer(
     val generalSettings: GeneralSettings,
 
     @SerialName("builtin_settings")
-    val builtinSettings: BuiltinSettings,
+    val builtinSettings: BuiltinSettings? = null,
 ) {
     @Serializable
     data class GeneralSettings(

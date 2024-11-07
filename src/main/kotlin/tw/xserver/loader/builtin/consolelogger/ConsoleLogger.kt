@@ -2,6 +2,7 @@ package tw.xserver.loader.builtin.consolelogger
 
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
@@ -15,9 +16,10 @@ object ConsoleLogger : ListenerAdapter() {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private val commandConsoles: MutableList<ConsoleChannel> = ArrayList()
     private val buttonConsoles: MutableList<ConsoleChannel> = ArrayList()
-    private val consoleChannelList = SettingsLoader.config.builtinSettings.consoleLoggerSetting
+    private val modalConsoles: MutableList<ConsoleChannel> = ArrayList()
+    private val consoleChannelList = SettingsLoader.config.builtinSettings?.consoleLoggerSetting
     fun run() {
-        if (consoleChannelList.isEmpty()) {
+        if (consoleChannelList.isNullOrEmpty()) {
             logger.info("No console channel bind")
             return
         }
@@ -40,6 +42,7 @@ object ConsoleLogger : ListenerAdapter() {
                 when (type) {
                     "command" -> commandConsoles.add(console)
                     "button" -> buttonConsoles.add(console)
+                    "modal" -> modalConsoles.add(console)
                 }
             }
         }
@@ -59,6 +62,12 @@ object ConsoleLogger : ListenerAdapter() {
         }
     }
 
+    override fun onModalInteraction(event: ModalInteractionEvent) {
+        modalConsoles.forEach {
+            sendChannel(event, it)
+        }
+    }
+
     private fun sendChannel(event: GenericInteractionCreateEvent, console: ConsoleChannel) {
         val interactionString = when (event) {
             is SlashCommandInteractionEvent -> {
@@ -74,6 +83,14 @@ object ConsoleLogger : ListenerAdapter() {
                     .putAll(
                         "cl_type" to "BTN",
                         "cl_interaction_string" to event.componentId
+                    ).parse(console.format)
+            }
+
+            is ModalInteractionEvent -> {
+                Placeholder.getSubstitutor(event.user)
+                    .putAll(
+                        "cl_type" to "BTN",
+                        "cl_interaction_string" to event.modalId
                     ).parse(console.format)
             }
 

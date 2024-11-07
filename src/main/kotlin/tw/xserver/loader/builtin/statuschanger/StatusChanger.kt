@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit
 object StatusChanger {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private var threadPool = Executors.newSingleThreadScheduledExecutor()
-    private val botStatusList = SettingsLoader.config.builtinSettings.statusChangerSetting.activityMessages
+    private val botStatusList = SettingsLoader.config.builtinSettings?.statusChangerSetting?.activityMessages
 
     fun run() {
-        if (botStatusList.isEmpty()) {
+        if (botStatusList.isNullOrEmpty()) {
             logger.info("No bot status messages to display.")
             return
         }
@@ -49,7 +49,7 @@ object StatusChanger {
 
     private fun cycleActivities() {
         while (!Thread.interrupted()) {
-            for (status in botStatusList) {
+            for (status in botStatusList!!) {
                 val args = status.split(";")
                 if (args.size < 3) {
                     logger.error("Invalid status configuration: $status")
