@@ -5,11 +5,11 @@ group = "tw.xserver.api"
 version = "v2.0"
 
 plugins {
-    id("com.gradleup.shadow") version "8.3.3"
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 dependencies {
-    api("org.xerial:sqlite-jdbc:3.46.1.3")
+    api("org.xerial:sqlite-jdbc:3.47.0.0")
 }
 
 tasks.build {

@@ -2,9 +2,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.0.20"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20"
-    id("com.gradleup.shadow") version "8.3.3"
+    kotlin("jvm") version "2.1.0-RC"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0-RC"
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 group = "tw.xserver.loader"
@@ -21,17 +21,17 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:25.0.0")
+    compileOnly("org.jetbrains:annotations:26.0.1")
 
-    api("net.dv8tion:JDA:5.1.2") // JDA
-    api("ch.qos.logback:logback-classic:1.5.8") // Log
-    api("com.charleskorn.kaml:kaml:0.61.0") // Yaml
+    api("net.dv8tion:JDA:5.2.0") // JDA
+    api("ch.qos.logback:logback-classic:1.5.12") // Log
+    api("com.charleskorn.kaml:kaml:0.62.2") // Yaml
     api("com.google.code.gson:gson:2.11.0") // Json
     api("commons-io:commons-io:2.17.0") // Commons io
     api("org.apache.commons:commons-text:1.12.0") // StringSubstitutor
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0") // coroutine
-    implementation("org.jline:jline:3.27.0") // CLI
+    implementation("org.jline:jline:3.27.1") // CLI
     implementation("com.github.ajalt.clikt:clikt:5.0.1") // Run Arg
     implementation("org.fusesource.jansi:jansi:2.4.1") // AnsiConsole
     implementation("org.jsoup:jsoup:1.18.1") // Connection
