@@ -162,7 +162,12 @@ internal object ChatLogger {
                 "cl_msg_after" to newMessage
             )
 
-            sendListenChannel("on-msg-update", event.guild, listenChannelIds, substitutor)
+            sendListenChannel(
+                "on-msg-update",
+                event.guild,
+                listenChannelIds,
+                substitutor
+            )
         } catch (e: MessageNotFound) {
             return
         }
@@ -191,7 +196,12 @@ internal object ChatLogger {
                     "cl_change_count" to updateCount.toString(),
                     "cl_msg_before" to oldMessage,
                 )
-                sendListenChannel("on-msg-delete", event.guild, listenChannelIds, substitutor)
+                sendListenChannel(
+                    "on-msg-delete",
+                    event.guild,
+                    listenChannelIds,
+                    substitutor
+                )
             }
         } catch (e: MessageNotFound) {
             return
@@ -199,7 +209,12 @@ internal object ChatLogger {
             when (e.errorCode) {
                 // Unknown Member
                 10007 -> {
-                    sendListenChannel("on-msg-delete", event.guild, listenChannelIds, Placeholder.globalPlaceholder)
+                    sendListenChannel(
+                        "on-msg-delete",
+                        event.guild,
+                        listenChannelIds,
+                        Placeholder.globalPlaceholder
+                    )
                     return
                 }
             }
@@ -300,11 +315,16 @@ internal object ChatLogger {
 
 
         return MessageEditData.fromCreateData(
-            creator.getCreateBuilder("chat-logger@setting", locale, substitutor).build()
+            creator.getCreateBuilder(
+                "chat-logger@setting",
+                locale,
+                substitutor
+            ).build()
         )
     }
 
     private fun isListenable(channelId: Long): Boolean {
-        return KEEP_ALL_LOG || DbManager.isChannelInTableCache(channelId)
+        return KEEP_ALL_LOG ||
+                DbManager.isChannelInTableCache(channelId)
     }
 }

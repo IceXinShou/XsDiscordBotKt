@@ -50,12 +50,12 @@ object Event : PluginEvent(true) {
                 config = Yaml().decodeFromStream<MainConfigSerializer>(it)
             }
         } catch (e: IOException) {
-            logger.error("Please configure ${PLUGIN_DIR_FILE.canonicalPath}./config.yml", e)
+            logger.error("Please configure ${PLUGIN_DIR_FILE.canonicalPath}./config.yml.", e)
         }
 
-        logger.info("Setting file loaded successfully")
+        logger.info("Setting file loaded successfully.")
         if (File(PLUGIN_DIR_FILE, "data").mkdirs()) {
-            logger.info("Default data folder created")
+            logger.info("Default data folder created.")
         }
 
         when (MODE) {
@@ -69,7 +69,7 @@ object Event : PluginEvent(true) {
             }
         }
 
-        logger.info("Data file loaded successfully")
+        logger.info("Data file loaded successfully.")
     }
 
     override fun reloadLang() {
@@ -78,7 +78,7 @@ object Event : PluginEvent(true) {
         LangManager(
             pluginDirFile = PLUGIN_DIR_FILE,
             fileName = "register.yml",
-            defaultLocale = DiscordLocale.ENGLISH_US,
+            defaultLocale = DiscordLocale.CHINESE_TAIWAN,
             clazzSerializer = CmdFileSerializer::class,
             clazzLocalization = Localizations::class
         )

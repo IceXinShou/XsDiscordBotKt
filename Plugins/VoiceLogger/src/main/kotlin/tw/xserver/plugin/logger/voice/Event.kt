@@ -42,7 +42,7 @@ object Event : PluginEvent(true) {
     override fun reloadConfigFile() {
         fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
 
-        logger.info("Data file loaded successfully")
+        logger.info("Data file loaded successfully.")
     }
 
     override fun reloadLang() {

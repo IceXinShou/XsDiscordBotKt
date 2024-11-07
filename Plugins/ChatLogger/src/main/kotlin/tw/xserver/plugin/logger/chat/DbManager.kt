@@ -25,7 +25,7 @@ internal object DbManager {
     internal fun initAfterReady() {
         val dataFolder = File(PLUGIN_DIR_FILE, "data")
         if (dataFolder.mkdirs()) {
-            logger.info("Default data folder created")
+            logger.info("Default data folder created.")
         }
 
         dataFolder.listFiles()?.filter { it.isFile && it.extension == "db" }?.forEach fileLoop@{ file ->

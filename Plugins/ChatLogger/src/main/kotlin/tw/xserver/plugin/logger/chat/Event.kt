@@ -47,7 +47,7 @@ object Event : PluginEvent(true) {
     override fun reloadConfigFile() {
         fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
 
-        logger.info("Data file loaded successfully")
+        logger.info("Data file loaded successfully.")
     }
 
     override fun reloadLang() {
@@ -56,7 +56,7 @@ object Event : PluginEvent(true) {
         LangManager(
             PLUGIN_DIR_FILE,
             "register.yml",
-            defaultLocale = DiscordLocale.ENGLISH_US,
+            defaultLocale = DiscordLocale.CHINESE_TAIWAN,
             clazzSerializer = CmdFileSerializer::class,
             clazzLocalization = CmdLocalizations::class
         )
@@ -64,7 +64,7 @@ object Event : PluginEvent(true) {
         LangManager(
             PLUGIN_DIR_FILE,
             "placeholder.yml",
-            defaultLocale = DiscordLocale.ENGLISH_US,
+            defaultLocale = DiscordLocale.CHINESE_TAIWAN,
             clazzSerializer = PlaceholderSerializer::class,
             clazzLocalization = PlaceholderLocalizations::class
         )
@@ -96,7 +96,11 @@ object Event : PluginEvent(true) {
         if (GlobalUtil.checkPrefix(event, COMPONENT_PREFIX)) return
         when (val componentId = event.componentId.removePrefix(COMPONENT_PREFIX)) {
             "toggle" -> ChatLogger.onToggle(event)
-            "modify-allow", "modify-block" -> ChatLogger.createSel(event, componentId)
+            "modify-allow", "modify-block" -> ChatLogger.createSel(
+                event,
+                componentId
+            )
+
             "delete" -> ChatLogger.onDelete(event)
         }
     }

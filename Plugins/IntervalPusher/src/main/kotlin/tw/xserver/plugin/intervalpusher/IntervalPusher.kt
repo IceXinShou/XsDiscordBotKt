@@ -28,7 +28,13 @@ class IntervalPusher(
                     client.newCall(request).execute().use { response ->
                         if (!response.isSuccessful) {
                             when (response.code) {
-                                521 -> logger.error("Status Monitor is OFFLINE!")
+                                404 -> {
+                                    logger.warn("Status Monitor refuse the connection! (Code: 404)")
+                                    logger.warn("Break the heartbeat loop!")
+                                    stop()
+                                }
+
+                                521 -> logger.warn("Status Monitor is OFFLINE! (Code: 521)") // reply from Cloudflare
                                 else -> logger.error("Query URL $url failed, code: ${response.code}")
                             }
                         }

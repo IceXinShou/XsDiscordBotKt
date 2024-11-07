@@ -40,10 +40,10 @@ object Event : PluginEvent(true) {
                 config = Yaml().decodeFromStream<MainConfigSerializer>(it)
             }
         } catch (e: IOException) {
-            logger.error("Please configure ${PLUGIN_DIR_FILE.canonicalPath}./config.yml", e)
+            logger.error("Please configure ${PLUGIN_DIR_FILE.canonicalPath}./config.yml.", e)
         }
 
-        logger.info("Setting file loaded successfully")
+        logger.info("Setting file loaded successfully.")
     }
 
     override fun onReady(event: ReadyEvent) {
