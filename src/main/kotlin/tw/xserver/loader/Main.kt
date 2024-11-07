@@ -1,5 +1,6 @@
 package tw.xserver.loader
 
+import com.github.ajalt.clikt.core.main
 import tw.xserver.loader.base.MainLoader
 import tw.xserver.loader.cli.JLineManager
 import tw.xserver.loader.logger.LogBackManager
