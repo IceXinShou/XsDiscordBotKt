@@ -14,8 +14,6 @@ import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionE
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.requests.restaction.CacheRestAction
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import tw.xserver.loader.builtin.placeholder.Placeholder
 import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.plugin.creator.message.MessageCreator
@@ -29,7 +27,6 @@ import java.util.stream.Collectors
 
 
 internal object VoiceLogger {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), DEFAULT_LOCALE, COMPONENT_PREFIX)
 
     internal fun setting(event: SlashCommandInteractionEvent) = event.hook.editOriginal(

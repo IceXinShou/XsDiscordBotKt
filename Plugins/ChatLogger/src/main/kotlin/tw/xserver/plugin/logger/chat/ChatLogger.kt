@@ -15,8 +15,6 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import tw.xserver.loader.builtin.placeholder.Placeholder
 import tw.xserver.loader.builtin.placeholder.Substitutor
 import tw.xserver.plugin.creator.message.MessageCreator
@@ -30,7 +28,6 @@ import java.util.stream.Collectors
 
 internal object ChatLogger {
     internal const val KEEP_ALL_LOG = true
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), DiscordLocale.CHINESE_TAIWAN, COMPONENT_PREFIX)
 
     fun setting(event: SlashCommandInteractionEvent) = event.hook.editOriginal(
