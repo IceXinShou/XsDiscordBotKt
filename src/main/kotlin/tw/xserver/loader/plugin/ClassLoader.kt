@@ -108,7 +108,7 @@ object ClassLoader : URLClassLoader(arrayOfNulls(0), MainLoader::class.java.clas
                         }
                     }
                 } catch (e: Exception) {
-                    logger.error("Error accessing resource: '$name'", e)
+                    logger.error("Error accessing resource: '{}'", name, e)
                 }
             }
         }

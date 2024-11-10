@@ -41,7 +41,7 @@ class LangManager<D : Any, L : Any>(
             val registerFile = File(directory, fileName)
             val locale = DiscordLocale.from(directory.name.replace("\\.\\w+$".toRegex(), ""))
             if (locale == DiscordLocale.UNKNOWN) {
-                logger.warn("Cannot identify Discord locale from file: ${registerFile.canonicalPath}")
+                logger.warn("Cannot identify Discord locale from file: {}", registerFile.canonicalPath)
                 return@forEach
             }
 
@@ -58,7 +58,7 @@ class LangManager<D : Any, L : Any>(
                 }
 
             } catch (e: Exception) {
-                logger.error("Error decoding data for locale $locale from file: ${registerFile.name}", e)
+                logger.error("Error decoding data for locale $locale from file: {}", registerFile.name, e)
             }
         }
 
@@ -84,9 +84,9 @@ class LangManager<D : Any, L : Any>(
                         }
                     }
                 } catch (e: NoSuchFieldException) {
-                    logger.error("Field not found: ${property.name}", e)
+                    logger.error("Field not found: {}", property.name, e)
                 } catch (e: IllegalAccessException) {
-                    logger.error("Access to field denied: ${property.name}", e)
+                    logger.error("Access to field denied: {}", property.name, e)
                 }
             }
         }
@@ -112,11 +112,11 @@ class LangManager<D : Any, L : Any>(
                 }
             }
         } catch (e: NoSuchFieldException) {
-            logger.error("Field not found in the path: $path", e)
+            logger.error("Field not found in the path: {}", path, e)
         } catch (e: IllegalAccessException) {
-            logger.error("Access to field denied in the path: $path", e)
+            logger.error("Access to field denied in the path: {}", path, e)
         } catch (e: Exception) {
-            logger.error("Error processing path: $path", e)
+            logger.error("Error processing path: {}", path, e)
         }
 
         throw NoSuchFieldException("LocaleData not found in the end of path: $path")

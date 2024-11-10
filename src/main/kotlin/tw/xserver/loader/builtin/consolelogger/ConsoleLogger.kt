@@ -27,13 +27,13 @@ object ConsoleLogger : ListenerAdapter() {
         consoleChannelList.forEach { consoleData ->
             val guild = jdaBot.getGuildById(consoleData.guildId)
             if (guild == null) {
-                logger.warn("Skipped, Cannot found Guild: ${consoleData.guildId}")
+                logger.warn("Skipped, Cannot found Guild: {}", consoleData.guildId)
                 return@forEach
             }
 
             val channel = jdaBot.getTextChannelById(consoleData.channelId)
             if (channel == null) {
-                logger.warn("Skipped, Cannot found Channel: ${consoleData.channelId}")
+                logger.warn("Skipped, Cannot found Channel: {}", consoleData.channelId)
                 return@forEach
             }
 

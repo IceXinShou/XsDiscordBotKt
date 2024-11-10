@@ -62,7 +62,7 @@ internal object DbManager {
                         }
                 }
             } catch (e: Exception) {
-                logger.error("Error processing database file: ${file.name}", e)
+                logger.error("Error processing database file: {}", file.name, e)
             }
         }
     }

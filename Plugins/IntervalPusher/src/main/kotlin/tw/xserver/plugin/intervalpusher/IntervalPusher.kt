@@ -35,14 +35,14 @@ class IntervalPusher(
                                 }
 
                                 521 -> logger.warn("Status Monitor is OFFLINE! (Code: 521)") // reply from Cloudflare
-                                else -> logger.error("Query URL $url failed, code: ${response.code}")
+                                else -> logger.error("Query URL {} failed, code: {}", url, response.code)
                             }
                         }
                     }
                 } catch (e: IOException) {
-                    logger.error("Query URL $originUrl internet error: ${e.message}")
+                    logger.error("Query URL {} internet error: {}", originUrl, e.message)
                 } catch (e: Exception) {
-                    logger.error("Query URL $originUrl failed: ${e.message}")
+                    logger.error("Query URL {} failed: {}", originUrl, e.message)
                 }
                 delay(intervalSeconds * 1000L)
             }

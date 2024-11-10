@@ -40,7 +40,7 @@ object PluginLoader {
                         logger.debug("-------> {}", config.name)
 
                         if (pluginInfos.containsKey(config.name)) {
-                            logger.error("Duplicate plugin name: ${file.name}!")
+                            logger.error("Duplicate plugin name: {}!", file.name)
                             fail++
                             return
                         }
@@ -55,7 +55,7 @@ object PluginLoader {
                     }
                 } catch (e: Exception) {
                     fail++
-                    logger.error("Error occurred with file: ${file.name}!", e)
+                    logger.error("Error occurred with file: {}!", file.name, e)
                 }
             }
         }
@@ -74,7 +74,7 @@ object PluginLoader {
             if (plugin.listener) listenersQueue.add(plugin)
         }
 
-        if (fail > 0) logger.error("$fail plugin(s) failed to load.")
+        if (fail > 0) logger.error("{} plugin(s) failed to load.", fail)
         logger.info("{} plugin(s) loaded successfully.", success)
     }
 
@@ -101,12 +101,12 @@ object PluginLoader {
             if (pluginInfos.containsKey(depend)) {
                 // If loading the dependency fails, log and return true to indicate a failure.
                 if (addPluginToQueue(pluginInfos[depend])) {
-                    logger.error("Failed to load dependency $depend for plugin ${pluginInfo.name}.")
+                    logger.error("Failed to load dependency {} for plugin {}.", depend, pluginInfo.name)
                     return true
                 }
             } else {
                 // If the dependency does not exist, log an error and return true.
-                logger.error("Plugin: ${pluginInfo.name} is missing dependency: $depend")
+                logger.error("Plugin: {} is missing dependency: {}", pluginInfo.name, depend)
                 return true
             }
         }

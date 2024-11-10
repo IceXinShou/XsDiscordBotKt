@@ -52,13 +52,13 @@ object StatusChanger {
             for (status in botStatusList!!) {
                 val args = status.split(";")
                 if (args.size < 3) {
-                    logger.error("Invalid status configuration: $status")
+                    logger.error("Invalid status configuration: {}", status)
                     continue
                 }
                 try {
                     updateActivity(args)
                 } catch (e: IllegalArgumentException) {
-                    logger.error("Cannot find activity type: ${args[0]}", e)
+                    logger.error("Cannot find activity type: {}", args[0], e)
                 }
                 if (Thread.interrupted()) {
                     logger.info("Interrupt detected, breaking the cycle.")

@@ -50,7 +50,7 @@ object Event : PluginEvent(true) {
                 config = Yaml().decodeFromStream<MainConfigSerializer>(it)
             }
         } catch (e: IOException) {
-            logger.error("Please configure ${PLUGIN_DIR_FILE.canonicalPath}./config.yml.", e)
+            logger.error("Please configure {}./config.yml.", PLUGIN_DIR_FILE.canonicalPath, e)
         }
 
         logger.info("Setting file loaded successfully.")

@@ -29,7 +29,7 @@ abstract class JsonFileManager<T : JsonElement>(
                     try {
                         data = Gson().fromJson(fileText, dataType)
                     } catch (e: JsonSyntaxException) {
-                        logger.error("Bad format for file: ${file.name}", e)
+                        logger.error("Bad format for file: {}", file.name, e)
                         return
                     }
                     return

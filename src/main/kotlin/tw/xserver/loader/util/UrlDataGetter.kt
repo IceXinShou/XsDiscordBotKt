@@ -41,12 +41,12 @@ object UrlDataGetter {
             client.newCall(request).execute().use { response ->
                 if (response.isSuccessful) response.body?.string()
                 else {
-                    logger.warn("POST request failed with status: ${response.code}")
+                    logger.warn("POST request failed with status: {}", response.code)
                     null
                 }
             }
         } catch (e: IOException) {
-            logger.error("POST request failed: ${e.message}", e)
+            logger.error("POST request failed: {}", e.message, e)
             null
         }
     }
@@ -70,12 +70,12 @@ object UrlDataGetter {
             client.newCall(request).execute().use { response ->
                 if (response.isSuccessful) response.body?.string()
                 else {
-                    logger.warn("GET request failed with status: ${response.code}")
+                    logger.warn("GET request failed with status: {}", response.code)
                     null
                 }
             }
         } catch (e: IOException) {
-            logger.error("GET request failed: ${e.message}", e)
+            logger.error("GET request failed: {}", e.message, e)
             null
         }
     }

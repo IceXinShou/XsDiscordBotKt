@@ -36,7 +36,7 @@ object SettingsLoader {
         try {
             this@SettingsLoader.javaClass.classLoader.getResourceAsStream(CONFIG_NAME).use { fileInJar ->
                 if (fileInJar == null) {
-                    logger.error("Cannot find resource: $CONFIG_NAME!")
+                    logger.error("Cannot find resource: {}!", CONFIG_NAME)
                     throw MissingResourceException(
                         "Cannot find resource $CONFIG_NAME!",
                         this@SettingsLoader.javaClass.classLoader.name,

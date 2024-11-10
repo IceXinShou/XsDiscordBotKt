@@ -60,7 +60,7 @@ object JLineManager {
         }
 
         else -> {
-            logger.warn("Unknown command: $cmd")
+            logger.warn("Unknown command: {}", cmd)
             0
         }
     }
