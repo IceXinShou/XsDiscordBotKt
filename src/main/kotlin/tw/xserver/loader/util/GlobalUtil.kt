@@ -16,9 +16,9 @@ import tw.xserver.loader.base.MainLoader
  */
 object GlobalUtil {
     /**
-     * Retrieves a User object from Discord's servers by their Id.
+     * Retrieves a User object from Discord's servers by their ID.
      *
-     * @param id The unique Id of the user.
+     * @param id The unique ID of the user.
      * @return The User object.
      */
     fun getUserById(id: Long): CacheRestAction<User> = MainLoader.jdaBot.retrieveUserById(id)

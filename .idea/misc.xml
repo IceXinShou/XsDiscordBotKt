@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <entry_points version="2.0">
+      <entry_point TYPE="field" FQNAME="tw.xserver.loader.util.Arguments botToken$delegate" />
+      <entry_point TYPE="field" FQNAME="tw.xserver.loader.util.Arguments forceReplaceLangResources$delegate" />
+      <entry_point TYPE="field" FQNAME="tw.xserver.loader.util.Arguments ignoreVersionCheck$delegate" />
+      <entry_point TYPE="field" FQNAME="tw.xserver.loader.util.Arguments logLevel$delegate" />
+      <entry_point TYPE="field" FQNAME="tw.xserver.loader.util.Arguments noBuild$delegate" />
+    </entry_points>
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
