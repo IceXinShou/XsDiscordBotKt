@@ -1,14 +1,10 @@
 package tw.xserver.plugin.feedbacker.lang
 
+import tw.xserver.loader.localizations.LocalTemplate
 import tw.xserver.loader.localizations.LocaleData
 
 internal object CmdLocalizations {
     val feedbacker = CommandWithMemberLd()
-
-    class ND {
-        val name = LocaleData()
-        val description = LocaleData()
-    }
 
     class CommandWithMemberLd {
         val options = OptionsLd()
@@ -16,7 +12,7 @@ internal object CmdLocalizations {
         val description = LocaleData()
 
         class OptionsLd {
-            val member = ND()
+            val member = LocalTemplate.NDLocalData()
         }
     }
 }

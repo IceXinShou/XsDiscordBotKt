@@ -3,7 +3,7 @@ package tw.xserver.plugin.botinfo.command
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.commands.build.Commands
-import tw.xserver.plugin.botinfo.lang.Localizations
+import tw.xserver.plugin.botinfo.lang.CmdLocalizations
 
 /**
  * Retrieves and constructs an array of guild-specific command configurations.
@@ -16,7 +16,7 @@ import tw.xserver.plugin.botinfo.lang.Localizations
 fun getGuildCommands(): Array<CommandData> = arrayOf(
     // Command to display bot info message
     Commands.slash("bot-info", "show about the bot data")
-        .setNameLocalizations(Localizations.botInfo.name)
-        .setDescriptionLocalizations(Localizations.botInfo.description)
+        .setNameLocalizations(CmdLocalizations.botInfo.name)
+        .setDescriptionLocalizations(CmdLocalizations.botInfo.description)
         .setDefaultPermissions(DefaultMemberPermissions.ENABLED),
 )

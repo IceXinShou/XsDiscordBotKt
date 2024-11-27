@@ -9,7 +9,7 @@ import tw.xserver.loader.util.FileGetter
 import tw.xserver.loader.util.GlobalUtil
 import tw.xserver.plugin.botinfo.command.getGuildCommands
 import tw.xserver.plugin.botinfo.lang.CmdFileSerializer
-import tw.xserver.plugin.botinfo.lang.Localizations
+import tw.xserver.plugin.botinfo.lang.CmdLocalizations
 import java.io.File
 
 object Event : PluginEvent(true) {
@@ -33,7 +33,7 @@ object Event : PluginEvent(true) {
             fileName = "register.yml",
             defaultLocale = DiscordLocale.CHINESE_TAIWAN,
             clazzSerializer = CmdFileSerializer::class,
-            clazzLocalization = Localizations::class
+            clazzLocalization = CmdLocalizations::class
         )
     }
 

@@ -2,63 +2,53 @@ package tw.xserver.plugin.economy.lang
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import tw.xserver.loader.localizations.LocalTemplate
 
 @Serializable
 internal data class CmdFileSerializer(
-    val balance: Command1,
+    val balance: CommandMember,
 
     @SerialName("top-money")
-    val topMoney: SimpleCommand,
+    val topMoney: LocalTemplate.NDString,
 
     @SerialName("top-cost")
-    val topCost: SimpleCommand,
+    val topCost: LocalTemplate.NDString,
 
     @SerialName("add-money")
-    val addMoney: Command2,
+    val addMoney: CommandMemberValue,
 
     @SerialName("remove-money")
-    val removeMoney: Command2,
+    val removeMoney: CommandMemberValue,
 
     @SerialName("set-money")
-    val setMoney: Command2,
+    val setMoney: CommandMemberValue,
 
     @SerialName("set-cost")
-    val setCost: Command2
+    val setCost: CommandMemberValue
 ) {
+
     @Serializable
-    internal data class Command1(
+    internal data class CommandMember(
         val name: String,
         val description: String,
-        val options: Options1
+        val options: Options
     ) {
         @Serializable
-        internal data class Options1(
-            val member: Option
+        internal data class Options(
+            val member: LocalTemplate.NDString
         )
     }
 
     @Serializable
-    internal data class Command2(
+    internal data class CommandMemberValue(
         val name: String,
         val description: String,
-        val options: Options2
+        val options: Options
     ) {
         @Serializable
-        internal data class Options2(
-            val member: Option,
-            val value: Option
+        internal data class Options(
+            val member: LocalTemplate.NDString,
+            val value: LocalTemplate.NDString
         )
     }
-
-    @Serializable
-    internal data class Option(
-        val name: String,
-        val description: String
-    )
-
-    @Serializable
-    internal data class SimpleCommand(
-        val name: String,
-        val description: String
-    )
 }

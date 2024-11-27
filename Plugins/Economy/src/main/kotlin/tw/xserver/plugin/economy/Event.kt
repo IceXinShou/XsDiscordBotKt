@@ -16,7 +16,7 @@ import tw.xserver.loader.util.FileGetter
 import tw.xserver.loader.util.GlobalUtil
 import tw.xserver.plugin.economy.command.getGuildCommands
 import tw.xserver.plugin.economy.lang.CmdFileSerializer
-import tw.xserver.plugin.economy.lang.Localizations
+import tw.xserver.plugin.economy.lang.CmdLocalizations
 import tw.xserver.plugin.economy.serializer.MainConfigSerializer
 import tw.xserver.plugin.economy.storage.JsonImpl
 import tw.xserver.plugin.economy.storage.SheetImpl
@@ -80,7 +80,7 @@ object Event : PluginEvent(true) {
             fileName = "register.yml",
             defaultLocale = DiscordLocale.CHINESE_TAIWAN,
             clazzSerializer = CmdFileSerializer::class,
-            clazzLocalization = Localizations::class
+            clazzLocalization = CmdLocalizations::class
         )
     }
 
