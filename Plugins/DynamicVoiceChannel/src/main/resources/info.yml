@@ -1,0 +1,6 @@
+author: xinshoutw
+main: tw.xserver.plugin.dynamicvoicechannel.Event
+name: DynamicVoiceChannel
+version: '2.0'
+depend:
+  - MessageCreator

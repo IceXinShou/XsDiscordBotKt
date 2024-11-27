@@ -1,4 +1,4 @@
-author: IceXinShou
+author: xinshoutw
 main: tw.xserver.plugin.logger.chat.Event
 name: ChatLogger
 version: '2.0'
