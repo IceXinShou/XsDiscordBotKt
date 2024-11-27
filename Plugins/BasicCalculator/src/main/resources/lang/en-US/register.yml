@@ -1,0 +1,7 @@
+basic-calculate:
+  name: calculate
+  description: calculate basic math formula
+  options:
+    formula:
+      name: formula
+      description: Legal symbols + - * / ^ ( ), and bracket is ignorable

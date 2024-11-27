@@ -46,3 +46,6 @@ findProject(":Plugins:DynamicVoiceChannel")?.name = "DynamicVoiceChannel"
 
 include("Plugins:Feedbacker")
 findProject(":Plugins:Feedbacker")?.name = "Feedbacker"
+
+include("Plugins:BasicCalculator")
+findProject(":Plugins:BasicCalculator")?.name = "BasicCalculator"
