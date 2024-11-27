@@ -15,10 +15,7 @@ internal object BasicCalculator {
     private val creator = MessageCreator(File(PLUGIN_DIR_FILE, "lang"), DiscordLocale.CHINESE_TAIWAN)
 
     fun calculate(event: SlashCommandInteractionEvent) {
-        val formula: String = event.getOption("formula")!!.asString.apply {
-            trim()
-            trimEnd('?', '=')
-        }
+        val formula: String = event.getOption("formula")!!.asString.trim().trimEnd('?', '=', ' ')
         val ans: String
         try {
             ans = evaluateExpression(formula).toInt().toString()
