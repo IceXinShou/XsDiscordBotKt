@@ -132,7 +132,7 @@ internal object BasicCalculator {
                     stack.push(c)
                     prevTokenType = TokenType.OPERATOR
                 } else {
-                    throw IllegalArgumentException("Unknown Character: $c")
+                    throw IllegalArgumentException("Unknown character: $c")
                 }
                 i++
             }
@@ -140,7 +140,7 @@ internal object BasicCalculator {
             while (!stack.isEmpty()) {
                 val op = stack.pop()
                 if (op == '(' || op == ')') {
-                    throw IllegalArgumentException("括号不匹配")
+                    throw IllegalArgumentException("Unmatched bracket")
                 }
                 output.add(op.toString())
             }
