@@ -1,1 +1,14 @@
-content: "%bc_question% = %bc_answer%"
+embeds:
+  - title:
+      text: "🔢 計算機"
+    image_url: "https://blog.xinshou.tw/favicon.ico"
+    color_code: "#00FFFF"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "算式"
+        value: "```%bc_question%```"
+
+      - name: "結果"
+        value: "```%bc_answer%```"

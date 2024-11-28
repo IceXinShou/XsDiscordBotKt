@@ -1,1 +1,14 @@
-content: "Error Occurred: %bc_question%"
+embeds:
+  - title:
+      text: "🔢 Calculator"
+    image_url: "https://blog.xinshou.tw/favicon.ico"
+    color_code: "#C02020"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "Formula"
+        value: "`%bc_question%`"
+
+      - name: "Result"
+        value: "`%bc_error%`"

@@ -1,1 +1,14 @@
-content: "%bc_question% = %bc_answer%"
+embeds:
+  - title:
+      text: "🔢 Calculator"
+    image_url: "https://blog.xinshou.tw/favicon.ico"
+    color_code: "#00FFFF"
+    footer:
+      text: "❖ ORDERLY SERVER ❖"
+
+    fields:
+      - name: "Formula"
+        value: "```%bc_question%```"
+
+      - name: "Result"
+        value: "```%bc_answer%```"
