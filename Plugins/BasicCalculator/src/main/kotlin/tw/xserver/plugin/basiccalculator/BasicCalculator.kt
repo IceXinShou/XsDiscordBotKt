@@ -7,8 +7,9 @@ import tw.xserver.loader.builtin.placeholder.Placeholder
 import tw.xserver.plugin.basiccalculator.Event.PLUGIN_DIR_FILE
 import tw.xserver.plugin.creator.message.MessageCreator
 import java.io.File
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
-import kotlin.math.pow
 
 
 internal object BasicCalculator {
@@ -18,14 +19,17 @@ internal object BasicCalculator {
         val formula: String = event.getOption("formula")!!.asString.trim().trimEnd('?', '=', ' ')
         val ans: String
         try {
-            ans = evaluateExpression(formula).toInt().toString()
+            ans = evaluateExpression(formula)
         } catch (e: IllegalArgumentException) {
             event.hook.editOriginal(
                 MessageEditData.fromCreateData(
                     creator.getCreateBuilder(
                         "error",
                         event.userLocale,
-                        Placeholder.getSubstitutor(event.member!!).put("bc_question" to formula)
+                        Placeholder.getSubstitutor(event.member!!).putAll(
+                            "bc_question" to formula,
+                            "bc_error" to (e.message ?: "Unknown error"),
+                        )
                     ).build()
                 )
             ).queue()
@@ -33,17 +37,18 @@ internal object BasicCalculator {
         }
 
 
-        event.hook.editOriginal(
-            MessageEditData.fromCreateData(
-                creator.getCreateBuilder(
-                    event,
-                    Placeholder.getSubstitutor(event.member!!).putAll(
-                        "bc_question" to formula,
-                        "bc_answer" to ans,
-                    )
-                ).build()
-            )
+        event.channel.sendMessage(
+            creator.getCreateBuilder(
+                event,
+                Placeholder.getSubstitutor(event.member!!).putAll(
+                    "bc_question" to formula,
+                    "bc_answer" to ans,
+                    "bc_answer_round" to ans.split('.', limit = 1)[0],
+                )
+            ).build()
         ).queue()
+
+        event.hook.deleteOriginal().queue()
     }
 
 
@@ -51,7 +56,7 @@ internal object BasicCalculator {
         NUMBER, OPERATOR, LEFT_PAREN, RIGHT_PAREN
     }
 
-    private fun evaluateExpression(expression: String): Double {
+    private fun evaluateExpression(expression: String): String {
         fun isOperator(c: Char): Boolean = c in listOf('+', '-', '*', '/', '^')
 
         // 優先級
@@ -145,13 +150,13 @@ internal object BasicCalculator {
             return output
         }
 
-        fun evaluatePostfix(postfixTokens: List<String>): Double {
-            val stack = Stack<Double>()
+        fun evaluatePostfix(postfixTokens: List<String>): String {
+            val stack = Stack<BigDecimal>()
 
             for (token in postfixTokens) {
                 when {
-                    token.toDoubleOrNull() != null -> {
-                        stack.push(token.toDouble())
+                    token.toBigDecimalOrNull() != null -> {
+                        stack.push(token.toBigDecimal())
                     }
 
                     isOperator(token[0]) && token.length == 1 -> {
@@ -162,11 +167,11 @@ internal object BasicCalculator {
                         val b = stack.pop()
                         val a = stack.pop()
                         val result = when (op) {
-                            '+' -> a + b
-                            '-' -> a - b
-                            '*' -> a * b
-                            '/' -> a / b
-                            '^' -> a.pow(b)
+                            '+' -> a.add(b)
+                            '-' -> a.subtract(b)
+                            '*' -> a.multiply(b)
+                            '/' -> a.divide(b, 10, RoundingMode.HALF_UP)
+                            '^' -> a.pow(b.toInt())
                             else -> throw IllegalArgumentException("Unknown Operator：$op")
                         }
                         stack.push(result)
@@ -180,7 +185,12 @@ internal object BasicCalculator {
             if (stack.size != 1) {
                 throw IllegalArgumentException("Illegal formula")
             }
+
+
             return stack.pop()
+                .setScale(5, RoundingMode.HALF_UP)
+                .stripTrailingZeros()
+                .toPlainString()
         }
 
         return evaluatePostfix(infixToPostfix(expression))
