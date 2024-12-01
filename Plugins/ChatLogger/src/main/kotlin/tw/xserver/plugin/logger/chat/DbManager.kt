@@ -13,7 +13,7 @@ import java.sql.Connection
 
 
 internal object DbManager {
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // Long may be too small but for efficiency performance. Watchful waiting
     private val channelTableCache: MutableSet<Long> = mutableSetOf() // Avoid multiple database exist query

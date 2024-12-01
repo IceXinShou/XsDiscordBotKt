@@ -15,7 +15,7 @@ import java.util.jar.JarFile
  * Manages the lifecycle of all plugins, loading and unloading them as required.
  */
 object PluginLoader {
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val dir: File = File("./plugins")
     private val pluginInfos: MutableMap<String, InfoSimple> = HashMap()
     internal val guildCommands = mutableListOf<CommandData>()

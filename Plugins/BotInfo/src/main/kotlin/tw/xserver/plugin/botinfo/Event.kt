@@ -22,7 +22,7 @@ object Event : PluginEvent(true) {
     override fun unload() {}
 
     override fun reloadConfigFile() {
-        fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
+        fileGetter = FileGetter(PLUGIN_DIR_FILE, this::class.java)
     }
 
     override fun reloadLang() {

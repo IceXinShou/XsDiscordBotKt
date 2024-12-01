@@ -18,7 +18,7 @@ import kotlin.system.exitProcess
  * Main loader for the bot application, handles bot initialization, and management of events and plugins.
  */
 object BotLoader {
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val ROOT_PATH: String = System.getProperty("user.dir")
     lateinit var jdaBot: JDA
         private set

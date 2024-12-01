@@ -12,7 +12,7 @@ import java.io.File
 
 internal object JsonManager {
     private val fileManagers: MutableMap<Long, JsonObjFileManager> = HashMap()
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // listen map to setting
     internal val dataMap: MutableMap<Long, ChannelData> = HashMap()

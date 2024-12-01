@@ -18,7 +18,7 @@ class IntervalPusher(
     private var job: Job? = null
 
     // Logger 實例
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // 掛起函數來獲取 ping 值並構建 URL
     private suspend fun buildUrl(url: String): String {

@@ -33,7 +33,7 @@ import java.io.File
 object Event : PluginEvent(true) {
     internal const val COMPONENT_PREFIX = "xs:chat-logger:v2:"
     internal val PLUGIN_DIR_FILE = File("./plugins/ChatLogger/")
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun load() {
         reloadAll()
@@ -45,7 +45,7 @@ object Event : PluginEvent(true) {
     }
 
     override fun reloadConfigFile() {
-        fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
+        fileGetter = FileGetter(PLUGIN_DIR_FILE, this::class.java)
 
         logger.info("Data file loaded successfully.")
     }

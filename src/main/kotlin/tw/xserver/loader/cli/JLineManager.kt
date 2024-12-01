@@ -33,7 +33,7 @@ class CustomCompleter : Completer {
 
 
 object JLineManager {
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val terminal: Terminal = TerminalBuilder.builder().system(true).build()
     private val completer: Completer = CustomCompleter()
     val reader: LineReader = LineReaderBuilder.builder()

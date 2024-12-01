@@ -13,7 +13,7 @@ import java.nio.channels.Channels
 import kotlin.system.exitProcess
 
 object UpdateChecker {
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private const val VERSION = "v2.0"
 
     fun versionCheck(): Boolean {

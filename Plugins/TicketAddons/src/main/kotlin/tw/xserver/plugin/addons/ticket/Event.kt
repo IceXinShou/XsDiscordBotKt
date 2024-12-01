@@ -13,7 +13,7 @@ import java.io.IOException
 
 object Event : PluginEvent(true) {
     internal val PLUGIN_DIR_FILE = File("./plugins/TicketAddons/")
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     internal lateinit var config: MainConfigSerializer
         private set
 
@@ -24,7 +24,7 @@ object Event : PluginEvent(true) {
     override fun unload() {}
 
     override fun reloadConfigFile() {
-        fileGetter = FileGetter(PLUGIN_DIR_FILE, this.javaClass)
+        fileGetter = FileGetter(PLUGIN_DIR_FILE, this::class.java)
 
         try {
             fileGetter.readInputStream("./config.yml").use {

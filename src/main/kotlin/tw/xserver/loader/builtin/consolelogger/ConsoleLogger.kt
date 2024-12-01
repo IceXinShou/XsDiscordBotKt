@@ -13,7 +13,7 @@ import tw.xserver.loader.base.SettingsLoader
 import tw.xserver.loader.builtin.placeholder.Placeholder
 
 object ConsoleLogger : ListenerAdapter() {
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val commandConsoles: MutableList<ConsoleChannel> = ArrayList()
     private val buttonConsoles: MutableList<ConsoleChannel> = ArrayList()
     private val modalConsoles: MutableList<ConsoleChannel> = ArrayList()
