@@ -5,12 +5,12 @@ group = "tw.xserver.plugin.api"
 version = "v2.0"
 
 plugins {
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0-RC"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
     id("com.gradleup.shadow") version "8.3.5"
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+    api("com.fasterxml.jackson.core:jackson-databind:2.18.2")
     api("com.google.api-client:google-api-client:2.7.0")
     api("com.google.oauth-client:google-oauth-client-jetty:1.36.0")
     api("com.google.apis:google-api-services-sheets:v4-rev20241008-2.0.0")

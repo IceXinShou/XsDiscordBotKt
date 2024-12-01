@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-    api("org.xerial:sqlite-jdbc:3.47.0.0")
+    api("org.xerial:sqlite-jdbc:3.47.1.0")
 }
 
 tasks.build {
