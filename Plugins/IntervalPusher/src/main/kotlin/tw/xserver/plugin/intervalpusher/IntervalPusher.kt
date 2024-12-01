@@ -60,6 +60,6 @@ class IntervalPusher(
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
         private fun buildUrl(url: String): String =
-            url.replace("%ping%", jdaBot.gatewayPing.toString())
+            url.replace("%ping%", jdaBot.restPing.queue().toString())
     }
 }
