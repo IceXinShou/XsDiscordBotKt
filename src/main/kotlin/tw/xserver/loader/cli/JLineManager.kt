@@ -6,9 +6,8 @@ import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader
+import tw.xserver.loader.base.BotLoader
 import kotlin.coroutines.coroutineContext
-import kotlin.system.exitProcess
 
 class CustomCompleter : Completer {
     override fun complete(reader: LineReader, line: ParsedLine, candidates: MutableList<Candidate>) {
@@ -35,7 +34,6 @@ class CustomCompleter : Completer {
 
 object JLineManager {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-    private lateinit var scope: CoroutineScope
     private val terminal: Terminal = TerminalBuilder.builder().system(true).build()
     private val completer: Completer = CustomCompleter()
     val reader: LineReader = LineReaderBuilder.builder()
@@ -44,54 +42,54 @@ object JLineManager {
         .build()
 
 
-    fun main() {
-        scope = CoroutineScope(Dispatchers.IO).apply {
-            launch {
-                mainLoop()
-            }
+    fun start(scope: CoroutineScope, stopSignal: CompletableDeferred<Unit>) {
+        scope.launch {
+            mainLoop(stopSignal)
         }
+        logger.info("JLineManager started.")
     }
 
-    private suspend fun mainLoop() {
-        while (coroutineContext.isActive) {
+    private suspend fun mainLoop(stopSignal: CompletableDeferred<Unit>) {
+        loop@ while (coroutineContext.isActive) {
             try {
-                val line = withContext(Dispatchers.IO) {
+                val cmd = withContext(Dispatchers.IO) {
                     reader.readLine("console > ").trim()
                 }
-                if (line.isNotEmpty()) {
-                    processLine(line)
+                if (cmd.isNotEmpty()) {
+                    when (cmd.lowercase()) {
+                        "reload" -> {
+                            BotLoader.reload()
+                        }
+
+                        "stop", "exit", "shutdown" -> {
+                            logger.info("Stopping application as per user command.")
+                            stopSignal.complete(Unit)
+                            break@loop // 退出循環
+                        }
+
+                        else -> {
+                            logger.warn("Unknown command: {}", cmd)
+                        }
+                    }
                 }
             } catch (e: UserInterruptException) {
                 logger.info("Interrupted by user: ^C")
             } catch (e: EndOfFileException) {
                 logger.info("Interrupted by user: ^D")
+                stopSignal.complete(Unit)
+                break@loop
             } catch (e: Exception) {
                 logger.error("An error occurred: ", e)
             }
         }
     }
 
-    private fun processLine(cmd: String) {
-        when (cmd.lowercase()) {
-            "reload" -> {
-                MainLoader.reload()
-                logger.info("Application reloaded successfully.")
-            }
-
-            "stop", "exit", "shutdown" -> {
-                stopApp()
-            }
-
-            else -> {
-                logger.warn("Unknown command: {}", cmd)
-            }
+    fun stop() {
+        try {
+            terminal.close()
+        } catch (e: Exception) {
+            logger.warn("Error closing terminal: ", e)
         }
-    }
-
-    private fun stopApp() {
-        scope.cancel()
-        MainLoader.stop()
-        logger.info("Application stopped successfully.")
-        exitProcess(0)
+        logger.info("JLineManager stopped.")
     }
 }

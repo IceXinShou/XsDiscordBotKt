@@ -2,14 +2,13 @@ package tw.xserver.loader.base
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
+import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader.globalCommands
-import tw.xserver.loader.base.MainLoader.guildCommands
-import tw.xserver.loader.base.MainLoader.listenersQueue
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.plugin.yaml.InfoSerializer
 import java.io.File
+import java.util.*
 import java.util.jar.JarFile
 
 /**
@@ -19,6 +18,9 @@ object PluginLoader {
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     private val dir: File = File("./plugins")
     private val pluginInfos: MutableMap<String, InfoSimple> = HashMap()
+    internal val guildCommands = mutableListOf<CommandData>()
+    internal val globalCommands = mutableListOf<CommandData>()
+    internal val listenersQueue = ArrayDeque<PluginEvent>()
     val pluginQueue = LinkedHashMap<String, PluginEvent>()
 
     /**
