@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader.jdaBot
+import tw.xserver.loader.base.BotLoader.jdaBot
 import tw.xserver.loader.localizations.LangManager
 import tw.xserver.loader.plugin.PluginEvent
 import tw.xserver.loader.util.FileGetter

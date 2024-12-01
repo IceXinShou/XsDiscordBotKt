@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.interactions.components.selections.EntitySelectInteraction
-import tw.xserver.loader.base.MainLoader.jdaBot
+import tw.xserver.loader.base.BotLoader.jdaBot
 
 object Placeholder {
     val globalPlaceholder: Substitutor = Substitutor(

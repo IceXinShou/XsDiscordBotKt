@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader.jdaBot
+import tw.xserver.loader.base.BotLoader.jdaBot
 import tw.xserver.loader.base.SettingsLoader
 import tw.xserver.loader.builtin.placeholder.Placeholder
 

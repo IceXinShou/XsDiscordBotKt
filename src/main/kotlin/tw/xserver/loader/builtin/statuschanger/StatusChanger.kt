@@ -3,7 +3,7 @@ package tw.xserver.loader.builtin.statuschanger
 import net.dv8tion.jda.api.entities.Activity
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader.jdaBot
+import tw.xserver.loader.base.BotLoader.jdaBot
 import tw.xserver.loader.base.SettingsLoader
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

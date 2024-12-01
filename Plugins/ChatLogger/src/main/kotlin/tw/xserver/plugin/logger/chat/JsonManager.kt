@@ -5,14 +5,14 @@ import com.google.gson.JsonObject
 import net.dv8tion.jda.api.entities.Guild
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader.jdaBot
+import tw.xserver.loader.base.BotLoader.jdaBot
 import tw.xserver.loader.json.JsonObjFileManager
 import tw.xserver.plugin.logger.chat.Event.PLUGIN_DIR_FILE
 import java.io.File
 
 internal object JsonManager {
     private val fileManagers: MutableMap<Long, JsonObjFileManager> = HashMap()
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     // listen map to setting
     internal val dataMap: MutableMap<Long, ChannelData> = HashMap()

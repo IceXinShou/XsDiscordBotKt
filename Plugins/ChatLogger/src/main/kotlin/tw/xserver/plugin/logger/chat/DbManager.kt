@@ -3,7 +3,7 @@ package tw.xserver.plugin.logger.chat
 import net.dv8tion.jda.api.entities.Guild
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader.jdaBot
+import tw.xserver.loader.base.BotLoader.jdaBot
 import tw.xserver.plugin.api.sqlite.SQLiteFileManager
 import tw.xserver.plugin.logger.chat.ChatLogger.KEEP_ALL_LOG
 import tw.xserver.plugin.logger.chat.Event.PLUGIN_DIR_FILE

@@ -2,7 +2,7 @@ package tw.xserver.loader.plugin
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tw.xserver.loader.base.MainLoader
+import tw.xserver.loader.base.BotLoader
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URI
@@ -15,7 +15,7 @@ import java.nio.file.Files
  * A custom URLClassLoader to load classes and resources from JAR files dynamically.
  * This allows plugins or modules to be loaded into the application at runtime.
  */
-object ClassLoader : URLClassLoader(arrayOfNulls(0), MainLoader::class.java.classLoader) {
+object ClassLoader : URLClassLoader(arrayOfNulls(0), BotLoader::class.java.classLoader) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val resourcePath: MutableMap<String, URL> = HashMap()
 

@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.requests.restaction.CacheRestAction
-import tw.xserver.loader.base.MainLoader
+import tw.xserver.loader.base.BotLoader
 
 /**
  * A utility class for fetching and managing entities like Users and Members from JDA.
@@ -21,8 +21,8 @@ object GlobalUtil {
      * @param id The unique ID of the user.
      * @return The User object.
      */
-    fun getUserById(id: Long): CacheRestAction<User> = MainLoader.jdaBot.retrieveUserById(id)
-    fun getUserById(id: String): CacheRestAction<User> = MainLoader.jdaBot.retrieveUserById(id)
+    fun getUserById(id: Long): CacheRestAction<User> = BotLoader.jdaBot.retrieveUserById(id)
+    fun getUserById(id: String): CacheRestAction<User> = BotLoader.jdaBot.retrieveUserById(id)
 
     /**
      * Gets the nickname of a user in a guild or their username if the nickname is not available.
